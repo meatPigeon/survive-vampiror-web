@@ -52,6 +52,6 @@ The build API stores versions under canonical title FYVPZFCO. The uploaded artif
 
 Setup verification (2026-10-08): fresh-clone install, types/build/backend checks and both MCP connections pass. The hosted starter passes guest login, game start, result and restart in Chrome with no browser errors.
 
-[Previous minimal encounter, DEV version 2](https://fyvpzfco-dev.idos.games/v/blda18d7a5d107f4398b96c381bc592debf/index.html). It predates the native three-wave port. Current validation and differences from the source are recorded in the [encounter history](docs/feature-history/horde-encounter.md). Hosted browser access was denied during verification; hosted gameplay remains unverified. Live promotion is disabled.
+[Open the staged three-wave port, DEV version 3](https://fyvpzfco-dev.idos.games/v/bld71000a964b604278a0c401ceb324bffe/index.html). Types, 22 tests, build, real DEV backend and both MCP checks pass. Local Chrome menu, arena, start, defeat, pause and restart have been inspected. Current validation and differences from the source are recorded in the [encounter history](docs/feature-history/horde-encounter.md). Hosted browser access was denied during verification; hosted gameplay remains unverified. Live promotion is disabled.
 
 [Previously verified DEV starter, version 1](https://fyvpzfco-dev.idos.games/v/blde7df07c403b846bab863c89d235353dd/index.html).

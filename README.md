@@ -8,7 +8,7 @@ Lead forty zombies through three escalating knight waves in a low-poly 3D arena.
 
 Move with WASD/arrows or touch direction buttons; bites happen automatically. Unlocked abilities use Q/E, sprint uses Space, and the sling uses mouse aim, left-click to fire and right-click to cancel. Mouse wheel zooms, Esc pauses and R restarts. Keep at least one permanent zombie alive.
 
-[Previous minimal DEV encounter (version 2)](https://fyvpzfco-dev.idos.games/v/blda18d7a5d107f4398b96c381bc592debf/index.html). It predates the three-wave port. Automated gameplay, camera and asset checks pass, and local Chrome menu, start, defeat, pause and restart have been inspected. Full rendered playthrough and hosted gameplay remain unverified because browser inspection is intermittent and hosted access was denied. Live promotion is disabled.
+[Play the staged three-wave port (DEV version 3)](https://fyvpzfco-dev.idos.games/v/bld71000a964b604278a0c401ceb324bffe/index.html). Automated gameplay, camera and asset checks pass, and local Chrome menu, start, defeat, pause and restart have been inspected. Full rendered playthrough and hosted gameplay remain unverified because browser inspection is intermittent and hosted access was denied. Live promotion is disabled.
 
 ## Local development
 
