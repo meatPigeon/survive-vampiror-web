@@ -1,5 +1,7 @@
 # IDOS.md — project guide
 
+For opening the workspace and the first playable-slice prompt, see [START_HERE.md](START_HERE.md).
+
 Every AI agent working on this game reads this file first: the platform's AI editor loads it into
 context on every run, and external agents reach it through `AGENTS.md` / `CLAUDE.md`. Keep it short
 and evergreen — what the game is, how the project is laid out, rules that hold for all of it. The
@@ -128,8 +130,12 @@ inventing ids.
   the server after each turn and shown in the live preview. Use only what `package.json` lists.
 - Locally (exported project or an external agent): `npm ci --ignore-scripts`, then `npm run dev`;
   `npm run check` verifies types, build and the live DEV backend. `npm run mcp:check` verifies both MCP connections.
+- `npm run stage:dev` uploads a checked DEV artifact as a test version and returns its link. It always
+  uses `deploy=false`; live promotion requires an explicit publishing request. Local source and the
+  browser AI editor do not automatically synchronize. See START_HERE.md for the full workflow.
 - Client code ships to players: never put secrets, keys or tokens in any file here.
-- Assets are not stored in the project — generated images/audio/3D are CDN URLs; reference those.
+- iDos-generated images/audio/3D use CDN URLs. A manual Vite build may also bundle user-owned
+  static assets in `public/` when the port needs them; the uploaded archive hosts the game itself.
 
 ## Feature history — how this project remembers
 
