@@ -50,6 +50,7 @@ export class Actor {
   private lastHp = Infinity;
   private recoil = 0;
   private deathPose: { rotation: THREE.Euler; position: THREE.Vector3; scale: THREE.Vector3 } | null = null;
+  private fuse: THREE.Mesh<THREE.OctahedronGeometry, THREE.MeshBasicMaterial> | null = null;
   constructor(asset: GLTF, temporary = false, private knight = false, phase = 0) {
     this.model = clone(asset.scene); this.root.add(this.model);
     this.rig = this.model.getObjectByName("CharacterRig") ?? this.model;
@@ -92,6 +93,7 @@ export class Actor {
   }
   updateZombie(a: Zombie, world: Encounter, dt: number) {
     this.root.position.set(a.x, 0, a.z);
+    if (this.fuse) this.fuse.visible = false;
     const turn = Math.atan2(Math.sin(a.facing - this.yaw), Math.cos(a.facing - this.yaw));
     const speedTarget = a.moving && !a.locked ? THREE.MathUtils.clamp(a.speed / RULES.speed, 0, 2) : 0;
     this.speed = THREE.MathUtils.lerp(this.speed, speedTarget, 1 - Math.exp(-12 * dt));
@@ -120,6 +122,15 @@ export class Actor {
     const ringScale = mine ? 1.5 + 0.4 * Math.sin(mine.fuse * 18) : a.locked || a.feasting ? 1.8 : 1;
     this.ring.group.scale.set(ringScale, 1, ringScale);
     this.model.position.y = a.airborne; this.model.rotation.z = a.flightSpin;
+    if (mine) {
+      // Planted recruits hold a low pose instead of continuing their walking/bite cycle.
+      this.biteTime = -1; this.play("idle", a.id * 0.37); this.mixer.update(0); this.air.clear();
+      this.rig.rotation.set(0.2, 0, 0); this.rig.position.set(0, 0, 0); this.rig.scale.set(1.08, 0.68, 1.08);
+      this.fuse ??= new THREE.Mesh(new THREE.OctahedronGeometry(0.09), new THREE.MeshBasicMaterial({ color: 0xffd17a, toneMapped: false }));
+      if (!this.fuse.parent) this.root.add(this.fuse);
+      this.fuse.position.set(0, 0.83, 0); this.fuse.scale.setScalar(1 + 0.2 * Math.sin(mine.fuse * 18)); this.fuse.visible = true;
+      return;
+    }
     if (this.biteTime >= 0 && this.biteTime < 0.36) { this.biteTime += dt; this.mixer.update(dt); }
     else {
       this.biteTime = -1; const action = this.play(a.moving ? "run" : "idle", a.id * 0.37);
@@ -176,6 +187,7 @@ export class Actor {
     // Geometry and original materials belong to the shared asset cache.
     for (const material of this.materials) material.dispose();
     this.ring.group.traverse(o => { if (o instanceof THREE.Mesh) o.geometry.dispose(); }); this.ring.material.dispose();
+    this.fuse?.geometry.dispose(); this.fuse?.material.dispose();
     this.model.traverse(o => { if (o instanceof THREE.SkinnedMesh) o.skeleton.dispose(); });
   }
 }

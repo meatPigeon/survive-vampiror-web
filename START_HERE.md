@@ -20,6 +20,8 @@ Read [the encounter's scope and decisions](docs/feature-history/horde-encounter.
 
 The port has three waves, five knight attacks, temporary recruitment, mines, sling, feast and sprint, Newbie/Normal difficulty, wave rewards, the source models, animations, audio and fonts. WASD/arrows move the horde; bites happen automatically. The first movement command starts combat. Esc pauses; R restarts. Unlocked abilities use Q/E, sprint uses Space, and the sling uses mouse aim, left-click to fire and right-click to cancel. Mouse wheel zooms; touch direction controls appear on touch devices.
 
+There are five rotating recruitment craters. Corpse mines use only available temporary recruits, planting half of them (at least one) as stationary bombs that the moving horde can walk through.
+
 ## Preview and checks
 
 The development preview is already running at http://127.0.0.1:5180/.
@@ -40,7 +42,7 @@ npm run mcp:check
 npm run stage:dev
 ```
 
-`check` verifies TypeScript, 23 gameplay/input/presentation tests, build, and the real DEV player/backend connection. Tests include a three-wave victory through ordinary movement and valid rewards, camera projection, converted rigs, Godot movement fixtures and particle lifecycle. `mcp:check` verifies both MCP connections and an authenticated DEV configuration read. `stage:dev` checks types, gameplay and the DEV backend, builds and zips the game, uploads it to iDos and returns a DEV test link. Its receipt is `.idos/last-stage.json` (ignored by Git).
+`check` verifies TypeScript, 31 gameplay/input/presentation tests, build, and the real DEV player/backend connection. Tests include five-site recruitment, temporary-only passable bombs, a three-wave victory through ordinary movement and valid rewards, camera projection, converted rigs, Godot movement fixtures and visual resource lifecycle. `mcp:check` verifies both MCP connections and an authenticated DEV configuration read. `stage:dev` checks types, gameplay and the DEV backend, builds and zips the game, uploads it to iDos and returns a DEV test link. Its receipt is `.idos/last-stage.json` (ignored by Git).
 
 `npm run assets:port` regenerates the owned reference assets from the sibling project using Godot 4.7.2. See the [asset origin and export notes](src/modules/horde/assets/reference/README.md). Runtime builds do not need Godot.
 
@@ -52,7 +54,9 @@ The build API stores versions under canonical title FYVPZFCO. The uploaded artif
 
 Setup verification (2026-10-08): fresh-clone install, types/build/backend checks and both MCP connections pass. The hosted starter passes guest login, game start, result and restart in Chrome with no browser errors.
 
-[Open the moonlit graveyard build, DEV version 4](https://fyvpzfco-dev.idos.games/v/bld7d856fe7471442739571c0051503af99/index.html). It adds procedural ground, candles, character rim lighting, ambient motes, combat sparks and clearer telegraphs. Types, 23 tests, build, real DEV backend and both MCP checks pass. Local Chrome menu, arena, start, zoom and combat rendering have been inspected without console errors. Current validation and differences from the source are recorded in the [encounter history](docs/feature-history/horde-encounter.md). Hosted browser access was denied during earlier verification; hosted gameplay remains unverified. Live promotion is disabled.
+[Open the five-crater build, DEV version 5](https://fyvpzfco-dev.idos.games/v/bld82469a232b124490b01dc2c8d02e327d/index.html). It adds two recruitment craters and temporary-only mines that the horde can walk through, with a low planted pose and amber fuse. Types, 31 tests, build, real DEV backend and both MCP checks pass. Local Chrome shows all five craters without console errors; a separate local UI scenario verifies planting, movement and detonation while preserving permanent zombies. Current validation and differences from the source are recorded in the [encounter history](docs/feature-history/horde-encounter.md). Hosted browser access was denied during earlier verification; hosted gameplay remains unverified. Live promotion is disabled.
+
+[Previous moonlit graveyard build, DEV version 4](https://fyvpzfco-dev.idos.games/v/bld7d856fe7471442739571c0051503af99/index.html).
 
 [Previous three-wave port, DEV version 3](https://fyvpzfco-dev.idos.games/v/bld71000a964b604278a0c401ceb324bffe/index.html).
 

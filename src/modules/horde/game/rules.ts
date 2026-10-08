@@ -20,4 +20,10 @@ export const RULES = {
 } as const;
 export const PERKS = ["mines", "sling", "feast", "sprint"] as const;
 export const PERK_TITLES = { mines: "Corpse mines", sling: "Zombie sling", feast: "Blood feast", sprint: "Sprint" };
-export const SITES = [{ name: "West", x: -14, z: -8 }, { name: "South", x: -10, z: 10 }, { name: "East", x: 14, z: 8 }];
+export const SITES = [
+  { name: "West", x: -14, z: -8 },
+  { name: "South", x: -10, z: 10 },
+  { name: "East", x: 14, z: 8 },
+  { name: "North", x: 6, z: -13 },
+  { name: "Northeast", x: 22, z: -7 },
+];

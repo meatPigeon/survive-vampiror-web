@@ -21,7 +21,7 @@ export const LAMPS = [
 ] as const;
 
 export function terrainMaterial() {
-  const active = { value: new THREE.Vector3(0, 0, 0) };
+  const active = { value: new Float32Array(SITES.length) };
   const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
   material.onBeforeCompile = shader => {
     shader.uniforms.hordeSite = active;
@@ -32,9 +32,9 @@ export function terrainMaterial() {
       #include <project_vertex>`);
     shader.fragmentShader = `
       varying vec2 arenaXZ;
-      uniform vec3 hordeSite;
-      uniform vec2 hordeSites[3];
-      uniform vec2 hordeLamps[8];
+      uniform float hordeSite[${SITES.length}];
+      uniform vec2 hordeSites[${SITES.length}];
+      uniform vec2 hordeLamps[${LAMPS.length}];
       float groundHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float groundNoise(vec2 p) {
         vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -50,8 +50,10 @@ export function terrainMaterial() {
       float broad = groundNoise(arenaXZ * 0.14 + drift * 1.6);
       float grain = groundNoise(arenaXZ * 3.7);
       vec3 soil = mix(vec3(0.037, 0.061, 0.056), vec3(0.065, 0.096, 0.060), broad);
-      float path = min(pathDistance(arenaXZ, hordeSites[0], hordeSites[1]),
-                       pathDistance(arenaXZ, hordeSites[1], hordeSites[2]));
+      float path = 1e10;
+      for (int i = 0; i < ${SITES.length - 1}; i++) {
+        path = min(path, pathDistance(arenaXZ, hordeSites[i], hordeSites[i + 1]));
+      }
       float worn = 1.0 - smoothstep(0.8, 2.8, path + (broad - 0.5) * 1.8);
       soil = mix(soil, vec3(0.093, 0.084, 0.058), worn * 0.65);
       soil *= 0.96 + grain * 0.08;
@@ -59,16 +61,16 @@ export function terrainMaterial() {
       diffuseColor.rgb = soil * (1.0 - border * 0.65);
       `).replace('#include <emissivemap_fragment>', `
       #include <emissivemap_fragment>
-      for (int i = 0; i < 8; i++) {
+      for (int i = 0; i < ${LAMPS.length}; i++) {
         vec2 delta = arenaXZ - hordeLamps[i];
         totalEmissiveRadiance += vec3(0.19, 0.077, 0.020) * exp(-dot(delta, delta) * 0.22);
       }
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < ${SITES.length}; i++) {
         float d = length(arenaXZ - hordeSites[i]);
         totalEmissiveRadiance += vec3(0.025, 0.19, 0.14) * exp(-d*d*0.16) * hordeSite[i];
       }`);
   };
-  material.customProgramCacheKey = () => 'horde-ground-v1';
+  material.customProgramCacheKey = () => `horde-ground-v2-${SITES.length}-${LAMPS.length}`;
   return { material, active };
 }
 

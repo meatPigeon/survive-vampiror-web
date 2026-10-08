@@ -10,6 +10,7 @@ export function sprint(world: Encounter): boolean {
 }
 export function moveHorde(world: Encounter, direction: Point, dt: number) {
   const living = alive(world), center = centerOf(living.filter(a => !a.locked));
+  const bombs = new Set(world.abilities.flatMap(a => a.armed));
   world.sprintRemaining = Math.max(0, world.sprintRemaining - dt); world.sprintCooldown = Math.max(0, world.sprintCooldown - dt);
   const speed = RULES.speed * (world.sprintRemaining > 0 ? RULES.sprintMultiplier : 1), intent = limited(direction);
   let travelled = 0;
@@ -20,7 +21,8 @@ export function moveHorde(world: Encounter, direction: Point, dt: number) {
     let separation = { x: 0, z: 0 };
     // Godot moves members in order; subsequent members see these updated positions.
     for (const b of living) {
-      if (a === b) continue;
+      // Planted mines stay put but do not push the moving horde away.
+      if (a === b || bombs.has(b.id)) continue;
       let away = subtract(a, b), d = length(away); if (d >= RULES.separationRadius) continue;
       if (d < 0.001) { away = { x: a.id > b.id ? 1 : -1, z: 0 }; d = 0.001; }
       separation = add(separation, scale(normalized(away), (RULES.separationRadius - d) / Math.max(d * d, 0.01)));

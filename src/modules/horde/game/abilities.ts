@@ -4,6 +4,7 @@ import { alive, damageKnight, damageZombie, emit, random } from "./world";
 import type { Ability, Encounter, Point, Zombie } from "./types";
 
 const enabled = (w: Encounter) => w.status === "playing" && !w.paused && !w.betweenWaves;
+const mineRecruits = (w: Encounter) => alive(w).filter(z => z.kind === 'temporary' && !z.locked);
 export function slingAmmo(w: Encounter, target?: Point): Zombie | null {
   let nearest: Zombie | null = null, reach: number = RULES.slingRange;
   for (const a of alive(w)) {
@@ -17,7 +18,7 @@ export function slingAmmo(w: Encounter, target?: Point): Zombie | null {
 export function canActivate(w: Encounter, a: Ability) {
   if (!enabled(w) || a.cooldown > 0) return false;
   switch (a.upgrade) {
-    case "mines": return alive(w).length >= 2 && !a.armed.length;
+    case "mines": return mineRecruits(w).length > 0 && !a.armed.length;
     case "sling": return slingAmmo(w) !== null && a.projectile === null;
     case "feast": return alive(w).length > 0 && a.feast <= 0;
     default: return false;
@@ -27,8 +28,8 @@ export function activateAbility(w: Encounter, slot = 0): boolean {
   const a = w.abilities[slot]; if (!a || !canActivate(w, a)) return false;
   switch (a.upgrade) {
     case "mines": {
-      const living = alive(w), available = living.filter(z => !z.locked), n = Math.min(Math.floor(living.length / 2), available.length);
-      for (let i = 0; i < n; i++) { const z = available[Math.floor(i * available.length / n)]!; z.locked = true; z.moving = false; a.armed.push(z.id); }
+      const available = mineRecruits(w), n = Math.max(1, Math.floor(available.length / 2));
+      for (let i = 0; i < n; i++) { const z = available[Math.floor(i * available.length / n)]!; z.locked = true; z.moving = false; z.speed = 0; a.armed.push(z.id); }
       a.fuse = RULES.fuseDuration; a.cooldown = RULES.mineCooldown;
       if (a.armed.length) emit(w, { type: "ability-activated", upgrade: "mines" }); break;
     }
@@ -73,7 +74,8 @@ function detonate(w: Encounter, a: Ability) {
     if (w.knight.hp > 0 && distance(z, w.knight) <= RULES.blastRadius) damage += RULES.blastDamage;
     emit(w, { type: "blast", x: z.x, z: z.z, radius: RULES.blastRadius }); damageZombie(w, z, z.hp);
   }
-  // Sacrificing the last permanent zombie ends the run before knight damage.
+  // Consume the armed recruits before applying accumulated blast damage.
+  // A terminal outcome during the fuse still takes priority over knight damage.
   if (enabled(w) && damage > 0) damageKnight(w, damage);
 }
 export function tickAbility(w: Encounter, a: Ability, dt: number) {
@@ -105,6 +107,6 @@ export function abilityText(w: Encounter, a: Ability, key: string) {
   if (a.feast > 0) return `Feasting · ${a.feast.toFixed(1)}s`;
   if (a.cooldown > 0) return `${titles[a.upgrade]} · ${a.cooldown.toFixed(1)}s`;
   if (a.upgrade === "sling" && !slingAmmo(w)) return "Sling · need a recruit";
-  if (a.upgrade === "mines" && alive(w).length < 2) return "Mines · need 2 zombies";
+  if (a.upgrade === "mines" && !mineRecruits(w).length) return "Mines · need a recruit";
   return `${titles[a.upgrade]} · ${key}`;
 }

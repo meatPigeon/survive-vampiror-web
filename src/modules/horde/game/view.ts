@@ -105,7 +105,7 @@ export class HordeView {
   }
   reset() {
     for (const actor of this.actors.values()) actor.destroy(); this.actors.clear(); this.knight?.destroy(); this.knight = null; this.wave = 0;
-    this.camera.reset(); this.previews.reset(); this.effects.reset(); this.terrain.active.value.setScalar(0);
+    this.camera.reset(); this.previews.reset(); this.effects.reset(); this.terrain.active.value.fill(0);
     for (const site of this.sites) { site.active = false; site.elapsed = 0; for (const grave of site.graves) grave.visible = false; site.track.visible = false; site.fill.visible = false; site.marker.visible = false; }
   }
   handleEvents(events: GameEvent[], world: Encounter) {
@@ -143,7 +143,7 @@ export class HordeView {
       const active = world.activeSite === index;
       if (active !== site.active) { site.active = active; site.elapsed = 0; }
       site.elapsed += dt; site.track.visible = active; site.marker.visible = active; site.fill.visible = active && world.siteProgress > 0;
-      this.terrain.active.value.setComponent(index, THREE.MathUtils.lerp(this.terrain.active.value.getComponent(index), active ? 1 : 0, 1 - Math.exp(-4 * dt)));
+      this.terrain.active.value[index] = THREE.MathUtils.lerp(this.terrain.active.value[index]!, active ? 1 : 0, 1 - Math.exp(-4 * dt));
       if (site.fill.visible) { site.fill.geometry.dispose(); site.fill.geometry = site.geometry(Math.min(1, world.siteProgress / RULES.summonTime)); }
       site.graves.forEach((grave, i) => {
         const t = THREE.MathUtils.clamp((site.elapsed - i * 0.09) / (active ? 0.55 : 0.4), 0, 1);

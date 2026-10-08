@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { Box3, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
 import { Actor, ArenaCamera, CombatEffects, simulation as game } from './load-source.mjs';
@@ -52,6 +53,37 @@ test('screen/world aiming round trips through the real tilted orthographic camer
     assert.equal(aim.onGround, true); near(aim.point.x, point.x); near(aim.point.z, point.z);
   }
   assert.equal(camera.aim(canvas, 0, 0).onGround, false);
+});
+
+test('temporary recruit bomb presentation lowers the real rig, clears on cancellation and death, and releases its fuse', async () => {
+  const bytes = await readFile(new URL('../src/modules/horde/assets/reference/temporary_zombie.glb', import.meta.url));
+  const asset = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
+  const world = game.createEncounter(); world.status = 'playing'; game.addZombies(world, 1, { x: 0, z: 0 }); game.grantPerk(world, 'mines');
+  const recruit = game.alive(world).find(a => a.kind === 'temporary'), actor = new Actor(asset, true);
+  let destroyed = false;
+  try {
+    actor.updateZombie(recruit, world, 1 / 60); actor.root.updateMatrixWorld(true);
+    const rig = actor.model.getObjectByName('CharacterRig'), normalScale = rig.scale.clone();
+    const normalHeight = new Box3().setFromObject(rig).getSize(new Vector3()).y;
+    assert.ok(game.activateAbility(world)); actor.updateZombie(recruit, world, 1 / 60); actor.root.updateMatrixWorld(true);
+    const fuse = actor.root.children.find(object => object.isMesh && object.geometry.type === 'OctahedronGeometry');
+    assert.ok(fuse?.visible); assert.ok(rig.scale.y < normalScale.y);
+    assert.ok(new Box3().setFromObject(rig).getSize(new Vector3()).y < normalHeight);
+    const finite = () => actor.root.traverse(object => {
+      for (const value of [...object.position, ...object.quaternion, ...object.scale, ...object.matrixWorld.elements]) assert.ok(Number.isFinite(value), object.name);
+    });
+    finite();
+    game.cancelAbilities(world); actor.updateZombie(recruit, world, 0.25); actor.root.updateMatrixWorld(true);
+    assert.equal(fuse.visible, false); assert.equal(recruit.locked, false);
+    near(rig.scale.x, normalScale.x); near(rig.scale.y, normalScale.y); near(rig.scale.z, normalScale.z); finite();
+    game.tickAbility(world, world.abilities[0], game.RULES.mineCooldown); assert.ok(game.activateAbility(world));
+    actor.updateZombie(recruit, world, 1 / 60); assert.equal(fuse.visible, true);
+    game.damageZombie(world, recruit, recruit.hp); actor.updateZombie(recruit, world, 0.3); actor.root.updateMatrixWorld(true);
+    assert.equal(fuse.visible, false); finite();
+    let geometriesReleased = 0, materialsReleased = 0;
+    fuse.geometry.addEventListener('dispose', () => geometriesReleased++); fuse.material.addEventListener('dispose', () => materialsReleased++);
+    actor.destroy(); destroyed = true; assert.equal(geometriesReleased, 1); assert.equal(materialsReleased, 1);
+  } finally { if (!destroyed) actor.destroy(); }
 });
 
 test('converted runtime GLBs retain independent rigs, authored attacks and finite geometry', async () => {

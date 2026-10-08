@@ -14,7 +14,7 @@ const art = {
   sprint: new URL('../assets/reference/ui/upgrades/sprint.png', import.meta.url).href,
 };
 const perks = {
-  mines: { role: 'SACRIFICE', cost: 'Spends half your horde', color: '#e4ad72', text: 'Q leaves half the horde behind. After 2 seconds they explode and die. Permanent zombies are spent too.' },
+  mines: { role: 'TRAPS', cost: 'Temporary recruits only · needs 1+', color: '#e4ad72', text: 'Q plants half your available temporary recruits (rounded down, at least one). They stay still for 2 seconds, then explode. Your horde can walk through them.' },
   sling: { role: 'ARTILLERY', cost: 'Uses temporary zombies', color: '#95ccd1', text: 'Q aims the sling. Move the mouse, then left-click to launch a temporary zombie into the scatter circle. Right-click cancels.' },
   feast: { role: 'SUSTAIN', cost: 'Bite to recover health', color: '#c8a4d8', text: 'Q grants 5 seconds of faster bites that heal the biting zombie. Get close and feed to recover.' },
   sprint: { role: 'MOBILITY', cost: 'Keeps Q / E slots free', color: '#c5cf91', text: 'Space doubles movement speed for 1.4 seconds. Recharges in 7 seconds. Keeps Q/E free for other abilities.' },

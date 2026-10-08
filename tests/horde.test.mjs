@@ -116,6 +116,25 @@ test('recruitment holds continuously, discards excess stock, closes, and never r
   advance(w, 5.1); assert.notEqual(w.activeSite, 0);
 });
 
+test('five recruitment craters retain West first, rotate without repeats and recruit at both new sites', () => {
+  assert.equal(SITES.length, 5);
+  assert.deepEqual(SITES.slice(0, 3), [{ name: 'West', x: -14, z: -8 }, { name: 'South', x: -10, z: 10 }, { name: 'East', x: 14, z: 8 }]);
+  const scheduled = isolated(); stepEncounter(scheduled, 1 / 60); assert.equal(scheduled.activeSite, 0);
+  const seen = new Set([scheduled.activeSite]);
+  for (let i = 0; i < 80; i++) {
+    const previous = scheduled.activeSite; scheduled.nextSiteAt = scheduled.elapsed;
+    stepEncounter(scheduled, 1 / 60); assert.notEqual(scheduled.activeSite, previous); seen.add(scheduled.activeSite);
+  }
+  assert.deepEqual([...seen].sort(), [0, 1, 2, 3, 4]);
+  for (const index of [3, 4]) {
+    const site = SITES[index]; assert.ok(Math.abs(site.x) < RULES.halfWidth && Math.abs(site.z) < RULES.halfDepth);
+    const w = isolated(); w.activeSite = index; w.lastSite = index; w.nextSiteAt = 30;
+    Object.assign(w.zombies[0], site); advance(w, RULES.summonTime + 0.1);
+    assert.equal(w.recruited, RULES.reserves); assert.equal(alive(w).filter(a => a.kind === 'temporary').length, RULES.reserves);
+    assert.equal(w.activeSite, null); near(w.nextSiteAt - w.elapsed, RULES.siteRespawnDelay, 0.1);
+  }
+});
+
 test('wave rewards resolve once; breaks freeze wounds, lifetimes, perks and clocks; final wave alone wins', () => {
   const w = isolated(); addZombies(w, 20, { x: -5, z: 0 }); w.zombies[0].hp = 12; grantPerk(w, 'feast'); w.abilities[0].cooldown = 7; w.sprintCooldown = 3;
   damageKnight(w, 800); assert.equal(w.status, 'playing'); assert.equal(w.awaitingReward, true); assert.equal(w.offeredRewards.length, 2); assert.ok(!w.offeredRewards.includes('feast'));
@@ -130,15 +149,83 @@ test('two Q/E perks coexist while sprint owns no slot; sprint gates start, coold
   const w = createEncounter(); grantPerk(w, 'sprint'); assert.equal(sprint(w), false);
   stepEncounter(w, 1 / 60, 1, 0); grantPerk(w, 'mines'); grantPerk(w, 'feast'); assert.equal(grantPerk(w, 'sling'), false);
   assert.ok(sprint(w)); assert.equal(sprint(w), false); near(w.sprintRemaining, 1.4); near(w.sprintCooldown, 7);
-  assert.ok(activateAbility(w, 0)); assert.ok(activateAbility(w, 1)); assert.equal(w.abilities[0].armed.length, 20); assert.ok(alive(w).every(a => a.feasting));
+  addZombies(w, 12, { x: 0, z: 0 });
+  assert.ok(activateAbility(w, 0)); assert.ok(activateAbility(w, 1)); assert.equal(w.abilities[0].armed.length, 6); assert.ok(alive(w).every(a => a.feasting));
   setPaused(w, true); const state = structuredClone(w); advance(w, 10, 1, 0); assert.deepEqual(w, state);
 });
 
-test('mines kill half the horde and only then apply accumulated damage; permanent wipe takes priority', () => {
-  const w = crowd([[0, 1], [0, 1.2], [0, 1.4], [0, 1.6]]); grantPerk(w, 'mines'); activateAbility(w); tickAbility(w, w.abilities[0], 2);
-  assert.equal(w.casualties, 2); assert.equal(w.knight.hp, 710);
-  const terminal = crowd([[0, 1], [0, 1.2]]); terminal.zombies[1].kind = 'temporary'; terminal.knight.hp = 20; grantPerk(terminal, 'mines'); activateAbility(terminal); tickAbility(terminal, terminal.abilities[0], 2);
-  assert.equal(terminal.status, 'lost'); assert.equal(terminal.knight.hp, 20); assert.equal(terminal.zombies[1].hp, 30);
+test('mines require an available temporary recruit and rejecting activation changes nothing', () => {
+  const w = isolated(); grantPerk(w, 'mines');
+  for (const withLockedRecruits of [false, true]) {
+    if (withLockedRecruits) { addZombies(w, 2, { x: 0, z: 0 }); for (const a of alive(w)) if (a.kind === 'temporary') a.locked = true; }
+    const before = structuredClone(w); assert.equal(game.canActivate(w, w.abilities[0]), false); assert.equal(activateAbility(w), false);
+    assert.deepEqual(w, before); assert.equal(w.abilities[0].fuse, 0); assert.equal(w.abilities[0].cooldown, 0);
+  }
+});
+
+test('mines arm half the eligible recruits rounded down, with one recruit sufficient and permanent survivors untouched', () => {
+  for (const [count, expected] of [[1, 1], [5, 2], [12, 6]]) {
+    const w = isolated(); addZombies(w, count, { x: 0, z: 0 }); grantPerk(w, 'mines');
+    const permanent = structuredClone(w.zombies.filter(a => a.kind === 'permanent'));
+    assert.ok(game.canActivate(w, w.abilities[0])); assert.ok(activateAbility(w));
+    const ability = w.abilities[0]; assert.equal(ability.armed.length, expected);
+    assert.ok(ability.armed.every(id => { const a = w.zombies.find(a => a.id === id); return a.kind === 'temporary' && a.hp > 0 && a.locked && !a.moving; }));
+    assert.deepEqual(w.zombies.filter(a => a.kind === 'permanent'), permanent);
+    assert.equal(activateAbility(w), false); near(ability.fuse, RULES.fuseDuration); near(ability.cooldown, RULES.mineCooldown);
+  }
+  const w = isolated(); addZombies(w, 12, { x: 0, z: 0 }); grantPerk(w, 'mines');
+  const recruits = alive(w).filter(a => a.kind === 'temporary'); recruits.slice(0, 4).forEach(a => a.locked = true); damageZombie(w, recruits[4], recruits[4].hp);
+  const eligible = new Set(recruits.slice(5).map(a => a.id)); assert.ok(activateAbility(w));
+  assert.equal(w.abilities[0].armed.length, 3); assert.ok(w.abilities[0].armed.every(id => eligible.has(id)));
+});
+
+test('temporary mines detonate once after the fuse, accumulating damage while permanent survivors remain safe', () => {
+  const w = isolated(); Object.assign(w.knight, { x: 0, z: 0 }); addZombies(w, 4, { x: 0, z: 0 });
+  for (const a of alive(w)) if (a.kind === 'temporary') Object.assign(a, { x: 0, z: 1 });
+  grantPerk(w, 'mines'); const permanent = structuredClone(w.zombies.filter(a => a.kind === 'permanent')); assert.ok(activateAbility(w));
+  const ability = w.abilities[0]; tickAbility(w, ability, RULES.fuseDuration - 0.01); assert.equal(w.casualties, 0); assert.equal(w.knight.hp, 800);
+  tickAbility(w, ability, 0.02); assert.equal(w.casualties, 2); assert.equal(w.knight.hp, 800 - 2 * RULES.blastDamage); assert.deepEqual(ability.armed, []);
+  assert.deepEqual(w.zombies.filter(a => a.kind === 'permanent'), permanent); near(ability.cooldown, RULES.mineCooldown - RULES.fuseDuration - 0.01);
+  tickAbility(w, ability, 1); assert.equal(w.casualties, 2); assert.equal(w.knight.hp, 710);
+});
+
+test('armed temporary bombs stay still, cannot bite or serve as sling ammo, and do not repel moving horde members', () => {
+  const w = crowd([[-0.3, 0], [0.3, 0]]); w.knight.hp = 0; addZombies(w, 1, { x: 0, z: 0 });
+  const bomb = alive(w).find(a => a.kind === 'temporary'); Object.assign(bomb, { x: 0, z: 0 }); grantPerk(w, 'mines'); assert.ok(activateAbility(w));
+  const unobstructed = structuredClone(w); unobstructed.zombies = unobstructed.zombies.filter(a => a.id !== bomb.id); unobstructed.abilities[0].armed = [];
+  for (let i = 0; i < 60; i++) {
+    game.moveHorde(w, { x: 0, z: 1 }, 1 / 60); game.moveHorde(unobstructed, { x: 0, z: 1 }, 1 / 60);
+    assert.deepEqual(w.zombies.filter(a => a.id !== bomb.id), unobstructed.zombies);
+  }
+  assert.deepEqual([bomb.x, bomb.z], [0, 0]); assert.equal(bomb.moving, false); assert.equal(game.slingAmmo(w), null);
+  grantPerk(w, 'sling'); assert.equal(activateAbility(w, 1), false);
+  const biting = isolated(); Object.assign(biting.knight, { x: 0, z: 0 }); addZombies(biting, 1, { x: 0, z: 0 });
+  Object.assign(alive(biting).find(a => a.kind === 'temporary'), { x: 0, z: 1, bite: 0 }); grantPerk(biting, 'mines'); activateAbility(biting); advance(biting, 0.5);
+  assert.equal(biting.knight.hp, 800); assert.ok(!biting.events.some(event => event.type === 'bite'));
+});
+
+test('ordinary locked sling members retain separation while armed mine recruits are passable', () => {
+  const w = crowd([[0, 0]]); w.knight.hp = 0; addZombies(w, 1, { x: 0, z: 0 });
+  const locked = alive(w).find(a => a.kind === 'temporary'); Object.assign(locked, { x: 0.1, z: 0, locked: true });
+  const absent = structuredClone(w); absent.zombies = absent.zombies.filter(a => a.id !== locked.id);
+  game.moveHorde(w, { x: 1, z: 0 }, 1 / 60); game.moveHorde(absent, { x: 1, z: 0 }, 1 / 60);
+  assert.notEqual(w.zombies[0].x, absent.zombies[0].x); assert.equal(locked.x, 0.1);
+});
+
+test('mine fuse and recruits freeze during pause and wave breaks; expiry cleans bombs before damage', () => {
+  const w = isolated(); Object.assign(w.knight, { x: 0, z: 0 }); addZombies(w, 1, { x: 0, z: 1 });
+  const bomb = alive(w).find(a => a.kind === 'temporary'); bomb.lifetime = 0.1; grantPerk(w, 'mines'); activateAbility(w);
+  setPaused(w, true); const paused = structuredClone(w); advance(w, 10, 1, 0); assert.deepEqual(w, paused); setPaused(w, false);
+  advance(w, 0.2); assert.equal(w.expiredCount, 1); assert.equal(w.casualties, 0); assert.deepEqual(w.abilities[0].armed, []); assert.equal(bomb.locked, false);
+  advance(w, RULES.fuseDuration); assert.equal(w.knight.hp, 800); assert.ok(!w.events.some(event => event.type === 'blast'));
+  const between = isolated(); addZombies(between, 1, { x: 0, z: 0 }); grantPerk(between, 'mines'); activateAbility(between); damageKnight(between, 800);
+  const frozen = structuredClone(between); advance(between, 10, 1, 0); assert.deepEqual(between, frozen);
+});
+
+test('last permanent loss cancels armed temporary mines before any knight damage', () => {
+  const w = crowd([[0, 1]]); addZombies(w, 1, { x: 0, z: 1 }); w.knight.hp = 20; grantPerk(w, 'mines'); activateAbility(w);
+  const bomb = alive(w).find(a => a.kind === 'temporary'); damageZombie(w, w.zombies[0], w.zombies[0].hp); tickAbility(w, w.abilities[0], RULES.fuseDuration);
+  assert.equal(w.status, 'lost'); assert.equal(w.knight.hp, 20); assert.equal(bomb.hp, 30); assert.equal(bomb.locked, false); assert.deepEqual(w.abilities[0].armed, []);
 });
 
 test('sling consumes only recruits, costs nothing to aim/cancel, validates full disk, and lands once', () => {
