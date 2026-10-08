@@ -3,9 +3,31 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone } from 'three/addons/utils/SkeletonUtils.js';
-import { Actor, ArenaCamera, simulation as game } from './load-source.mjs';
+import { Actor, ArenaCamera, CombatEffects, simulation as game } from './load-source.mjs';
 
 const near = (a, b) => assert.ok(Math.abs(a - b) < 0.00001, `${a} differs from ${b}`);
+test('combat particles stay bounded under bursts, expire, clear on restart and release GPU resources', () => {
+  const effects = new CombatEffects();
+  effects.burst({ x: 30, z: -22 }, 0xffba58, 1000);
+  effects.burst({ x: -30, z: 22 }, 0x8ef1ed, 1000);
+  assert.equal(effects.activeCount, 320);
+  effects.update(0.1, 25);
+  effects.root.traverse(object => {
+    if (!object.isPoints) return;
+    for (const attribute of Object.values(object.geometry.attributes)) for (const value of attribute.array) assert.ok(Number.isFinite(value));
+  });
+  effects.update(2, 25); assert.equal(effects.activeCount, 0);
+  effects.event({ type: 'blast', x: 0, z: 0 }); assert.equal(effects.activeCount, 40);
+  effects.update(0.01, 25); effects.reset(); assert.equal(effects.activeCount, 0);
+  const combat = effects.root.children[0];
+  for (let i = 0; i < 320; i++) assert.equal(combat.geometry.attributes.spark.getY(i), 0);
+  let released = 0;
+  effects.root.traverse(object => {
+    if (!object.isPoints) return;
+    object.geometry.addEventListener('dispose', () => released++); object.material.addEventListener('dispose', () => released++);
+  });
+  effects.destroy(); assert.equal(released, 4);
+});
 test('source camera fits wide/portrait arenas, clamps zoom, excludes locked actors and resets', () => {
   const camera = new ArenaCamera(), world = game.createEncounter();
   camera.resize(1600, 900); near(camera.camera.top * 2, 40.2);

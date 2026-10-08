@@ -40,7 +40,7 @@ npm run mcp:check
 npm run stage:dev
 ```
 
-`check` verifies TypeScript, 22 gameplay/input/presentation tests, build, and the real DEV player/backend connection. Tests include a three-wave victory through ordinary movement and valid rewards, camera projection, converted rigs and Godot movement fixtures. `mcp:check` verifies both MCP connections and an authenticated DEV configuration read. `stage:dev` checks types, gameplay and the DEV backend, builds and zips the game, uploads it to iDos and returns a DEV test link. Its receipt is `.idos/last-stage.json` (ignored by Git).
+`check` verifies TypeScript, 23 gameplay/input/presentation tests, build, and the real DEV player/backend connection. Tests include a three-wave victory through ordinary movement and valid rewards, camera projection, converted rigs, Godot movement fixtures and particle lifecycle. `mcp:check` verifies both MCP connections and an authenticated DEV configuration read. `stage:dev` checks types, gameplay and the DEV backend, builds and zips the game, uploads it to iDos and returns a DEV test link. Its receipt is `.idos/last-stage.json` (ignored by Git).
 
 `npm run assets:port` regenerates the owned reference assets from the sibling project using Godot 4.7.2. See the [asset origin and export notes](src/modules/horde/assets/reference/README.md). Runtime builds do not need Godot.
 

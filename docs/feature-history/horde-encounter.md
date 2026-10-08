@@ -31,9 +31,19 @@ The committed reference assets are user-owned scenes/art/audio/fonts from the si
 
 `SkeletonUtils.clone` gives each actor an independent skeleton/mixer. Shared source geometry/materials belong to the asset cache; instance hit materials, markers and stream geometry are disposed with each actor. The menu, actor, equipment and environment scenes retain source transforms rather than replacing them with placeholders.
 
+## Web visual treatment
+
+The user requested a visual appeal pass and shader experiments after the gameplay port. This deliberately moves the web lighting beyond source rasterization while preserving the three-wave simulation, camera controls, model scale and authored animations. Ten-wave expansion was discussed only as brainstorming and is not implemented.
+
+`material-look.ts` supplies cool hemisphere/moon lighting, a warm fill, ACES tone mapping, soft mint/gold character rim light and a continuous procedural moss/dirt surface. The exported `GroundPatches` group is hidden at runtime because its flat overlapping polygons obscured that surface; the original GLB remains unchanged. Warm ground light pools and the active recruitment glow use shader terms, avoiding eight extra point lights. Shader extensions use Three.js's [material compile hooks and program cache keys](https://threejs.org/docs/pages/Material.html). Actor-owned cloned hit materials reapply the rim hook, since material cloning does not carry shader callbacks. Skinning, source colors and shadow sampling remain in the standard material pipeline.
+
+`graveyard.ts` adds candles, source tombstones and instanced worn boundary stones outside the movement rectangle. These props do not create collision. Flames flicker only while the view advances; pause/host suspension therefore freeze them. The renderer now selects supported `PCFShadowMap` directly.
+
+`effects.ts` draws 64 ambient motes and a fixed 320-slot additive spark pool for bites, recruitment, mines and sling impacts. Large bursts overwrite older slots rather than growing resources. Restart clears particles; teardown disposes both point geometries/materials and instanced GPU buffers. No textures, downloaded art, new dependencies or fullscreen bloom passes are required. Attack borders follow the existing exact sector/circle/lane dimensions, and windup fill intensifies without changing hit timing or area. Impact rings expand and fade independently of damage.
+
 ## Verification
 
-`npm run check` runs strict types, 22 tests, production build and real DEV guest login/player bootstrap/public configuration. `npm run mcp:check` verifies Code MCP, Data MCP and an authenticated DEV configuration read. Both pass. The asset export command also completed successfully without changing source-owned files.
+`npm run check` runs strict types, 23 tests, production build and real DEV guest login/player bootstrap/public configuration. `npm run mcp:check` verifies Code MCP, Data MCP and an authenticated DEV configuration read. Both pass. The asset export command also completed successfully without changing source-owned files. The added presentation test covers particle capacity, finite buffers, expiry, reset and GPU resource disposal.
 
 Tests cover all knight attacks and priorities, Newbie/Normal damage, piercing and swept hits, source movement defaults and four corners, recruitment/lifetime/capacity, all four upgrades, wave freeze/carryover/rewards, terminal priority, restart/input cleanup and brief command start. An automated Newbie run wins all three waves using ordinary movement, automatic bites and valid skip rewards. This is simulation verification, not a human playtest. Presentation tests cover wide/portrait camera fitting, zoom/follow/reset, world/screen aiming and all runtime GLBs, independent rigs, attack clips and finite animated/death transforms.
 

@@ -4,7 +4,7 @@ Native web source for iDos title `FYVPZFCO`, developed with Codex and iDos Code 
 
 **Start here:** [Open the project and begin coding](START_HERE.md).
 
-Lead forty zombies through three escalating knight waves in a low-poly 3D arena. The native port follows the Godot reference's combat, recruitment, upgrades, difficulty and rewards, and uses its authored models, animations, audio and fonts. The existing iDos host handles authentication and shared UI.
+Lead forty zombies through three escalating knight waves in a moonlit low-poly graveyard. The native port follows the Godot reference's combat, recruitment, upgrades, difficulty and rewards, and uses its authored models, animations, audio and fonts. Procedural ground, warm candles, soft character rim lighting and combat sparks add a web visual treatment. The existing iDos host handles authentication and shared UI.
 
 Move with WASD/arrows or touch direction buttons; bites happen automatically. Unlocked abilities use Q/E, sprint uses Space, and the sling uses mouse aim, left-click to fire and right-click to cancel. Mouse wheel zooms, Esc pauses and R restarts. Keep at least one permanent zombie alive.
 
@@ -47,7 +47,7 @@ codex mcp login idos-data --scopes config:read,config:write,cloudcode:write,buil
 
 For backend configuration, grant `FYVPZFCO-DEV`. Staged build uploads additionally require `build:write` on canonical `FYVPZFCO`; select the permissions needed by that workflow. Set `tool_timeout_sec = 180` under `[mcp_servers.idos-data]` in Codex configuration for the finish-upload wait, then start a fresh Codex session after connecting. `npm run mcp:check` verifies both connections and reads the DEV currency configuration through Codex's native MCP transport, without starting a model turn or reading OAuth credentials. This machine's Data MCP reports 137 tools and access on both the live and DEV titles; configuration work should target `FYVPZFCO-DEV`.
 
-`npm run check` performs strict TypeScript checks, runs 22 gameplay/input/presentation tests, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. Tests cover all attacks, recruitment, abilities, wave carryover, terminal outcomes, input cleanup, camera projection and converted animation rigs, plus a complete three-wave victory using ordinary movement and valid skip rewards. `npm run verify` runs only the backend check.
+`npm run check` performs strict TypeScript checks, runs 23 gameplay/input/presentation tests, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. Tests cover all attacks, recruitment, abilities, wave carryover, terminal outcomes, input cleanup, camera projection and converted animation rigs, plus a complete three-wave victory using ordinary movement and valid skip rewards. Presentation checks also bound, expire, reset and dispose combat particles. `npm run verify` runs only the backend check.
 
 `npm run assets:port` reproducibly exports the source scenes and authored combat clips, copies audio/fonts/UI art and records a revision/hash manifest. It needs the sibling Godot project and Godot 4.7.2; normal builds use the committed assets. The movement fixture can be refreshed with the Godot script described in [the encounter history](docs/feature-history/horde-encounter.md).
 

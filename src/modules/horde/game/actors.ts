@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { clone } from "three/addons/utils/SkeletonUtils.js";
 import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { MotionAir } from "./motion-air";
+import { characterLight } from './material-look';
 import { recoveryTime, strikeTime, windupTime } from "./combat";
 import { RULES } from "./rules";
 import type { Encounter, Zombie } from "./types";
@@ -14,6 +15,7 @@ export function disposeObjects(root: THREE.Object3D) {
       for (const material of Array.isArray(object.material) ? object.material : [object.material]) materials.add(material);
     }
     if (object instanceof THREE.SkinnedMesh) object.skeleton.dispose();
+    if (object instanceof THREE.InstancedMesh) object.dispose();
   });
   for (const geometry of geometries) geometry.dispose();
   for (const material of materials) material.dispose();
@@ -72,7 +74,7 @@ export class Actor {
       this.model.traverse(object => {
         if (!(object instanceof THREE.Mesh)) return;
         const cloneMaterial = (material: THREE.Material) => {
-          const copy = material.clone(); if (copy instanceof THREE.MeshStandardMaterial) this.materials.push(copy); return copy;
+          const copy = material.clone(); if (copy instanceof THREE.MeshStandardMaterial) { characterLight(copy, this.knight); this.materials.push(copy); } return copy;
         };
         object.material = Array.isArray(object.material) ? object.material.map(cloneMaterial) : cloneMaterial(object.material);
       });
