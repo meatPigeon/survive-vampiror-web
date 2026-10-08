@@ -1,0 +1,222 @@
+{
+  "source": "@idosgames/mcp",
+  "version": "0.1.28",
+  "generatedFromCommit": "785a4577dbda0aa6d355f2b43e62e9f6a3537471",
+  "titleId": "FYVPZFCO",
+  "modules": {
+    "inventory": {
+      "contentHash": "71f41012c37839b7d4e94c6ed3759118990408da9615743bd27282ca137e49ab",
+      "catalog": {
+        "type": "feature",
+        "inBase": true,
+        "summary": "Inventory screen for any game: owned items by rarity with category tabs and item cards.",
+        "description": "A ready inventory for ANY game, built on the @idosgames/react/ui kit. It shows what the player owns from the SDK's cached inventory (no request of its own): category tabs (equipment, consumables, other), rarity frames, counts and levels, and an item card popup with the description. Equipment hands off to the heroes screen (ctx.features.open('character', { itemInstanceID })) and a chest or key item to the chests screen (ctx.features.open('lootboxes', { itemID })) when those systems are installed. Registers the 'inventory' feature — always shown in the lobby, even before the title has items.",
+        "provides": [
+          "owned items grid by rarity",
+          "category tabs",
+          "item card popup",
+          "hand-off of equipment to the heroes screen",
+          "hand-off of chests and keys to the chests screen"
+        ],
+        "tags": [
+          "inventory",
+          "items",
+          "rarity",
+          "ui",
+          "screen",
+          "economy"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.0"
+      }
+    },
+    "quests": {
+      "contentHash": "9a0d6402a5ecbad12997c91a6c25e7c067cc75f902f7e000db3f7b09ed89d83e",
+      "catalog": {
+        "type": "feature",
+        "inBase": true,
+        "summary": "Quests for any game: quests by cycle with details, claim all and the quest points track.",
+        "description": "A ready quests screen (Unity Runtime/UI/Quests) for ANY game, built on the @idosgames/react/ui kit and client.quest. The title's quests: cycles as tabs (daily, weekly, achievements) with the timer to the next cycle, progress bars, a quest details popup with every goal, 'Claim all' for finished quests, and the quest points track with chests to claim along it. Registers the 'quests' feature; its badge counts finished quests. Ships title-seed.json: four daily quests.",
+        "provides": [
+          "quests by cycle with progress",
+          "quest details popup",
+          "claim all finished quests",
+          "quest points track with milestone chests",
+          "badge for finished quests",
+          "demo daily quests"
+        ],
+        "tags": [
+          "quests",
+          "missions",
+          "achievements",
+          "daily",
+          "ui",
+          "screen",
+          "events"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.0"
+      }
+    },
+    "friends": {
+      "contentHash": "baae3cd9af04f1f2286605348c8eed3570add2eec30357f0b0188d32a63cbe3d",
+      "catalog": {
+        "type": "feature",
+        "inBase": true,
+        "summary": "Friends for any game: the friends list, requests, suggestions and the notification inbox, with a player card and add-by-ID in popups.",
+        "description": "A ready friends screen (Unity Runtime/UI/Friends) for ANY game, built on the @idosgames/react/ui kit and client.social. Tabs: friends, requests (incoming with accept / decline, and the ones you sent), suggestions (players active in this game lately) and news — the notification inbox (attacks, raids, new friends, sales, follows, likes, comments), opened as seen. The player's own ID sits on top with a copy button. Everything detailed is a popup: adding a friend by ID, the player card (level, power; message — opens the chat feature when chat is installed; remove friend; block) and the confirmations. When the title takes friends from idosgames.com only, requests, suggestions and 'Add' disappear and platform friends cannot be removed in the game. Registers the 'friends' feature; its badge counts requests waiting and unread news. No title settings needed.",
+        "provides": [
+          "friends list",
+          "incoming and sent friend requests",
+          "friend suggestions",
+          "notification inbox",
+          "add a friend by ID",
+          "player card with message, remove and block",
+          "friends badge"
+        ],
+        "tags": [
+          "friends",
+          "social",
+          "requests",
+          "inbox",
+          "notifications",
+          "ui",
+          "screen"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.1"
+      }
+    },
+    "invite": {
+      "contentHash": "249258bc510a42f88eb82c8c63c1d31c9def54246f9856f549b99358e2f6fe04",
+      "catalog": {
+        "type": "feature",
+        "inBase": true,
+        "summary": "Invite friends for any game: your code and link to share, friends who came by it, rewards for them, and entering a friend's code in a popup.",
+        "description": "A ready invite-a-friend screen (Unity V2/Runtime/UI/Referral) for ANY game, built on the @idosgames/react/ui kit and client.referral. The player's own short code (minted by the server when the screen opens) with 'Copy' and 'Share link' (the system share sheet, else the clipboard), how many friends came by it and the reward ladder for them (claim one or all). Entering a friend's code is a popup: it shows the newcomer's gift, reads the code the way the server does (8 letters, separators and case ignored) and pays the gift once. A player bound at login by an invite link sees 'You joined by a friend's code'. Registers the 'invite' feature — always shown in the lobby; while the title has invites off (Referral.IsEnabled, off by default) the screen says so and makes no request. Its badge counts invite rewards ready. Ships title-seed.json: a gift for the newcomer and rewards for 1, 3 and 5 friends.",
+        "provides": [
+          "own invite code and link",
+          "share or copy the invite",
+          "friends who came by your code",
+          "invite reward ladder with claim all",
+          "enter a friend's code popup",
+          "invite badge",
+          "demo referral rewards"
+        ],
+        "tags": [
+          "referral",
+          "invite",
+          "friends",
+          "growth",
+          "social",
+          "ui",
+          "screen"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.1"
+      }
+    },
+    "mailbox": {
+      "contentHash": "fcc65bab202ca1ecae11ee184aee0064e11bc9e34253866ec34733eb339b66cb",
+      "catalog": {
+        "type": "feature",
+        "inBase": true,
+        "summary": "Mailbox for any game: letters with rewards, publisher broadcasts, gifts from friends, resource transfers and missed rewards of other systems — with 'Claim all'.",
+        "description": "A ready mailbox screen for ANY game, built on the @idosgames/react/ui kit and client.mailbox. Tabs by category (all, rewards, gifts, system); a letter opens with its text in the player's language, the sender, a banner, the rewards and a button to the screen or page the letter links to. 'Claim' per letter and 'Claim all' in one server operation; rewards of other systems the player has not taken yet (leaderboard cycle, team event prize, invite rewards) are shown on top and claimed right here. 'Send gifts': a free daily gift to friends ('to everyone' in one tap) and a transfer of own coins or items to one friend — declined or expired transfers come back. 'Delete read' cleans up. The lobby badge counts unread letters and rewards waiting. The server owns everything: limits, friendship, expiry, what can be transferred. Opens straight on a friend with ctx.features.open('mailbox', { friendUserID, mode: 'gift' | 'transfer' }) — the friends system does that from a friend's card. Registers the 'mailbox' feature, hidden until the title turns the mailbox on. Ships title-seed.json: the mailbox on, a welcome template, a daily coin gift and coin/potion transfers.",
+        "provides": [
+          "mailbox screen",
+          "letters with rewards and claim all",
+          "publisher broadcasts in the inbox",
+          "gifts to friends",
+          "resource transfers between friends",
+          "missed rewards of other systems",
+          "mailbox badge"
+        ],
+        "tags": [
+          "mailbox",
+          "mail",
+          "inbox",
+          "gifts",
+          "rewards",
+          "social",
+          "ui",
+          "screen"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.0"
+      }
+    },
+    "profile": {
+      "contentHash": "868e0639ef9ac1cbc88a506c3ecd81c481823c71c11004c25dfcce6dc8ba921d",
+      "catalog": {
+        "type": "feature",
+        "inBase": true,
+        "summary": "Profile and settings for any game: name and ID, sound, volume and motion, language, tutorials and log out.",
+        "description": "A ready profile screen (Unity Alikhan/Username, UI/HUD/Settings, Runtime/UI/Consent, Localization) for ANY game, built on the @idosgames/react/ui kit. The player's name (rename in a popup with the server's rules: 3–24 characters, trimmed) and ID with copy; settings: sound on/off, volume and 'fewer animations' — the kit's player prefs, kept on this device and applied to every screen at once — the game's language (the title's languages, when there are two or more). Buttons: Tutorials (when tutorials is installed) and Log out (confirmed). Registers the 'profile' feature; the lobby's profile button opens it. No title settings needed.",
+        "provides": [
+          "player name and ID",
+          "rename popup",
+          "sound, volume and fewer animations",
+          "language picker",
+          "log out"
+        ],
+        "tags": [
+          "profile",
+          "settings",
+          "account",
+          "sound",
+          "language",
+          "privacy",
+          "ui",
+          "screen"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.3"
+      }
+    },
+    "mini-game": {
+      "contentHash": "eb39139d93bfb84e5a20d2485b081a264234452b5d90978fdf15b940cf3b7ac0",
+      "catalog": {
+        "type": "template",
+        "summary": "The smallest complete game: a 15-second 'catch the stars' round launched from the lobby's Play button, with a leaderboard score.",
+        "description": "A tiny game of its own mode (React/DOM, no engine): tap as many stars as you can in 15 seconds, gold stars are worth 3. The score goes to the title's leaderboard, and a round counts for quests that ask for games_played, for timed events that pay for the 'play_round' action and for season chains open to clients. The platform gives it to a new title when no other game fits the idea — it shows where a game plugs into the base (sign-in → lobby → Play) and is meant to be replaced by the real game. No demo settings of its own: it plays on the base's world.",
+        "provides": [
+          "a small tap game launched from the lobby",
+          "score submitted to the leaderboard",
+          "rounds counted by quests, events and the season",
+          "placeholder game to replace with the real one"
+        ],
+        "tags": [
+          "starter",
+          "mini-game",
+          "casual",
+          "tap",
+          "leaderboard"
+        ],
+        "author": {
+          "name": "iDos Games",
+          "url": "https://idosgames.com"
+        },
+        "version": "0.1.1"
+      }
+    }
+  }
+}
