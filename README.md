@@ -23,11 +23,11 @@ npm run mcp:check
 
 ## Codex workflow
 
-Open this repository as the Codex workspace. Read [IDOS.md](IDOS.md), then use the `idos-code` MCP for SDK guidance and module source. Backend configuration is handled by the separate `idos-data` MCP, after OAuth access to the title has been granted.
+Open this repository as the Codex workspace. Read [IDOS.md](IDOS.md), then use the `idos-code` MCP for SDK guidance and module source. Backend configuration is handled by the separate `idos-data` MCP. OAuth is connected on this machine, and an authenticated DEV configuration read has passed.
 
 The private remote is https://github.com/meatPigeon/survive-vampiror-web. Commit and push changes with normal Git commands. The existing Godot project has its own repository in the sibling `survive-vampiror` directory. Keep its assets and behavior as references for the port.
 
-GitHub stores the local source. It does not automatically deploy or copy files into the iDos AI Coder. Its built-in GitHub connector requires the iDos Start plan. Source transfer and deployment need a separately verified workflow; Code MCP supplies code and documentation, while App Data MCP manages backend data.
+GitHub stores the local source. It does not automatically deploy or copy files into the iDos AI Coder. Its built-in GitHub connector requires the iDos Start plan. Code MCP supplies source and SDK guidance. App Data MCP manages backend data and ready-build uploads. Its upload tools require the canonical title ID even for a staged test version, so staging adds an entry to the live title's build history. Live promotion is a separate operation. The prepared DEV archive has not yet been uploaded.
 
 ## Tool connection setup on another machine
 
@@ -39,7 +39,7 @@ codex mcp add idos-data --url https://site.idosgames.com/api/v2/mcp
 codex mcp login idos-data --scopes config:read,config:write,cloudcode:write,build:write
 ```
 
-Select only `FYVPZFCO-DEV` on the authorization page. Keep production access unselected. Restart or refresh the Codex session after connecting. `npm run mcp:check` verifies both connections through Codex's native MCP transport, without starting a model turn or reading OAuth credentials.
+Select only `FYVPZFCO-DEV` on the authorization page. Keep production access unselected. Restart or refresh the Codex session after connecting. `npm run mcp:check` verifies both connections and reads the DEV currency configuration through Codex's native MCP transport, without starting a model turn or reading OAuth credentials. This machine's Data MCP reports 137 tools and access on both the live and DEV titles; configuration work should target `FYVPZFCO-DEV`.
 
 `npm run check` performs strict TypeScript checks, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. `npm run verify` runs only the backend check.
 
@@ -49,7 +49,7 @@ Select only `FYVPZFCO-DEV` on the authorization page. Keep production access uns
 npm run package:dev
 ```
 
-This builds for DEV and creates `.idos/dev-build.zip`, with `index.html` at the archive root. The archive is ignored by Git. Packaging uses the system `zip` and `unzip`, both installed on this machine. Only compiled public client files enter the archive; OAuth credentials stay in Codex's own storage.
+This builds for DEV and creates `.idos/dev-build.zip`, with `index.html` at the archive root. The archive is ignored by Git. Vite uses relative asset paths so the bundle works under an iDos test-version path. Packaging uses the system `zip` and `unzip`, both installed on this machine. Only compiled public client files enter the archive; OAuth credentials stay in Codex's own storage.
 
 ## Source origin
 

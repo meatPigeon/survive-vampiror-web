@@ -43,7 +43,7 @@ export class CodexMcp {
       const timer = setTimeout(() => {
         this.pending.delete(id);
         reject(new Error(`Timed out: ${method}`));
-      }, 120000);
+      }, 180000);
       this.pending.set(id, { resolve, reject, timer });
       this.child.stdin.write(JSON.stringify({ id, method, params }) + '\n');
     });
@@ -68,4 +68,12 @@ export class CodexMcp {
     });
   }
   close() { this.child.kill(); }
+}
+
+export function unwrapMcpResult(result) {
+  if (result.isError) throw new Error('iDos MCP rejected the operation.');
+  const text = result.content?.find(item => item.type === 'text')?.text;
+  const value = result.structuredContent ?? (text ? JSON.parse(text) : null);
+  if (!value || value.Success === false) throw new Error('iDos operation failed.');
+  return value.Data ?? value;
 }

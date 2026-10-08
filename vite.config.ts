@@ -30,6 +30,7 @@ export default defineConfig(() => {
     Object.entries(sourceAliases).filter(([, path]) => existsSync(path)),
   );
   return {
+    base: "./",
     plugins: [react()],
     resolve: { alias },
     server: { port: 5180 },

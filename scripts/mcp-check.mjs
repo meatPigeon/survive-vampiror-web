@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { CodexMcp } from './lib/codex-mcp.mjs';
+import { CodexMcp, unwrapMcpResult } from './lib/codex-mcp.mjs';
 
 const cwd = fileURLToPath(new URL('../', import.meta.url));
 const client = new CodexMcp(cwd);
@@ -15,6 +15,10 @@ try {
       auth: server?.authStatus, tools: Object.keys(server?.tools ?? {}).length,
     }));
     if (!connected) ok = false;
+  }
+  if (ok) {
+    unwrapMcpResult(await client.call('idos-data', 'get_currency', { title_id: 'FYVPZFCO-DEV' }));
+    console.log(JSON.stringify({ check: 'DEV configuration read', ok: true, titleID: 'FYVPZFCO-DEV' }));
   }
   if (!ok) {
     console.error('Check codex mcp list. For iDos Data access, run codex mcp login idos-data and grant only FYVPZFCO-DEV.');
