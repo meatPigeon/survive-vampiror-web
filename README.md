@@ -6,7 +6,7 @@ The gameplay goal is to command a zombie horde against three escalating knight w
 
 ## Local development
 
-Use Node 22.12+ (Node 24 is recommended).
+Use Node 22.12+; this workspace pins Node 24.15.0 in `.node-version`. The stack is React, strict TypeScript, Vite and Three.js 0.185.1, matching iDos's 3D module registry.
 
 ```sh
 npm ci --ignore-scripts
@@ -42,6 +42,14 @@ codex mcp login idos-data --scopes config:read,config:write,cloudcode:write,buil
 Select only `FYVPZFCO-DEV` on the authorization page. Keep production access unselected. Restart or refresh the Codex session after connecting. `npm run mcp:check` verifies both connections through Codex's native MCP transport, without starting a model turn or reading OAuth credentials.
 
 `npm run check` performs strict TypeScript checks, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. `npm run verify` runs only the backend check.
+
+## DEV build archive
+
+```sh
+npm run package:dev
+```
+
+This builds for DEV and creates `.idos/dev-build.zip`, with `index.html` at the archive root. The archive is ignored by Git. Packaging uses the system `zip` and `unzip`, both installed on this machine. Only compiled public client files enter the archive; OAuth credentials stay in Codex's own storage.
 
 ## Source origin
 

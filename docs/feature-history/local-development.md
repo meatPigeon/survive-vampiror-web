@@ -11,3 +11,5 @@ Keep Viem pinned to 2.55.2 and Wagmi companions to `@wagmi/core@3.6.2` / `@wagmi
 Fresh `npm ci --ignore-scripts` succeeds. The starter is manually verified in Chrome for DEV guest login, lobby, mini-game start, result and return to lobby. The automated backend smoke uses memory-only credentials and a stable test device identity; it checks guest login, player bootstrap and title configuration, then logs out.
 
 The MCP connection check uses Codex app-server's native RPC with an ephemeral thread only as an MCP connection context. It never starts a model turn and never reads credential storage. Unexpected interactive RPC requests fail and direct the user back to Codex. The machine's normal Codex configuration and OAuth storage remain authoritative.
+
+Three.js 0.185.1 is installed for the 3D port, matching the current Code MCP board-game/voxelcraft dependencies. TypeScript declarations use `@types/three@0.185.0`. Importing Three.js and constructing its geometry succeeds; this does not imply that any horde gameplay or WebGL scene has been implemented.
