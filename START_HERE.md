@@ -52,6 +52,8 @@ The build API stores versions under canonical title FYVPZFCO. The uploaded artif
 
 Setup verification (2026-10-08): fresh-clone install, types/build/backend checks and both MCP connections pass. The hosted starter passes guest login, game start, result and restart in Chrome with no browser errors.
 
-[Open the staged three-wave port, DEV version 3](https://fyvpzfco-dev.idos.games/v/bld71000a964b604278a0c401ceb324bffe/index.html). Types, 22 tests, build, real DEV backend and both MCP checks pass. Local Chrome menu, arena, start, defeat, pause and restart have been inspected. Current validation and differences from the source are recorded in the [encounter history](docs/feature-history/horde-encounter.md). Hosted browser access was denied during verification; hosted gameplay remains unverified. Live promotion is disabled.
+[Open the moonlit graveyard build, DEV version 4](https://fyvpzfco-dev.idos.games/v/bld7d856fe7471442739571c0051503af99/index.html). It adds procedural ground, candles, character rim lighting, ambient motes, combat sparks and clearer telegraphs. Types, 23 tests, build, real DEV backend and both MCP checks pass. Local Chrome menu, arena, start, zoom and combat rendering have been inspected without console errors. Current validation and differences from the source are recorded in the [encounter history](docs/feature-history/horde-encounter.md). Hosted browser access was denied during earlier verification; hosted gameplay remains unverified. Live promotion is disabled.
+
+[Previous three-wave port, DEV version 3](https://fyvpzfco-dev.idos.games/v/bld71000a964b604278a0c401ceb324bffe/index.html).
 
 [Previously verified DEV starter, version 1](https://fyvpzfco-dev.idos.games/v/blde7df07c403b846bab863c89d235353dd/index.html).

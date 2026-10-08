@@ -8,7 +8,7 @@ Lead forty zombies through three escalating knight waves in a moonlit low-poly g
 
 Move with WASD/arrows or touch direction buttons; bites happen automatically. Unlocked abilities use Q/E, sprint uses Space, and the sling uses mouse aim, left-click to fire and right-click to cancel. Mouse wheel zooms, Esc pauses and R restarts. Keep at least one permanent zombie alive.
 
-[Play the staged three-wave port (DEV version 3)](https://fyvpzfco-dev.idos.games/v/bld71000a964b604278a0c401ceb324bffe/index.html). Automated gameplay, camera and asset checks pass, and local Chrome menu, start, defeat, pause and restart have been inspected. Full rendered playthrough and hosted gameplay remain unverified because browser inspection is intermittent and hosted access was denied. Live promotion is disabled.
+[Play the moonlit graveyard build (DEV version 4)](https://fyvpzfco-dev.idos.games/v/bld7d856fe7471442739571c0051503af99/index.html). All 23 tests, types, build, DEV backend and MCP checks pass. Local Chrome renders the menu, arena, shaders and close-up combat without console errors. Full rendered three-wave playthrough and hosted gameplay remain unverified; hosted access was previously denied. Live promotion is disabled.
 
 ## Local development
 
