@@ -1,0 +1,395 @@
+@font-face {
+  font-family:HordeSans;
+  src:url('../assets/reference/fonts/noto_sans.ttf');
+}
+
+@font-face {
+  font-family:HordeSerif;
+  src:url('../assets/reference/fonts/noto_serif.ttf');
+}
+
+.horde-hud {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  color:#eee5d2;
+  font-family:HordeSans,sans-serif;
+  font-size:15px;
+  text-shadow:0 1px 2px #05060580;
+}
+
+.horde-hud button,.horde-hud input {
+  pointer-events:auto;
+  font:inherit;
+}
+
+.horde-hud button {
+  cursor:pointer;
+  color:#eee5d2;
+  background:#171a17f0;
+  border:1px solid #807d6e99;
+  border-radius:6px;
+  padding:10px 18px;
+  transition:background .14s;
+}
+
+.horde-hud button:hover:not(:disabled) {
+  background:#383b33;
+  border-color:#eee5d2cc;
+}
+
+.horde-hud button:disabled {
+  color:#a3a89b;
+  background:#171a17a6;
+  cursor:default;
+  opacity:.7;
+}
+
+.horde-hud button:focus-visible {
+  outline:2px solid #eee5d2;
+  outline-offset:4px;
+}
+
+.horde-hud h1,.horde-hud h2 {
+  font-family:HordeSerif,serif;
+}
+
+.horde-hud p {
+  color:#aaa99d;
+  line-height:1.5;
+}
+
+.horde-kicker {
+  color:#b0bd7d;
+  font-size:13px;
+  letter-spacing:.03em;
+}
+
+.horde-audio {
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  padding:18px 20px;
+  border-left:2px solid #929c66b3;
+  background:#090d0ad9;
+  text-align:left;
+  pointer-events:auto;
+}
+
+.horde-audio label {
+  display:block;
+}
+
+.horde-audio label span {
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+}
+
+.horde-audio b {
+  font-weight:400;
+  color:#aaa99d;
+}
+
+.horde-audio input {
+  width:100%;
+  height:18px;
+  accent-color:#b6bea3;
+  cursor:pointer;
+  margin:7px 0 0;
+}
+
+.horde-knight-status {
+  position:absolute;
+  top:26px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(400px,40%);
+}
+
+.horde-knight-status>div:first-child {
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  letter-spacing:.06em;
+  margin-bottom:7px;
+}
+
+.horde-knight-status small {
+  display:block;
+  text-align:center;
+  font-size:12px;
+  color:#aaa99d;
+  margin-top:8px;
+}
+
+.horde-health {
+  height:8px;
+  background:#111311e0;
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+}
+
+.horde-health i,.horde-health b {
+  position:absolute;
+  inset:0 auto 0 0;
+  border-radius:3px;
+  background:#b55e4d;
+}
+
+.horde-health b {
+  background:#eee5d2;
+}
+
+.horde-top-right {
+  position:absolute;
+  top:24px;
+  right:28px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+
+.horde-top-right time {
+  color:#aaa99d;
+  font-size:13px;
+}
+
+.horde-top-right button {
+  background:none;
+  border:0;
+  padding:4px 6px;
+}
+
+.horde-numbers {
+  position:absolute;
+  top:100px;
+  left:28px;
+  display:flex;
+  gap:25px;
+}
+
+.horde-numbers>div {
+  display:grid;
+  grid-template-columns:28px auto;
+  column-gap:10px;
+  align-items:center;
+}
+
+.horde-numbers img {
+  width:28px;
+  grid-row:1/3;
+}
+
+.horde-numbers strong {
+  font-size:28px;
+  font-weight:600;
+}
+
+.horde-numbers span {
+  font-size:12px;
+  color:#aaa99d;
+}
+
+.horde-temporary {
+  color:#9bcbd0;
+  border-left:1px solid #aaa99d55;
+  padding-left:20px;
+}
+
+.horde-temporary span {
+  color:#9bcbd0;
+}
+
+.horde-critical,.horde-critical span {
+  color:#e89b88!important;
+}
+
+.horde-expiring {
+  color:#e3c49b!important;
+}
+
+.horde-rally {
+  position:absolute;
+  right:28px;
+  top:100px;
+  text-align:right;
+}
+
+.horde-rally b {
+  font-size:23px;
+  font-weight:400;
+  color:#b7e4d5;
+}
+
+.horde-rally small {
+  display:block;
+  font-size:12px;
+  color:#aaa99d;
+  margin-top:4px;
+}
+
+.horde-threat {
+  position:absolute;
+  left:50%;
+  bottom:90px;
+  transform:translateX(-50%);
+  font-size:16px;
+  color:#e3c49b;
+  text-align:center;
+}
+
+.horde-exposed {
+  color:#b8ce99;
+}
+
+.horde-abilities {
+  position:absolute;
+  bottom:26px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:16px;
+}
+
+.horde-abilities button {
+  min-width:220px;
+}
+
+.horde-sprint {
+  position:absolute;
+  bottom:26px;
+  right:28px;
+  min-width:160px;
+}
+
+.horde-sprint progress {
+  display:block;
+  width:100%;
+  height:3px;
+  accent-color:#b8ce99;
+  margin-top:7px;
+}
+
+.horde-dpad {
+  display:none;
+  position:absolute;
+  bottom:30px;
+  left:18px;
+  grid-template:repeat(2,44px)/repeat(3,44px);
+  gap:4px;
+  pointer-events:auto;
+}
+
+.horde-dpad button {
+  padding:0;
+  touch-action:none;
+  user-select:none;
+}
+
+.horde-up {
+  grid-column:2;
+}
+
+.horde-left {
+  grid-column:1;
+  grid-row:2;
+}
+
+.horde-down {
+  grid-column:2;
+  grid-row:2;
+}
+
+.horde-right {
+  grid-column:3;
+  grid-row:2;
+}
+
+.horde-modal,.horde-rewards {
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:#050807bd;
+  pointer-events:auto;
+  box-sizing:border-box;
+  padding:24px;
+  overflow:auto;
+}
+
+.horde-modal section {
+  width:min(520px,100%);
+  box-sizing:border-box;
+  background:#151716fa;
+  border-radius:12px;
+  padding:36px 46px;
+  text-align:center;
+  box-shadow:0 0 28px #0005;
+}
+
+.horde-modal h1 {
+  font-size:42px;
+  margin:0 0 12px;
+}
+
+.horde-modal p {
+  margin:0 0 20px;
+}
+
+.horde-result-stats {
+  color:#aaa99d;
+  font-size:14px;
+  line-height:1.8;
+  margin:18px 0 22px;
+}
+
+.horde-modal-actions {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:24px;
+}
+
+.horde-hud .horde-primary {
+  background:#eee5d2;
+  color:#151716;
+  border-color:#eee5d2;
+}
+
+.horde-hud .horde-primary:hover {
+  background:#fff9eb;
+  color:#151716;
+}
+
+.horde-countdown {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  flex-direction:column;
+  text-align:center;
+  gap:10px;
+}
+
+.horde-countdown strong {
+  font-family:HordeSerif,serif;
+  font-size:92px;
+  line-height:1;
+  animation:horde-count .28s ease-out;
+}
+
+.horde-countdown small {
+  color:#aaa99d;
+}
+
+@keyframes horde-count {
+  from {
+    transform:scale(1.2);
+  }
+  to {
+    transform:scale(1);
+  }
+}

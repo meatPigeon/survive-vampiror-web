@@ -1,0 +1,156 @@
+@media(pointer:coarse) {
+  .horde-dpad {
+    display:grid;
+  }
+}
+
+@media(max-width:700px) {
+  .horde-menu-content {
+    left:6%;
+    width:68%;
+    gap:12px;
+  }
+  .horde-menu-shade {
+    background:linear-gradient(90deg,#0e120ffa,#0e120fbb 65%,transparent);
+  }
+  .horde-menu h1 {
+    font-size:42px;
+  }
+  .horde-menu p {
+    font-size:14px;
+  }
+  .horde-menu .horde-raise {
+    font-size:23px;
+  }
+  .horde-menu-footer {
+    right:20px;
+    bottom:20px;
+    font-size:9px;
+  }
+  .horde-knight-status {
+    top:22px;
+    width:52%;
+    left:43%;
+  }
+  .horde-top-right {
+    right:10px;
+    gap:8px;
+  }
+  .horde-top-right time {
+    display:none;
+  }
+  .horde-numbers {
+    left:14px;
+    top:85px;
+    gap:10px;
+  }
+  .horde-numbers strong {
+    font-size:24px;
+  }
+  .horde-numbers img {
+    width:20px;
+  }
+  .horde-numbers>div {
+    grid-template-columns:20px auto;
+    gap:6px;
+  }
+  .horde-numbers span {
+    font-size:10px;
+  }
+  .horde-temporary {
+    padding-left:8px;
+  }
+  .horde-rally {
+    right:14px;
+    top:143px;
+  }
+  .horde-rally small {
+    font-size:10px;
+  }
+  .horde-threat {
+    bottom:170px;
+    width:90%;
+    font-size:14px;
+  }
+  .horde-abilities {
+    bottom:80px;
+    left:auto;
+    right:14px;
+    transform:none;
+    flex-direction:column;
+    gap:8px;
+  }
+  .horde-abilities button {
+    min-width:150px;
+    font-size:11px;
+    padding:8px;
+  }
+  .horde-sprint {
+    right:14px;
+    bottom:25px;
+    min-width:150px;
+    font-size:12px!important;
+  }
+  .horde-modal {
+    padding:18px;
+  }
+  .horde-modal section {
+    padding:28px 24px;
+  }
+  .horde-modal h1 {
+    font-size:34px;
+  }
+  .horde-rewards {
+    padding:22px 18px;
+  }
+  .horde-rewards h1 {
+    font-size:32px;
+  }
+  .horde-rewards>section>p {
+    font-size:13px;
+    margin-bottom:20px;
+  }
+  .horde-cards {
+    gap:12px;
+  }
+  .horde-hud .horde-card {
+    padding:10px;
+    min-height:380px;
+  }
+  .horde-hud .horde-card[aria-pressed=true] {
+    padding:8px;
+  }
+  .horde-card-art {
+    height:145px;
+  }
+  .horde-card h2 {
+    font-size:19px;
+  }
+  .horde-card p {
+    font-size:11px;
+  }
+  .horde-card footer {
+    font-size:9px;
+  }
+  .horde-card-art span {
+    left:5px;
+    top:6px;
+    font-size:9px;
+  }
+  .horde-card-art b {
+    right:6px;
+    bottom:6px;
+    font-size:10px;
+  }
+  .horde-confirm {
+    font-size:11px;
+    gap:12px;
+  }
+  .horde-confirm button {
+    min-width:150px;
+    font-size:12px;
+  }
+  .horde-skip {
+    font-size:12px!important;
+  }
+}

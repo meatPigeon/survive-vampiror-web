@@ -1,0 +1,203 @@
+{
+  "source": "../survive-vampiror",
+  "revision": "dc97542e57888c82ab18c6b8a47c9294192bf3bb",
+  "engine": "4.7.2.stable.arch_linux.ed1daf0bf",
+  "files": {
+    "arena_environment.glb": {
+      "bytes": 114100,
+      "sha256": "e3ad685e16215814f85246e1f3b445a13d88129f90127d45a2810ae7621e3e5c"
+    },
+    "audio/command.wav": {
+      "bytes": 14156,
+      "sha256": "eb8741de5839cc6f3fcca3cee083c1d3583d80b59a7c6d5c7054331438e09063"
+    },
+    "audio/defeat.wav": {
+      "bytes": 90008,
+      "sha256": "1570d8685034801e161f8a4dcfc5f1d0054e62ec4e8bd022ca1523d14cba4f4c"
+    },
+    "audio/expired.wav": {
+      "bytes": 48554,
+      "sha256": "026ab6ec2018c3078387fbb971e76a0b640a94f6a87ce72e99ae3e701e62560c"
+    },
+    "audio/feast_end.wav": {
+      "bytes": 37088,
+      "sha256": "aa46776b7026285df458f2e380894e1cc83a42b718241eba9c8a2a75dc920eae"
+    },
+    "audio/feast_start.wav": {
+      "bytes": 63548,
+      "sha256": "0051c5b217537794a9cc849bf0bb5a3778688fe5fbcc00abcf22a16d3b0d80e9"
+    },
+    "audio/grave_rise.wav": {
+      "bytes": 88244,
+      "sha256": "f4db8042532c8920c5e93b3467d8e59bed616a36fcb59f75b35b4c06e441e67b"
+    },
+    "audio/grave_sink.wav": {
+      "bytes": 67890,
+      "sha256": "59579072d0a6ca54a1b5efd848affcf860f2c9ccbc62796414c667160044c1d5"
+    },
+    "audio/graveyard_groove.ogg": {
+      "bytes": 454398,
+      "sha256": "baa3df5ae2e54576b73438dcaf2033e988ea371308ae4065ed8c7e3015f3bac5"
+    },
+    "audio/halberd_hit.wav": {
+      "bytes": 88244,
+      "sha256": "e122afa44292b396cc4debe819b22f4e9f50a92f8ba4dd9ff2e736bfc3ecab8a"
+    },
+    "audio/halberd_swish.wav": {
+      "bytes": 26504,
+      "sha256": "89995b0cfe4b038ee5a76ab9132184ce87c181fe6b188a94222deefe399c5323"
+    },
+    "audio/horde_step.wav": {
+      "bytes": 42380,
+      "sha256": "a1f9b444e9644ce0a68994f025c931d47c278461b7a46ff8e099c939887cca77"
+    },
+    "audio/mine_arm.wav": {
+      "bytes": 54728,
+      "sha256": "f77e25daec86f51b403e6ac44202ac9d207b162499c3d471d09aa77c816b2d06"
+    },
+    "audio/mine_blast.wav": {
+      "bytes": 75014,
+      "sha256": "a62538c25f5f89e3db8c339890146ca5b25eed9699349b5ec3db7e3aa764e574"
+    },
+    "audio/recruited.wav": {
+      "bytes": 49436,
+      "sha256": "73079c858efa61084219baaf640d844c0fe4bfc1f2038c3de4171f5b92a2690a"
+    },
+    "audio/sling_land.wav": {
+      "bytes": 40616,
+      "sha256": "97f12339c1bdefd2049aaea072796d94c1760d5a5b5fd75744934625b88a8316"
+    },
+    "audio/sling_launch.wav": {
+      "bytes": 42380,
+      "sha256": "7dff2fcec69c2ce3dd0945c89fdd7d5357f442ec1e3880fb7ba10384ef7d4b7e"
+    },
+    "audio/sprint.wav": {
+      "bytes": 31796,
+      "sha256": "9498300f55bf4b0cb312b009f6f2b0c6461b80e8d2357c1337690eadc6cad418"
+    },
+    "audio/undead_march.ogg": {
+      "bytes": 427333,
+      "sha256": "1a655a69a725168580dfc340528e5c23053cb65d141e547c92c4f5c4bc87ae29"
+    },
+    "audio/victory.wav": {
+      "bytes": 83834,
+      "sha256": "43b028bb2db6c9dcfb33e6d07b7f49ee833690f8bc8766ab3de367197237484e"
+    },
+    "audio/warning_charge.wav": {
+      "bytes": 35324,
+      "sha256": "fb568aa68ce75d49453dd0375ff6a217a2c4beaa0841e485d3100bd50dfc823c"
+    },
+    "audio/warning_spin.wav": {
+      "bytes": 49436,
+      "sha256": "1ac5460b50581e8b0235889551cc2a438e06e3c1f26ac76e86055bb08adb7316"
+    },
+    "audio/warning_sweep.wav": {
+      "bytes": 21212,
+      "sha256": "4f7f2bb020f3e0466d300f147a4396824951d2a2c13fa3ed28cea20b7596727b"
+    },
+    "audio/zombie_bite.wav": {
+      "bytes": 42380,
+      "sha256": "59beef8e7569863711b077d284cc1f6a9d4d51ac969cf37f14c303c6ae1115a4"
+    },
+    "audio/zombie_grunt.wav": {
+      "bytes": 87364,
+      "sha256": "2fd1e43906fdada8137d680ed0e49bdf0f21c99881e90b1126eb7e5665dc4985"
+    },
+    "crossbow.glb": {
+      "bytes": 7180,
+      "sha256": "fd9631432f09fcc33d24a45b57e424993b14f96600f560d06e1125e34870158c"
+    },
+    "fonts/DEJAVU_LICENSE.txt": {
+      "bytes": 8816,
+      "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+    },
+    "fonts/NOTO_LICENSE.txt": {
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    "fonts/dejavu_sans.ttf": {
+      "bytes": 759720,
+      "sha256": "6038a160b491e121c1f12c7bccb4a9c8730296e3adc1086a059404ed84b7451c"
+    },
+    "fonts/noto_sans.ttf": {
+      "bytes": 621572,
+      "sha256": "478c558ea716033cd60c03438f628dfa75694dcf6b5f6d505a2f05fd2b4f3823"
+    },
+    "fonts/noto_serif.ttf": {
+      "bytes": 712444,
+      "sha256": "19e72cd8d595fae5bd74a5206f5d938512e1183d4fed7abb1ec1be1d7efa5f88"
+    },
+    "halberd.glb": {
+      "bytes": 29704,
+      "sha256": "2bf7d76b720f10a1057e604b139484dbfed581e49e75c1d4460205b4e8073120"
+    },
+    "horse.glb": {
+      "bytes": 18424,
+      "sha256": "05ee0d64295a0074f4d5d901b5c165ab49094981729758b33c67591ca831ecb1"
+    },
+    "knight_wave1.glb": {
+      "bytes": 421268,
+      "sha256": "cfb2009e9cf875d635355e96ade5ea7670e8fe1a3519cc7fab3fe9f905be1248"
+    },
+    "knight_wave2.glb": {
+      "bytes": 421212,
+      "sha256": "6402782b6934fac39959f032874eed21b48cc408754b5f139de4a1537e219a31"
+    },
+    "knight_wave3.glb": {
+      "bytes": 420956,
+      "sha256": "df6082a1a26fc6b246347169fcfda77f6ce02ab0e0fc9eeac2cfae91074fcd59"
+    },
+    "menu_diorama.glb": {
+      "bytes": 657920,
+      "sha256": "a97979e073005012ff4d796cd0f27b97955433cdb4fdf361808fc692d1921858"
+    },
+    "permanent_zombie.glb": {
+      "bytes": 272448,
+      "sha256": "a2b47e2a3b0f73f2170f23213d4118c2c3637d213805aa0b2436534b963507f1"
+    },
+    "recruit_mantle.glb": {
+      "bytes": 6600,
+      "sha256": "f66455567a3ebb32c6f17987b9f0a914e8ad8fad983b12929199affbb191978a"
+    },
+    "recruitment_crater.glb": {
+      "bytes": 20160,
+      "sha256": "29d985e8411d509e78aa57fc32cf79d6eff127e65e5e779d74f55a71fdf9b4c4"
+    },
+    "temporary_zombie.glb": {
+      "bytes": 278776,
+      "sha256": "098634c48ff5864f07303e4c4aafac06a7ce105fcd0807684fa74b4db9122e74"
+    },
+    "tombstone.glb": {
+      "bytes": 15880,
+      "sha256": "3ef5d790bc2f6e38c2080a76659960869e11ca47bab0f3e08b1a71be3a657a19"
+    },
+    "ui/permanent_ring.svg": {
+      "bytes": 173,
+      "sha256": "39cde1d6cf1ebf7ed78b1e7267520808d969dd307de3bea88243d105910d809f"
+    },
+    "ui/slider_knob.svg": {
+      "bytes": 158,
+      "sha256": "3f705c84672d32ff36b877c0f238cd5cd5a768487a4cca19cc9328d0e9f0c988"
+    },
+    "ui/temporary_ring.svg": {
+      "bytes": 231,
+      "sha256": "5d28f9892e734ff5a3b5d547200c587a5e461e2931192fcdc312754bd8b7a4d0"
+    },
+    "ui/upgrades/feast.png": {
+      "bytes": 83597,
+      "sha256": "17d46cec257557aa162983abfd38cc6c3224e9031a0b4ee6af2bc029ba8bfe9a"
+    },
+    "ui/upgrades/mines.png": {
+      "bytes": 121487,
+      "sha256": "600436a88c61e823885725779dc39869489c880a8a92fddf54a1c5a3a7c102f8"
+    },
+    "ui/upgrades/sling.png": {
+      "bytes": 65555,
+      "sha256": "b0e30f0cae0a480fb48a5647c18b7a0b6737d28ed4587113f6eb677ac5699d24"
+    },
+    "ui/upgrades/sprint.png": {
+      "bytes": 72817,
+      "sha256": "9ff5ed6dfb513cfe0a11a4b5156e6c508b43ea91d5ac6701b17151e93387bb3b"
+    }
+  }
+}

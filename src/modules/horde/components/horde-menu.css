@@ -1,0 +1,92 @@
+.horde-menu {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.horde-menu-shade {
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,#0e120f 0%,#0e120ffa 34%,#0e120f00 60%);
+}
+
+.horde-menu-content {
+  position:absolute;
+  left:5.625%;
+  top:50%;
+  transform:translateY(-50%);
+  width:min(410px,35%);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  pointer-events:auto;
+}
+
+.horde-menu h1 {
+  font-size:clamp(34px,4.85vw,62px);
+  line-height:1.05;
+  margin:0;
+  text-shadow:0 4px 5px #0008;
+}
+
+.horde-menu p {
+  font-size:17px;
+  color:#b0b89c;
+  margin:0;
+}
+
+.horde-mode {
+  display:flex;
+  gap:8px;
+}
+
+.horde-mode button {
+  flex:1;
+  min-height:44px;
+  background:#141b16e6;
+  border:0;
+  border-bottom:2px solid #424f3b;
+  border-radius:0;
+}
+
+.horde-mode button[aria-pressed=true] {
+  background:#334226;
+  border-bottom:3px solid #b0bd7d;
+}
+
+.horde-menu small {
+  font-size:15px;
+  color:#b0b89c;
+}
+
+.horde-menu .horde-raise {
+  font-family:HordeSerif,serif;
+  font-size:28px;
+  min-height:66px;
+  color:#f7e8c4;
+  background:#6e241c;
+  border:0;
+  border-bottom:4px solid #3b120f;
+  border-radius:2px;
+  box-shadow:0 4px 6px #0005;
+}
+
+.horde-menu .horde-raise:hover {
+  background:#913826;
+}
+
+.horde-menu .horde-text-button {
+  background:none;
+  border:none;
+  color:#b0b5a3;
+  align-self:flex-start;
+  padding-left:0;
+}
+
+.horde-menu-footer {
+  position:absolute;
+  right:48px;
+  bottom:28px;
+  color:#8f9c7d;
+  font-size:13px;
+}

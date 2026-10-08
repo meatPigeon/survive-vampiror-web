@@ -1,149 +1,157 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { clone } from "three/addons/utils/SkeletonUtils.js";
-import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
-import { RULES, type Encounter } from "./simulation";
+import { GLTFLoader, type GLTF } from "three/addons/loaders/GLTFLoader.js";
+import { siteIndicator } from "./site-indicator";
+import { Actor, disposeObjects } from "./actors";
+import { ArenaCamera } from "./camera";
+import { Previews } from "./previews";
+import { strikeTime } from './combat';
+import { RULES, SITES } from "./rules";
+import type { Encounter, GameEvent } from "./types";
 
-interface Actor {
-  root: THREE.Group; model: THREE.Object3D; mixer: THREE.AnimationMixer;
-  idle: THREE.AnimationAction; run: THREE.AnimationAction; running: boolean;
-  ring: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>;
-  deadFor: number;
-}
+const urls = {
+  permanent: new URL('../assets/reference/permanent_zombie.glb', import.meta.url).href,
+  temporary: new URL('../assets/reference/temporary_zombie.glb', import.meta.url).href,
+  knight1: new URL('../assets/reference/knight_wave1.glb', import.meta.url).href,
+  knight2: new URL('../assets/reference/knight_wave2.glb', import.meta.url).href,
+  knight3: new URL('../assets/reference/knight_wave3.glb', import.meta.url).href,
+  environment: new URL('../assets/reference/arena_environment.glb', import.meta.url).href,
+  menu: new URL('../assets/reference/menu_diorama.glb', import.meta.url).href,
+  crater: new URL('../assets/reference/recruitment_crater.glb', import.meta.url).href,
+  grave: new URL('../assets/reference/tombstone.glb', import.meta.url).href,
+};
+interface SiteVisual { root: THREE.Group; graves: THREE.Object3D[]; track: THREE.Mesh; fill: THREE.Mesh; marker: THREE.Mesh; geometry: (fraction: number) => THREE.BufferGeometry; active: boolean; elapsed: number; }
 export class HordeView {
-  readonly renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  readonly renderer = new THREE.WebGLRenderer({ antialias: true });
+  readonly camera = new ArenaCamera();
   private scene = new THREE.Scene();
-  private camera = new THREE.OrthographicCamera(-18, 18, 13, -13, 0.1, 100);
-  private actors: Actor[] = [];
+  private menu = new THREE.Scene();
+  private menuCamera = new THREE.OrthographicCamera(-1, 1, 4.9, -4.9, 0.05, 100);
+  private menuMixer: THREE.AnimationMixer | null = null;
+  private assets = new Map<keyof typeof urls, GLTF>();
+  private actors = new Map<number, Actor>();
   private knight: Actor | null = null;
-  private warning = new THREE.Group();
+  private wave = 0;
+  private previews = new Previews();
+  private sites: SiteVisual[] = [];
+  private bolt = new THREE.Group();
   private observer: ResizeObserver;
   private destroyed = false;
+  private width = 1;
+  private height = 1;
+  private inMenu = true;
   readonly ready: Promise<void>;
-
   constructor(host: HTMLElement) {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    this.renderer.setClearColor(0x101c25);
-    this.renderer.domElement.style.cssText = "display:block;width:100%;height:100%;touch-action:none;";
-    this.renderer.domElement.setAttribute("aria-label", "Horde arena: move with WASD or the direction buttons");
-    host.appendChild(this.renderer.domElement);
-    this.camera.position.set(0, 28, 24); this.camera.lookAt(0, 0, 0);
-    this.scene.add(new THREE.HemisphereLight(0xddefff, 0x465541, 2.6));
-    const sun = new THREE.DirectionalLight(0xffe0b0, 2.8);
-    sun.position.set(-8, 16, 6); this.scene.add(sun);
-    const floor = new THREE.Mesh(new THREE.BoxGeometry(30, 0.35, 22),
-      new THREE.MeshStandardMaterial({ color: 0x394b42, roughness: 1 }));
-    floor.position.y = -0.19; this.scene.add(floor);
-    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(floor.geometry),
-      new THREE.LineBasicMaterial({ color: 0x9ba789 }));
-    edge.position.copy(floor.position); this.scene.add(edge);
-    const grid = new THREE.GridHelper(30, 15, 0x687665, 0x485d50);
-    grid.scale.z = 22 / 30; grid.position.y = 0.005; this.scene.add(grid);
-    const stoneGeometry = new THREE.DodecahedronGeometry(1, 0);
-    const stoneMaterial = new THREE.MeshStandardMaterial({ color: 0x69746d, roughness: 1 });
-    for (let i = 0; i < 14; i++) {
-      const stone = new THREE.Mesh(stoneGeometry, stoneMaterial);
-      const side = i % 2 ? -1 : 1;
-      stone.position.set(side * (16.8 + (i % 3) * 0.4), 0.1, -10 + i * 1.6);
-      stone.scale.set(0.7 + (i % 3) * 0.3, 0.6, 1.1); stone.rotation.y = i;
-      this.scene.add(stone);
+    this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;';
+    this.renderer.domElement.setAttribute('aria-label', 'Horde arena'); host.appendChild(this.renderer.domElement);
+    this.scene.background = new THREE.Color().setRGB(0.055, 0.065, 0.08, THREE.SRGBColorSpace);
+    this.menu.background = new THREE.Color().setRGB(0.055, 0.070, 0.059, THREE.SRGBColorSpace);
+    this.scene.add(new THREE.AmbientLight(new THREE.Color().setRGB(0.91, 0.94, 0.82, THREE.SRGBColorSpace), 0.65));
+    const sun = new THREE.DirectionalLight(new THREE.Color().setRGB(1, 0.94, 0.8, THREE.SRGBColorSpace), 1.2);
+    sun.position.copy(new THREE.Vector3(0, 0, 60).applyEuler(new THREE.Euler(-55 * Math.PI / 180, -25 * Math.PI / 180, 0, 'YXZ')));
+    sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -40, right: 40, top: 35, bottom: -35, near: 1, far: 120 });
+    sun.shadow.bias = -0.0002; this.scene.add(sun);
+    const material = new THREE.MeshStandardMaterial({ color: new THREE.Color().setRGB(0.2, 0.235, 0.155, THREE.SRGBColorSpace), roughness: 1 });
+    for (const [size, y] of [[200, -0.02], [60, 0]] as const) {
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(size, size === 60 ? 44 : size), material);
+      ground.rotation.x = -Math.PI / 2; ground.position.y = y; ground.receiveShadow = true; this.scene.add(ground);
     }
-    const cone = new THREE.Mesh(new THREE.RingGeometry(0, RULES.attackRange, 40, 1,
-      -Math.PI / 2 - 80 * Math.PI / 180, 160 * Math.PI / 180),
-      new THREE.MeshBasicMaterial({ color: 0xff914d, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false }));
-    cone.rotation.x = -Math.PI / 2; cone.position.y = 0.03;
-    this.warning.add(cone); this.scene.add(this.warning);
-    this.warning.visible = false;
-    this.observer = new ResizeObserver(() => this.resize(host));
-    this.observer.observe(host); this.resize(host);
-    this.ready = this.loadActors();
+    this.scene.add(this.previews.root);
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.65, 6), new THREE.MeshStandardMaterial({ color: 0xb2afa0 }));
+    shaft.rotation.x = Math.PI / 2; this.bolt.add(shaft); this.bolt.visible = false; this.scene.add(this.bolt);
+    this.observer = new ResizeObserver(() => this.resize(host)); this.observer.observe(host); this.resize(host);
+    this.ready = this.load();
+  }
+  private async load() {
+    const loader = new GLTFLoader();
+    const assets = await Promise.all(Object.entries(urls).map(async ([key, url]) => [key as keyof typeof urls, await loader.loadAsync(url)] as const));
+    if (this.destroyed) { for (const [, asset] of assets) disposeObjects(asset.scene); return; }
+    for (const [key, asset] of assets) this.assets.set(key, asset);
+    const environment = this.assets.get('environment')!.scene; this.scene.add(environment);
+    environment.traverse(o => { if (o instanceof THREE.Mesh) { o.castShadow = true; o.receiveShadow = true; } });
+    const menu = this.assets.get('menu')!; this.menu.add(menu.scene);
+    menu.scene.traverse(o => { if (o instanceof THREE.Mesh) { o.castShadow = true; o.receiveShadow = true; } });
+    this.menu.add(new THREE.AmbientLight(new THREE.Color().setRGB(0.7, 0.77, 0.66, THREE.SRGBColorSpace), 0.65));
+    const sourceCamera = menu.cameras[0];
+    if (sourceCamera) { sourceCamera.updateWorldMatrix(true, false); sourceCamera.getWorldPosition(this.menuCamera.position); sourceCamera.getWorldQuaternion(this.menuCamera.quaternion); }
+    else { this.menuCamera.position.set(5, 6, 12); this.menuCamera.lookAt(0, 1, 0); }
+    this.menuMixer = new THREE.AnimationMixer(menu.scene);
+    for (const clip of menu.animations.filter(c => /idle/.test(c.name))) this.menuMixer.clipAction(clip).play();
+    this.sites = SITES.map(site => {
+      const root = new THREE.Group(); root.position.set(site.x, 0, site.z); root.add(this.assets.get('crater')!.scene.clone(true));
+      const graves = [[-1.3, -1.25, -18, -6], [0, -1.65, 5, 3], [1.3, -1.2, 18, 8]].map(([x, z, yaw, lean]) => {
+        const grave = this.assets.get('grave')!.scene.clone(true); grave.position.set(x!, 0.055, z!); grave.rotation.set(0, yaw! * Math.PI / 180, lean! * Math.PI / 180); root.add(grave); grave.visible = false; return grave;
+      });
+      const { track, fill, marker, geometry } = siteIndicator();
+      for (const mesh of [track, fill, marker]) root.add(mesh);
+      this.scene.add(root); return { root, graves, track, fill, marker, geometry, active: false, elapsed: 0 };
+    });
   }
   private resize(host: HTMLElement) {
-    const width = Math.max(1, host.clientWidth), height = Math.max(1, host.clientHeight);
-    const aspect = width / height, halfHeight = Math.max(13.5, 18 / aspect);
-    this.camera.left = -halfHeight * aspect; this.camera.right = halfHeight * aspect;
-    this.camera.top = halfHeight; this.camera.bottom = -halfHeight;
-    this.camera.updateProjectionMatrix(); this.renderer.setSize(width, height, false);
-    this.render();
+    this.width = Math.max(1, host.clientWidth); this.height = Math.max(1, host.clientHeight);
+    this.camera.resize(this.width, this.height); const aspect = this.width * 0.66 / this.height;
+    this.menuCamera.left = -4.9 * aspect; this.menuCamera.right = 4.9 * aspect; this.menuCamera.updateProjectionMatrix();
+    this.renderer.setSize(this.width, this.height, false); this.render();
   }
-  private createActor(asset: GLTF, scale: number, color: number): Actor {
-    const root = new THREE.Group(), model = clone(asset.scene);
-    model.scale.setScalar(scale); model.rotation.y = Math.PI; root.add(model);
-    const mixer = new THREE.AnimationMixer(model);
-    const idleClip = asset.animations.find(clip => clip.name === "idle")!;
-    const runClip = asset.animations.find(clip => clip.name === "run")!;
-    const idle = mixer.clipAction(idleClip), run = mixer.clipAction(runClip);
-    idle.play(); run.play(); run.setEffectiveWeight(0); run.timeScale = 1.5;
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.29, 0.36, 24),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.8, side: THREE.DoubleSide }));
-    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.025; root.add(ring);
-    this.scene.add(root);
-    return { root, model, mixer, idle, run, running: false, ring, deadFor: 0 };
+  reset() {
+    for (const actor of this.actors.values()) actor.destroy(); this.actors.clear(); this.knight?.destroy(); this.knight = null; this.wave = 0;
+    this.camera.reset(); this.previews.reset();
+    for (const site of this.sites) { site.active = false; site.elapsed = 0; for (const grave of site.graves) grave.visible = false; site.track.visible = false; site.fill.visible = false; site.marker.visible = false; }
   }
-  private async loadActors() {
-    const loader = new GLTFLoader();
-    const assets = await Promise.all([
-      loader.loadAsync(new URL("../assets/zombie.glb", import.meta.url).href),
-      loader.loadAsync(new URL("../assets/medieval_knight.glb", import.meta.url).href),
-    ]);
-    if (this.destroyed) { for (const asset of assets) disposeObjects(asset.scene); return; }
-    this.actors = Array.from({ length: RULES.count }, () => this.createActor(assets[0]!, 0.48, 0xdce8a4));
-    this.knight = this.createActor(assets[1]!, 0.65, 0xffb37c);
-    this.knight.ring.scale.setScalar(1.6);
+  handleEvents(events: GameEvent[], world: Encounter) {
+    for (const event of events) {
+      if (event.type === 'attack-struck' && (event.attack === 'sweep' || event.attack === 'spin')) this.knight?.slash(event.attack === 'spin', strikeTime(world), 1.1 + (world.wave >= 3 ? 0.65 : 0));
+      if (event.type === 'bite') {
+        const zombie = world.zombies.find(a => a.hp > 0 && a.x === event.x && a.z === event.z); if (zombie) this.actors.get(zombie.id)?.bite();
+      }
+      if (['blast', 'sling-landing', 'sling-impact'].includes(event.type)) this.previews.pulse({ x: event.x!, z: event.z! }, event.radius!, event.type === 'blast' ? 0xff7326 : 0x4dd9e6, event.type === 'sling-landing' ? 0.8 : 0.3, event.type === 'sling-landing' ? 0.22 : 0.35);
+    }
   }
-  private animate(actor: Actor, x: number, z: number, facing: number, moving: boolean, hp: number, flash: number, deadFor: number, dt: number) {
-    actor.root.position.set(x, 0, z); actor.root.rotation.set(0, facing, 0);
-    actor.deadFor = hp <= 0 ? Math.max(deadFor, actor.deadFor + dt) : 0;
-    actor.root.visible = hp > 0 || actor.deadFor < 0.6;
-    const collapse = hp <= 0 ? Math.min(1, actor.deadFor / 0.6) : 0;
-    actor.model.rotation.z = collapse * Math.PI / 2;
-    actor.root.scale.setScalar(1 - collapse * 0.95);
-    actor.ring.material.opacity = flash > 0 ? 1 : 0.55 + hp / RULES.zombieHealth * 0.2;
-    actor.ring.material.color.setHex(flash > 0 ? 0xff634a : actor === this.knight ? 0xffb37c : 0xdce8a4);
-    actor.idle.setEffectiveWeight(moving ? 0 : 1); actor.run.setEffectiveWeight(moving ? 1 : 0);
-    actor.mixer.update(dt);
-  }
-  update(world: Encounter, dt: number) {
+  update(world: Encounter, dt: number, menu = false) {
+    this.inMenu = menu;
+    if (menu) { this.menuMixer?.update(dt); this.render(); return; }
+    if (!this.assets.size) return;
+    const ids = new Set(world.zombies.map(a => a.id));
+    for (const [id, actor] of this.actors) if (!ids.has(id)) { actor.destroy(); this.actors.delete(id); }
     for (const a of world.zombies) {
-      const actor = this.actors[a.id];
-      if (actor) this.animate(actor, a.x, a.z, a.facing, a.moving, a.hp, a.flash, a.deadFor, dt);
+      let actor = this.actors.get(a.id);
+      if (!actor) { actor = new Actor(this.assets.get(a.kind === 'temporary' ? 'temporary' : 'permanent')!, a.kind === 'temporary', false, a.id * 0.37); this.actors.set(a.id, actor); this.scene.add(actor.root); }
+      actor.updateZombie(a, world, dt);
     }
-    const k = world.knight;
-    if (this.knight) {
-      this.animate(this.knight, k.x, k.z, k.facing, k.moving, k.hp, k.flash, world.status === "won" ? 0.3 : 0, dt);
-      // A readable anticipation / swing using the existing idle/run rig.
-      this.knight.model.rotation.z = k.hp === 0 ? Math.PI / 2 : k.phase === "windup" ? -0.12 : k.phase === "recovery" && k.timer > 1.15 ? 0.24 : 0;
-      this.knight.root.scale.setScalar(1);
-      this.knight.root.visible = true;
-      this.knight.ring.material.opacity = 0.8;
+    if (this.wave !== world.wave) {
+      this.knight?.destroy(); this.wave = world.wave; this.knight = new Actor(this.assets.get(`knight${world.wave}` as keyof typeof urls)!, false, true); this.scene.add(this.knight.root);
     }
-    this.warning.visible = world.status === "playing" && k.phase === "windup";
-    this.warning.position.set(k.x, 0, k.z); this.warning.rotation.y = k.facing;
+    this.knight?.updateKnight(world, dt); this.camera.update(world, dt); this.previews.update(world, dt);
+    const bolt = world.knight.bolt; this.bolt.visible = bolt.flying; this.bolt.position.set(bolt.x, world.wave >= 3 ? 1.7 : 1.2, bolt.z); this.bolt.rotation.y = Math.atan2(bolt.direction.x, bolt.direction.z);
+    this.sites.forEach((site, index) => {
+      const active = world.activeSite === index;
+      if (active !== site.active) { site.active = active; site.elapsed = 0; }
+      site.elapsed += dt; site.track.visible = active; site.marker.visible = active; site.fill.visible = active && world.siteProgress > 0;
+      if (site.fill.visible) { site.fill.geometry.dispose(); site.fill.geometry = site.geometry(Math.min(1, world.siteProgress / RULES.summonTime)); }
+      site.graves.forEach((grave, i) => {
+        const t = THREE.MathUtils.clamp((site.elapsed - i * 0.09) / (active ? 0.55 : 0.4), 0, 1);
+        const eased = active ? 1 + 2.70158 * (t - 1) ** 3 + 1.70158 * (t - 1) ** 2 : t * t;
+        grave.rotation.x = 0.12 * (active ? 1 - (1 - (1 - t) ** 3) : eased);
+        grave.rotation.z = [-6, 3, 8][i]! * Math.PI / 180 + (i % 2 === 0 ? 0.1 : -0.1) * (active ? (1 - t) ** 3 : eased);
+        grave.position.y = 0.055 - 1.5 * (active ? 1 - eased : eased); grave.visible = active || t < 1;
+      });
+    });
     this.render();
   }
-  render() { if (!this.destroyed) this.renderer.render(this.scene, this.camera); }
-  capture(): Promise<Blob | null> {
-    if (this.destroyed) return Promise.resolve(null);
-    this.render(); return new Promise(resolve => this.renderer.domElement.toBlob(resolve, "image/png"));
+  render() {
+    if (this.destroyed) return;
+    this.renderer.setScissorTest(false); this.renderer.setViewport(0, 0, this.width, this.height);
+    if (this.inMenu) {
+      this.renderer.setClearColor(this.menu.background as THREE.Color); this.renderer.clear();
+      this.renderer.setViewport(this.width * 0.34, 0, this.width * 0.66, this.height); this.renderer.render(this.menu, this.menuCamera);
+    } else this.renderer.render(this.scene, this.camera.camera);
   }
+  capture(): Promise<Blob | null> { if (this.destroyed) return Promise.resolve(null); this.render(); return new Promise(resolve => this.renderer.domElement.toBlob(resolve, 'image/png')); }
   destroy() {
-    this.destroyed = true; this.observer.disconnect();
-    for (const actor of [...this.actors, ...(this.knight ? [this.knight] : [])]) {
-      actor.mixer.stopAllAction(); actor.mixer.uncacheRoot(actor.model);
-    }
-    disposeObjects(this.scene); this.renderer.dispose(); this.renderer.domElement.remove();
+    this.destroyed = true; this.observer.disconnect(); this.reset(); this.menuMixer?.stopAllAction();
+    disposeObjects(this.scene); disposeObjects(this.menu);
+    for (const asset of this.assets.values()) disposeObjects(asset.scene);
+    this.renderer.dispose(); this.renderer.domElement.remove();
   }
-}
-
-function disposeObjects(root: THREE.Object3D) {
-  const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>();
-  root.traverse(object => {
-    if (object instanceof THREE.Mesh || object instanceof THREE.LineSegments) {
-      geometries.add(object.geometry);
-      for (const material of Array.isArray(object.material) ? object.material : [object.material]) materials.add(material);
-    }
-    if (object instanceof THREE.SkinnedMesh) object.skeleton.dispose();
-  });
-  for (const geometry of geometries) geometry.dispose();
-  for (const material of materials) material.dispose();
 }

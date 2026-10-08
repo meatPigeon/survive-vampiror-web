@@ -1,10 +1,10 @@
 {
   "id": "horde",
   "type": "template",
-  "summary": "Command forty zombies against one knight in a low-poly 3D arena.",
-  "description": "One local encounter with horde movement, automatic bites, knight pursuit and a warned sweep, health and deaths, win/loss, pause and restart. Uses the existing host for sign-in and shared UI.",
-  "provides": ["3D horde encounter", "keyboard and touch movement", "combat and outcomes", "agent-observable simulation"],
+  "summary": "Lead a zombie horde through three escalating knight waves.",
+  "description": "Native port of the Godot horde game: five knight attacks, temporary reinforcements, four upgrades, difficulty, authored models and audio, wave rewards, pause and restart. Uses the existing host for sign-in and shared UI.",
+  "provides": ["three-wave 3D horde game", "keyboard and touch movement", "reinforcements and upgrades", "agent-observable simulation"],
   "tags": ["three", "horde", "survival", "prototype"],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": { "name": "meatPigeon" }
 }
