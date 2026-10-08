@@ -8,3 +8,4 @@ instead.
 <!-- One line per entry: - [Title](slug.md) — one-line gist -->
 
 - [Local development](local-development.md) — source ownership, DEV environment and reproducible wallet dependencies.
+- [Horde encounter](horde-encounter.md) — first-slice scope, reused assets, input/debug contract and corner-collision checks.

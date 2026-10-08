@@ -9,8 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node tests/horde.test.mjs",
     "verify": "node scripts/verify.mjs",
-    "check": "npm run typecheck && npm run build && npm run verify",
+    "check": "npm run typecheck && npm test && npm run build && npm run verify",
     "mcp:check": "node scripts/mcp-check.mjs",
     "package:dev": "node scripts/package-dev.mjs",
     "stage:dev": "node scripts/stage-dev.mjs"

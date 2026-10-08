@@ -4,7 +4,9 @@ Native web source for iDos title `FYVPZFCO`, developed with Codex and iDos Code 
 
 **Start here:** [Open the project and begin coding](START_HERE.md).
 
-The gameplay goal is to command a zombie horde against three escalating knight waves. This initial repository contains the official iDos host and the seven starter modules currently listed in the title: inventory, quests, friends, invite, mailbox, profile and mini-game. The horde gameplay has not been ported yet.
+The first playable slice commands forty zombies against one AI knight in a low-poly 3D arena. Move with WASD, arrows or the on-screen direction buttons; bites happen automatically. Dodge the orange sweep warning, defeat the knight or lose the horde, then restart. Esc pauses and R restarts. The existing iDos host handles authentication and shared UI. The full three-wave progression remains a later porting milestone.
+
+[Play the staged DEV encounter (version 2)](https://fyvpzfco-dev.idos.games/v/blda18d7a5d107f4398b96c381bc592debf/index.html). This is a test version, with live promotion disabled. Local Chrome rendering/input checks and automated tests pass; browser access to the hosted version was denied during verification, so hosted gameplay is not yet verified.
 
 ## Local development
 
@@ -43,7 +45,7 @@ codex mcp login idos-data --scopes config:read,config:write,cloudcode:write,buil
 
 For backend configuration, grant `FYVPZFCO-DEV`. Staged build uploads additionally require `build:write` on canonical `FYVPZFCO`; select the permissions needed by that workflow. Set `tool_timeout_sec = 180` under `[mcp_servers.idos-data]` in Codex configuration for the finish-upload wait, then start a fresh Codex session after connecting. `npm run mcp:check` verifies both connections and reads the DEV currency configuration through Codex's native MCP transport, without starting a model turn or reading OAuth credentials. This machine's Data MCP reports 137 tools and access on both the live and DEV titles; configuration work should target `FYVPZFCO-DEV`.
 
-`npm run check` performs strict TypeScript checks, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. `npm run verify` runs only the backend check.
+`npm run check` performs strict TypeScript checks, runs eight deterministic gameplay/input tests, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. `npm test` checks movement, corners, sweep timing, pause, both outcomes and fresh encounter state; `npm run verify` runs only the backend check.
 
 ## Staged DEV build
 
@@ -51,7 +53,7 @@ For backend configuration, grant `FYVPZFCO-DEV`. Staged build uploads additional
 npm run stage:dev
 ```
 
-Runs type/backend checks, creates the DEV archive, uploads it and stages a test version with `deploy=false`. It returns the DEV test URL and writes `.idos/last-stage.json` (ignored). The command uses the canonical identity from `src/idos.title.ts`; configuration and the returned test host use DEV. Live promotion is a separate publishing action.
+Runs type, gameplay and backend checks, creates the DEV archive, uploads it and stages a test version with `deploy=false`. It returns the DEV test URL and writes `.idos/last-stage.json` (ignored). The command uses the canonical identity from `src/idos.title.ts`; configuration and the returned test host use DEV. Live promotion is a separate publishing action.
 
 For a label or a read-only status check:
 
@@ -74,4 +76,4 @@ This builds for DEV and creates `.idos/dev-build.zip`, with `index.html` at the 
 
 Bootstrapped from the official `@idosgames/mcp@0.1.28` registry. The title ID and starter-module list were verified in the publisher's browser editor. This is an MCP starter baseline, rather than a byte-for-byte export of every file in the online editor. Registry fingerprints are recorded in [docs/idos-registry.json](docs/idos-registry.json).
 
-This setup includes the staged DEV starter. On-chain gameplay integration is a later milestone; load the matching MCP skill before adding a platform feature.
+The active game module is now `horde`; the unregistered `mini-game` folder is retained as a catalog reference. [Horde encounter decisions](docs/feature-history/horde-encounter.md) explain the first-slice boundary. On-chain gameplay integration is a later milestone; load the matching MCP skill before adding a platform feature.

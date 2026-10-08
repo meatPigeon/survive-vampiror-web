@@ -5,7 +5,7 @@ import { friendsModule } from "./modules/friends";
 import { inviteModule } from "./modules/invite";
 import { mailboxModule } from "./modules/mailbox";
 import { profileModule } from "./modules/profile";
-import { miniGameModule } from "./modules/mini-game";
+import { hordeModule } from "./modules/horde";
 
 export const modules: Module[] = [
   inventoryModule,
@@ -14,5 +14,5 @@ export const modules: Module[] = [
   inviteModule,
   mailboxModule,
   profileModule,
-  miniGameModule,
+  hordeModule,
 ];

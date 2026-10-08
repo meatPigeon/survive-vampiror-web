@@ -12,7 +12,7 @@ history of individual features does NOT belong here (see "Feature history" at th
 <!-- 2–4 lines, filled in once the direction is clear: genre, core loop, target platform, tone.
      Update it when the concept changes — not with every feature. -->
 
-Survive Vampiror is a low-poly 3D horde game: the player commands zombies against three escalating knight waves. This repository is its native iDos web port, developed locally with Codex and iDos Code MCP. The current checkout contains the platform starter; horde gameplay is not implemented yet.
+Survive Vampiror is a low-poly 3D horde game: the player commands zombies against three escalating knight waves. This repository is its native iDos web port, developed locally with Codex and iDos Code MCP. The first playable slice is one arena encounter with forty zombies and one AI knight, combat, win/loss and restart; the full wave progression remains in the Godot reference.
 
 ## Installed modules
 
@@ -27,7 +27,7 @@ adding or removing modules in this local repository.
 - `invite`
 - `mailbox`
 - `profile`
-- `mini-game`
+- `horde`
 <!-- idos:modules:end -->
 
 ## How the project is built

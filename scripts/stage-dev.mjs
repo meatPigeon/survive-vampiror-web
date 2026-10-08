@@ -24,6 +24,7 @@ try {
   if (statusOnly && !/^bld[a-z0-9]+$/i.test(buildID ?? '')) throw new Error('Use --status <build_id>.');
   if (!statusOnly) {
     run('npm', ['run', 'typecheck']);
+    run('npm', ['test']);
     run('npm', ['run', 'verify']);
     run('npm', ['run', 'package:dev']);
   }
