@@ -5,6 +5,7 @@ import { RULES } from './rules';
 
 export interface GameSettings {
   music: number; effects: number; normal: boolean; hints: boolean;
+  // Keep the retired direction-pad preference readable for version 1 save compatibility.
   quality: 'auto' | 'low' | 'high'; motion: 'system' | 'reduced' | 'full'; touch: 'auto' | 'always' | 'hidden'; bindings: Bindings;
 }
 export interface RunRecord { id: string; won: boolean; normal: boolean; elapsed: number; conquered: number; survivors: number; recruited: number; casualties: number; finishedAt: number }

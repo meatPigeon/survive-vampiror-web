@@ -2,6 +2,10 @@
 
 ## Current update
 
+2026-10-12: mobile combat now uses tap-to-move without the direction pad or its visibility setting. Portrait phones, short landscape screens and coarse-pointer devices use compact health/population/recruitment chips and a single row of ability buttons with readable cooldowns. Route, passive perks and camera zoom are available in Pause; camera adjustment does not resume combat. The old `settings.touch` field remains readable for version 1 save compatibility but no longer controls any UI. Keyboard movement remains available. The first-command hint is reduced to two lines on mobile, and the command bar keeps a small Stop/Cancel control at the edge.
+
+Mobile verification: types, all 83 tests, production build, live DEV checkpoint checks and Solana identity checks passed. A controller regression verifies that paused zoom does not enable movement or advance combat. Chrome verified actual Continue, pause zoom, tap-to-move and Stop; a local, account-free layout fixture exercised both ability slots, sprint, cooldowns, the long shockwave warning and simultaneous sling aiming at phone portrait/landscape widths, including a 320 CSS-pixel width. The aim prompt was moved above attack warnings after that check exposed an overlap. The fixture is ignored and is not part of the shipped game. Chrome's extension UI interrupted the last real-page pause disclosure check. Physical touch hardware and the hosted candidate remain unverified.
+
 2026-10-12: removed the temporary knight-kill button, its controller action and the practice-run state used exclusively by that cheat. It is now absent from local development as well as production. The separate playable field-guide exercises are unchanged.
 
 2026-10-11: version 8 is now live, PROD has the private save schema, and Solana account recovery is implemented. See [Solana identity](solana-identity.md) for current evidence and limits. The original release-candidate history below describes the earlier pass.

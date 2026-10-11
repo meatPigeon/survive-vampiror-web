@@ -79,9 +79,6 @@
 .horde-rewards>section { width:min(820px,100%); background:transparent; border:0; box-shadow:none; padding:0; }
 .horde-rewards .horde-card p { font-size:13px; }
 .horde-rewards .horde-card h2 { font-size:25px; }
-.horde-hud[data-touch=always] .horde-dpad { display:grid; }
-.horde-hud[data-touch=hidden] .horde-dpad { display:none; }
-.horde-hud[data-touch=always] .horde-conquest-dock { bottom:130px; }
 @media (max-width:700px) {
   .horde-menu { padding:28px 6%; }
   .horde-menu-content { width:100%; max-width:440px; min-width:0; gap:11px; }
@@ -113,14 +110,6 @@
   .horde-rewards>section { padding:0; }
   .horde-rewards .horde-card p { font-size:12px; }
   .horde-rewards .horde-card h2 { font-size:18px; }
-  .horde-hud[data-touch=always] .horde-conquest-dock { bottom:121px; }
-  .horde-hud[data-touch=always] .horde-first-steps { bottom:230px; }
-  .horde-hud[data-touch=always] .horde-dpad { left:10px; bottom:13px; grid-template:repeat(2,46px)/repeat(3,46px); gap:3px; }
-  .horde-hud[data-touch=hidden] .horde-conquest-dock { bottom:13px; }
-}
-@media(max-width:700px) and (pointer:coarse) {
-  .horde-first-steps { bottom:230px; }
-  .horde-hud[data-touch=hidden] .horde-first-steps { bottom:140px; }
 }
 @media(max-height:620px) {
   .horde-menu { padding-block:20px; }
@@ -153,8 +142,4 @@
 .horde-audio input[type=range]::-moz-range-thumb { height:14px; width:14px; border-radius:50%; background:#d5dfb9; border:2px solid #8fba79; }
 @media(max-width:700px) {
   .horde-command-bar,.horde-movement-hint { top:222px; bottom:auto; }
-  .horde-hud[data-touch=always] .horde-threat { bottom:245px; }
-}
-@media(max-width:700px) and (pointer:coarse) {
-  .horde-hud:not([data-touch=hidden]) .horde-threat { bottom:245px; }
 }

@@ -163,7 +163,10 @@ export class HordeController {
     this.destination = boundedDestination(aim.point); this.view.setDestination(this.destination);
     beginBattle(this.world); this.audio.command(); this.consumeEvents(); this.publish();
   }
-  zoom(steps: number) { if (this.input.enabled()) this.view.camera.zoom(steps); }
+  zoom(steps: number) {
+    // Camera adjustment is safe while paused; movement and abilities remain gated.
+    if (this.loaded && !this.error && !this.menu && !this.panel && !this.confirmNew && ['ready', 'playing'].includes(this.world.status)) this.view.camera.zoom(steps);
+  }
   reward(index: number | 'skip') { if (this.panel || this.confirmNew || this.menu) return; if (resolveReward(this.world, index)) { this.input.clear(); this.consumeEvents(); this.checkpoint(true); this.publish(); } }
   private refreshAim() {
     if (!this.world.abilities.some(a => a.aiming)) return;

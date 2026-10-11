@@ -66,3 +66,17 @@ test('defeat retries the location entrance instead of the latest nearly-dead aut
     assert.notEqual(c.saves.profile.checkpoint.runId,originalId); assert.equal(c.saves.profile.retryCheckpoint.runId,c.saves.profile.checkpoint.runId);
   });
 });
+
+test('pause camera controls adjust the view without resuming combat or enabling movement', async () => {
+  await withController(async (c, _window, _writes, frame) => {
+    const zooms = []; c.view.camera.zoom = steps => zooms.push(steps);
+    c.zoom(1); assert.deepEqual(zooms, []); // No encounter on the main menu.
+    c.start(); c.togglePause();
+    const elapsed = c.world.elapsed, position = game.centerOf(game.alive(c.world));
+    c.zoom(-1); c.zoom(1); c.input.holdTouch(1, 'right'); frame();
+    assert.deepEqual(zooms, [-1, 1]); assert.equal(c.world.paused, true);
+    assert.equal(c.world.elapsed, elapsed); assert.deepEqual(game.centerOf(game.alive(c.world)), position);
+    assert.equal(c.input.enabled(), false);
+    c.openPanel('settings'); c.zoom(1); assert.deepEqual(zooms, [-1, 1]);
+  });
+});

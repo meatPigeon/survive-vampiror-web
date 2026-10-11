@@ -5,15 +5,18 @@ import { GameSettings } from './GameSettings';
 import { FieldGuide } from './FieldGuide';
 import { CAMPAIGN } from '../data/campaign';
 import { HordeIcon } from './HordeIcon';
+import { CampaignHud } from './CampaignHud';
 export function GameDialogs({ state, controller }: { state: Snapshot; controller: HordeController }) {
   if (state.error) return <Modal label="Game interrupted"><h1>A little trouble</h1><p>{state.error}</p><SaveStatus state={state} controller={controller} /><button className="horde-primary" onClick={() => controller.reload()}>Reload game</button></Modal>;
   if (state.panel === 'settings') return <GameSettings state={state} controller={controller} />;
   if (state.panel === 'help') return <FieldGuide state={state} controller={controller} />;
   if (state.confirmNew) return <Modal label="Start a new march?" onClose={() => controller.cancelNew()}><span className="horde-kicker">A FRESH BEGINNING</span><h1>Raise a new horde?</h1><p>This replaces your current checkpoint. Your settings and personal records will stay.</p><div className="horde-modal-actions"><button data-autofocus onClick={() => controller.cancelNew()}>Keep my march</button><button className="horde-primary" onClick={() => controller.start(true)}>Start new march</button></div></Modal>;
   if (state.menu) return null;
-  if (state.paused) return <Modal label="Encounter paused" onClose={() => controller.togglePause()}><span className="horde-kicker">{state.location.name.toUpperCase()}</span><h1>The horde can wait</h1><p>Wave {state.wave} of {state.totalWaves} · {clock(state.elapsed)} · {state.mode}</p><div className="horde-pause-population"><HordeIcon name="permanent" /><b>{state.permanent}</b> permanent survivors</div>
+  if (state.paused) return <Modal label="Encounter paused" onClose={() => controller.togglePause()}><span className="horde-kicker">{state.location.name.toUpperCase()}</span><h1>The horde can wait</h1><p>Wave {state.wave} of {state.totalWaves} · {clock(state.elapsed)} · {state.mode}</p><button className="horde-primary horde-resume" data-autofocus onClick={() => controller.togglePause()}>Resume march</button><div className="horde-pause-population"><HordeIcon name="permanent" /><b>{state.permanent}</b> permanent survivors</div>
+    <details className="horde-pause-campaign"><summary>Route & perks</summary><CampaignHud state={state} /></details>
+    <div className="horde-pause-zoom" role="group" aria-label="Camera zoom"><span>Camera</span><button aria-label="Zoom out" onClick={() => controller.zoom(-1)}><HordeIcon name="zoom-out" /></button><button aria-label="Zoom in" onClick={() => controller.zoom(1)}><HordeIcon name="zoom-in" /></button></div>
     <SaveStatus state={state} controller={controller} />
-    <div className="horde-modal-actions"><button className="horde-primary" data-autofocus onClick={() => controller.togglePause()}>Resume march</button><button onClick={() => controller.openPanel('help')}>How to play</button><button onClick={() => controller.openPanel('settings')}>Settings</button><button onClick={() => controller.restart()}>New march</button><button onClick={() => controller.returnToMenu()}>Main menu</button></div>
+    <div className="horde-modal-actions"><button onClick={() => controller.openPanel('help')}>How to play</button><button onClick={() => controller.openPanel('settings')}>Settings</button><button onClick={() => controller.restart()}>New march</button><button onClick={() => controller.returnToMenu()}>Main menu</button></div>
   </Modal>;
   if (state.status !== 'won' && state.status !== 'lost') return null;
   const won = state.status === 'won', conquered = won ? state.totalWaves : state.wave - 1;

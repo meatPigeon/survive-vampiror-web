@@ -6,6 +6,7 @@
 @import "./horde-panels.css";
 @import "./horde-release.css";
 @import "./horde-guide.css";
+@import "./horde-mobile.css";
 
 .horde-identity { max-width: 440px; margin-top: 14px; color: #bbc9aa; font-size: 14px; line-height: 1.55; }
 .horde-identity summary { cursor: pointer; color: #dadfba; }
