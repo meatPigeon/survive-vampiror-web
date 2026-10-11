@@ -1,10 +1,24 @@
 {
   "id": "horde",
   "type": "template",
-  "summary": "Lead a zombie horde through three escalating knight waves.",
-  "description": "Native port of the Godot horde game: five knight attacks, temporary reinforcements, four upgrades, difficulty, authored models and audio, wave rewards, pause and restart. Uses the existing host for sign-in and shared UI.",
-  "provides": ["three-wave 3D horde game", "keyboard and touch movement", "reinforcements and upgrades", "agent-observable simulation"],
-  "tags": ["three", "horde", "survival", "prototype"],
-  "version": "0.2.0",
-  "author": { "name": "meatPigeon" }
+  "summary": "Lead a zombie horde from the village graveyard to the castle.",
+  "description": "Five-location native horde campaign with ten knight attacks, active and passive perks, cloud checkpoint resume, personal records, a field guide, pointer/touch/keyboard controls, remapping and accessible settings. Uses the existing host for sign-in and shared UI.",
+  "provides": [
+    "five-location 3D horde campaign",
+    "pointer, keyboard and touch movement",
+    "reinforcements and upgrades",
+    "private player checkpoints and records",
+    "player guide and persistent settings",
+    "agent-observable simulation"
+  ],
+  "tags": [
+    "three",
+    "horde",
+    "survival",
+    "single-player"
+  ],
+  "version": "0.4.0",
+  "author": {
+    "name": "meatPigeon"
+  }
 }

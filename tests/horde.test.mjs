@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { simulation as game, HordeInput } from './load-source.mjs';
+import { simulation as game, HordeInput, loadGame } from './load-source.mjs';
+const { captureCheckpoint } = await loadGame('checkpoint');
 const { RULES, SITES, createEncounter, stepEncounter, setPaused, describeEncounter, beginAttack, updateKnight, damageKnight, damageZombie, addZombies, resolveReward, grantPerk, activateAbility, updateAim, fireSling, tickAbility, advanceBolt, sprint, alive } = game;
 const advance = (w, seconds, x = 0, z = 0) => { for (let i = 0; i < Math.round(seconds * 60); i++) stepEncounter(w, 1 / 60, x, z); };
 const isolated = () => { const w = createEncounter(); w.status = 'playing'; w.knight.state = 'recovery'; w.knight.timer = -10000; w.knight.x = 28; w.knight.z = -20; return w; };
@@ -142,7 +143,9 @@ test('wave rewards resolve once; breaks freeze wounds, lifetimes, perks and cloc
   assert.equal(resolveReward(w, -1), false); assert.equal(resolveReward(w, 'skip'), true); assert.equal(resolveReward(w, 'skip'), false); assert.equal(alive(w).length, 70); assert.equal(game.permanentCount(w), 50);
   advance(w, 4.1); assert.equal(w.wave, 2); assert.equal(w.knight.maxHp, 1000); assert.equal(w.zombies[0].hp, 12); near(w.abilities[0].cooldown, 6.9, 0.03); near(w.sprintCooldown, 2.9, 0.03);
   damageKnight(w, 1000); resolveReward(w, 'skip'); advance(w, 4.1); assert.equal(w.wave, 3); assert.equal(w.knight.maxHp, 1200);
-  damageKnight(w, 1200); assert.equal(w.status, 'won'); const result = structuredClone(w); advance(w, 5); assert.deepEqual(w, result);
+  damageKnight(w, 1200); assert.equal(w.status, 'playing'); assert.equal(w.awaitingReward, true); resolveReward(w, 'skip'); advance(w, 4.1); assert.equal(w.wave, 4); assert.equal(w.knight.maxHp, 1450);
+  damageKnight(w, 1450); assert.equal(w.status, 'playing'); assert.equal(w.awaitingReward, true); resolveReward(w, 'skip'); advance(w, 4.1); assert.equal(w.wave, 5); assert.equal(w.knight.maxHp, 1800);
+  damageKnight(w, 1800); assert.equal(w.status, 'won'); const result = structuredClone(w); advance(w, 5); assert.deepEqual(w, result);
 });
 
 test('two Q/E perks coexist while sprint owns no slot; sprint gates start, cooldown and pause', () => {
@@ -257,19 +260,42 @@ test('a brief first command starts the battle even when released before a physic
   stepEncounter(w, 1 / 60); near(w.elapsed, 1 / 60);
 });
 
-test('ordinary movement and valid skip rewards can win all three waves', () => {
-  const w = createEncounter(false, 231); stepEncounter(w, 1 / 60, 1, 0);
-  for (let i = 0; i < 360 * 60 && w.status === 'playing'; i++) {
-    if (w.awaitingReward) { assert.ok(resolveReward(w, 'skip')); continue; }
-    const k = w.knight, c = describeEncounter(w).center; let x = k.x - c.x, z = k.z - c.z;
+test('ordinary movement, repeated checkpoint resumes and offered upgrades can win all five locations', () => {
+  const w = createEncounter(false, 3); stepEncounter(w, 1 / 60, 1, 0);
+  for (let i = 0; i < 600 * 60 && w.status === 'playing'; i++) {
+    if (i % 600 === 0) {
+      const checkpoint = captureCheckpoint(w, 'full-campaign-resume'); assert.ok(checkpoint, `valid save at wave ${w.wave}, ${w.elapsed}s`);
+      Object.assign(w, checkpoint.world); setPaused(w, false);
+    }
+    if (w.awaitingReward) {
+      const priority = ['vigor', 'fangs', 'feast', 'haste', 'sprint', 'necromancy', 'lasting'];
+      const chosen = priority.find(perk => w.offeredRewards.includes(perk));
+      assert.ok(resolveReward(w, chosen ? w.offeredRewards.indexOf(chosen) : 'skip')); continue;
+    }
+    for (const [slot, ability] of w.abilities.entries()) if (ability.upgrade === 'feast' && ability.cooldown === 0) activateAbility(w, slot);
+    const k = w.knight, c = game.centerOf(alive(w)); let x = k.x - c.x, z = k.z - c.z;
     const d = Math.hypot(x, z);
     if (k.state === 'windup') {
-      if (k.attack === 'sweep' || k.attack === 'spin') { x = -x; z = -z; }
+      if (k.attack === 'shockwave') sprint(w);
+      if (['sweep', 'spin', 'bash', 'shockwave', 'consecration', 'firebomb'].includes(k.attack)) {
+        const source = ['consecration', 'firebomb'].includes(k.attack) ? k.target : k.origin;
+        const time = game.windupTime(k.attack) - k.timer, speed = game.marchSpeed(w) * (w.sprintRemaining > 0 ? RULES.sprintMultiplier : 1);
+        // Choose an escape direction that has room at arena edges; all actions remain ordinary input.
+        let best = -Infinity;
+        for (let angle = 0; angle < 16; angle++) {
+          const dx = Math.cos(angle * Math.PI / 8), dz = Math.sin(angle * Math.PI / 8);
+          const endX = Math.max(-27, Math.min(27, c.x + dx * speed * time)), endZ = Math.max(-19, Math.min(19, c.z + dz * speed * time));
+          const score = Math.hypot(endX - source.x, endZ - source.z);
+          if (score > best) { best = score; x = dx; z = dz; }
+        }
+      }
       else { const side = (c.x - k.origin.x) * k.direction.z - (c.z - k.origin.z) * k.direction.x; x = k.direction.z * (side >= 0 ? 1 : -1); z = -k.direction.x * (side >= 0 ? 1 : -1); }
     }
-    if (k.state === 'strike' && k.attack === 'rush') { x = -k.direction.z; z = k.direction.x; }
+    if (k.state === 'strike' && k.attack === 'rush') { const side = (c.x - k.x) * k.direction.z - (c.z - k.z) * k.direction.x; x = k.direction.z * (side >= 0 ? 1 : -1); z = -k.direction.x * (side >= 0 ? 1 : -1); }
+    if (k.state === 'strike' && k.attack === 'shockwave') { x = -x; z = -z; if (d > 12) { x = 0; z = 0; } }
+    if (k.state === 'strike' && k.attack === 'firebomb' && Math.hypot(c.x - k.target.x, c.z - k.target.z) < 5) { x = c.x - k.target.x; z = c.z - k.target.z; }
     if (k.state === 'hunt' && d < 1) { x = 0; z = 0; }
     stepEncounter(w, 1 / 60, x, z);
   }
-  assert.equal(w.status, 'won'); assert.equal(w.wave, 3); assert.ok(game.permanentCount(w) > 0); assert.equal(w.knight.hp, 0);
+  assert.equal(w.status, 'won'); assert.equal(w.wave, 5); assert.ok(game.permanentCount(w) > 0); assert.equal(w.knight.hp, 0);
 });

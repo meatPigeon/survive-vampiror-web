@@ -2,6 +2,8 @@ import { RULES } from "./rules";
 import { add, distance, length, limited, normalized, scale, subtract } from "./math";
 import { alive, centerOf, clampBody, emit } from "./world";
 import type { Encounter, Point } from "./types";
+import { locationForWave } from '../data/campaign';
+import { marchSpeed } from './perk-effects';
 
 export function sprint(world: Encounter): boolean {
   if (!world.sprintUnlocked || world.paused || world.betweenWaves || world.status !== "playing" || world.sprintCooldown > 0) return false;
@@ -12,7 +14,7 @@ export function moveHorde(world: Encounter, direction: Point, dt: number) {
   const living = alive(world), center = centerOf(living.filter(a => !a.locked));
   const bombs = new Set(world.abilities.flatMap(a => a.armed));
   world.sprintRemaining = Math.max(0, world.sprintRemaining - dt); world.sprintCooldown = Math.max(0, world.sprintCooldown - dt);
-  const speed = RULES.speed * (world.sprintRemaining > 0 ? RULES.sprintMultiplier : 1), intent = limited(direction);
+  const speed = marchSpeed(world) * (world.sprintRemaining > 0 ? RULES.sprintMultiplier : 1), intent = limited(direction);
   let travelled = 0;
   for (const a of living) {
     if (a.locked) continue;
@@ -28,7 +30,7 @@ export function moveHorde(world: Encounter, direction: Point, dt: number) {
       separation = add(separation, scale(normalized(away), (RULES.separationRadius - d) / Math.max(d * d, 0.01)));
     }
     const velocity = limited(add(attraction, scale(separation, RULES.separationStrength)), speed), next = add(a, scale(velocity, dt));
-    const k = world.knight, minimum = RULES.zombieRadius + (world.wave >= 3 ? 0.75 : RULES.knightRadius);
+    const k = world.knight, minimum = RULES.zombieRadius + (locationForWave(world.wave).knightModel === 3 ? 0.75 : RULES.knightRadius);
     if (k.hp > 0 && distance(next, k) < minimum) {
       let away = subtract(next, k); if (length(away) < 1e-6) away = { x: 1, z: 0 };
       Object.assign(next, add(k, scale(normalized(away), minimum)));

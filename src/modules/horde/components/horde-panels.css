@@ -1,0 +1,149 @@
+.horde-hud { color:#f1ead8; text-shadow:0 1px 2px #0009; }
+.horde-icon { display:block; width:28px; height:28px; flex:none; }
+.horde-hud kbd { display:grid; place-items:center; min-width:23px; height:23px; box-sizing:border-box; padding:0 5px; border:1px solid #dbd7bd55; border-bottom-width:3px; border-radius:4px; background:#e8e0c914; color:#eee7d1; font:600 10px HordeSans,sans-serif; }
+.horde-knight-status { top:18px; width:min(390px,39%); padding:12px 17px 10px; border:1px solid #d1b89530; border-top:2px solid var(--location-accent); border-radius:0 0 9px 9px; background:linear-gradient(#101914f2,#101914de); box-shadow:0 5px 20px #0003; box-sizing:border-box; }
+.horde-knight-status>div:first-child { font-size:10px; font-weight:600; margin-bottom:7px; color:#e8dfc8; }
+.horde-knight-status>div:first-child span:last-child { letter-spacing:0; font-variant-numeric:tabular-nums; color:#c7cabb; }
+.horde-health { height:7px; background:#050d09; }
+.horde-health b { background:linear-gradient(90deg,#cfbe91,#f3e7bf); }
+.horde-knight-status small { font-size:10px; margin-top:7px; color:#bac3b2; }
+.horde-location-label { font-size:14px; margin-top:4px; letter-spacing:.015em; }
+.horde-top-right { top:20px; right:22px; gap:14px; }
+.horde-top-right time { display:flex; align-items:center; gap:5px; font-size:12px; color:#e0e4d5; font-variant-numeric:tabular-nums; }
+.horde-top-right time .horde-icon { width:18px; height:18px; }
+.horde-top-right button { display:flex; align-items:center; gap:5px; background:#0c1713e8; border:1px solid #8b9d7b55; padding:7px 10px; min-height:37px; font-size:12px; }
+.horde-top-right button .horde-icon { width:17px; height:17px; }
+.horde-numbers { top:112px; left:22px; gap:13px; border:1px solid #81977544; background:#0c1813ed; border-radius:7px; padding:10px 13px; box-shadow:0 4px 14px #0003; }
+.horde-numbers>div { grid-template-columns:31px auto; column-gap:9px; }
+.horde-numbers .horde-icon { width:31px; height:31px; grid-row:1/3; color:#dbc99b; }
+.horde-numbers strong { font-size:25px; line-height:1.15; font-variant-numeric:tabular-nums; }
+.horde-numbers span { font-size:10px; color:#bcc8b4; }
+.horde-temporary { padding-left:13px; }
+.horde-temporary .horde-icon { color:#a3d5cb; }
+.horde-rally { top:113px; right:22px; display:flex; align-items:center; gap:9px; min-width:154px; padding:10px 12px 13px; background:#0c1813ed; border:1px solid #87b49b44; border-radius:7px; box-shadow:0 4px 14px #0003; text-align:left; }
+.horde-rally>.horde-icon { color:#a1dbba; width:30px; height:30px; }
+.horde-rally b { font-size:14px; font-weight:600; color:#c8eed3; }
+.horde-rally small { font-size:10px; color:#bdc9b8; margin-top:3px; }
+.horde-rally-meter { position:absolute; left:12px; right:12px; bottom:5px; height:2px; background:#9bcda326; }
+.horde-rally-meter i { display:block; height:100%; background:#a9e3bb; }
+.horde-threat { bottom:108px; display:flex; align-items:center; justify-content:center; gap:9px; padding:9px 17px; background:#17180feb; border:1px solid #d9a77066; border-radius:5px; font-size:13px; font-weight:600; color:#f0c89c; max-width:70%; box-sizing:border-box; }
+.horde-threat .horde-icon { width:23px; height:23px; }
+.horde-exposed { border-color:#b5d58b70; color:#d1eab7; background:#162015ed; }
+.horde-conquest-dock { position:absolute; left:22px; bottom:20px; display:flex; flex-direction:column; gap:6px; width:322px; max-width:36%; }
+.horde-route { position:static; padding:10px 12px; max-width:none; border:1px solid #8fa5803b; border-left:2px solid var(--location-accent); border-radius:6px; background:#0b1713ed; }
+.horde-route-heading { display:flex; justify-content:space-between; align-items:center; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:#c4cfb9; }
+.horde-route-heading b { color:#e6d9ad; letter-spacing:0; font-size:11px; }
+.horde-route-heading b span { color:#9fae98; font-weight:400; }
+.horde-route ol { display:flex; justify-content:space-between; gap:6px; margin:8px 0 0; }
+.horde-route li { opacity:.63; min-width:34px; gap:3px; }
+.horde-route li small { font-size:8px; white-space:nowrap; }
+.horde-route .horde-route-marker { position:relative; width:30px; height:30px; border-radius:5px; border-color:#94a28344; background:#b9d0a809; }
+.horde-route-marker>.horde-icon { width:22px; height:22px; }
+.horde-route-marker>.horde-route-check { position:absolute; width:13px; height:13px; right:-5px; bottom:-4px; color:#c4efcc; padding:1px; border-radius:50%; background:#1e4330; }
+.horde-route .horde-route-current { color:#f0deaa; opacity:1; }
+.horde-route .horde-route-current .horde-route-marker { border-color:#e8cf956b; background:#9f7c2626; box-shadow:0 0 10px #f1ca7920; }
+.horde-route .horde-route-conquered { color:#a6d7b3; opacity:.9; }
+.horde-passives { position:static; display:flex; flex-wrap:wrap; max-width:none; gap:5px; }
+.horde-passives .horde-passive-badge { display:flex; align-items:center; gap:5px; padding:5px 7px; border:1px solid #8d9a713b; border-radius:4px; background:#101c15f2; font-size:9px; box-sizing:border-box; }
+.horde-passive-badge>.horde-icon { width:20px; height:20px; }
+.horde-passives .horde-passive-name { padding:0; border:0; background:none; }
+.horde-passive-badge:focus-visible { outline:2px solid #e4ddbb; outline-offset:2px; }
+.horde-action-dock { position:absolute; right:22px; bottom:20px; display:flex; align-items:flex-end; gap:10px; max-width:61%; }
+.horde-hud .horde-action { display:flex; align-items:center; position:relative; gap:10px; min-height:64px; min-width:176px; max-width:230px; padding:10px 13px 13px; text-align:left; border:1px solid #95a48460; border-top:2px solid var(--action-accent,#c5cf91); border-radius:7px; background:#111c15f5; box-shadow:0 4px 15px #0005; overflow:hidden; }
+.horde-action>.horde-icon { width:31px; height:31px; color:var(--action-accent,#c5cf91); }
+.horde-action-copy { display:flex; flex-direction:column; gap:3px; flex:1; }
+.horde-action-copy b { font-size:12px; font-weight:600; color:#f0ead5; white-space:nowrap; }
+.horde-action-copy small { font-size:10px; color:#aebea4; line-height:1.2; }
+.horde-action kbd { align-self:flex-start; margin-left:3px; }
+.horde-action-meter { position:absolute; bottom:0; left:0; right:0; height:3px; background:#78906526; }
+.horde-action-meter i { display:block; height:100%; background:var(--action-accent,#c5cf91); }
+.horde-hud .horde-action:disabled { opacity:.78; background:#101811f5; }
+.horde-hud .horde-action-active:disabled { opacity:1; box-shadow:0 0 14px #b5ca7814; }
+.horde-countdown { padding:25px 36px; border:1px solid #b5c98a55; border-radius:9px; background:#0b1612f0; }
+.horde-countdown>span { font-size:14px; color:#e3dfc3; }
+.horde-countdown strong { color:#e9d7a8; }
+.horde-countdown small { font-size:11px; color:#b8c9ac; }
+.horde-perk-artwork { display:block; width:100%; height:100%; filter:drop-shadow(0 8px 12px #0007); }
+.horde-card-art { display:grid; place-items:center; height:205px; background:radial-gradient(ellipse at 50% 40%,#3953423b,transparent 70%); }
+.horde-card-art span { padding:4px 6px; background:#0d1913e6; border-radius:3px; font-size:10px; }
+.horde-card-art b { font-size:10px; border-color:var(--accent); }
+.horde-hud .horde-card { min-height:438px; background:linear-gradient(#18261b,#101b14); border-color:#83976455; }
+.horde-card h2 { font-size:25px; margin:12px 0 10px; }
+.horde-card p { color:#c0cab7; font-size:13px; }
+.horde-card footer { color:#b5c4a7; }
+.horde-skip>.horde-icon { width:26px; height:26px; }
+.horde-zoom { display:none; }
+@media(min-width:1100px) {
+  .horde-numbers { top:18px; left:68px; }
+  .horde-rally { top:18px; right:190px; }
+}
+@media(min-width:1100px) and (max-width:1179px) {
+  .horde-rally { right:170px; width:176px; min-width:0; box-sizing:border-box; }
+  .horde-rally b { font-size:13px; }
+  .horde-rally small { font-size:9px; }
+}
+@media(max-width:1000px) and (min-width:701px) {
+  .horde-action-dock { gap:6px; }
+  .horde-hud .horde-action { min-width:140px; gap:6px; padding-left:9px; padding-right:9px; }
+  .horde-action>.horde-icon { width:25px; height:25px; }
+  .horde-action-copy b { font-size:10px; }
+  .horde-action-copy small { font-size:9px; }
+  .horde-action kbd { display:none; }
+  .horde-conquest-dock { width:270px; max-width:33%; }
+}
+@media(max-width:700px) {
+  .horde-zoom { position:absolute; top:164px; left:10px; display:flex; gap:5px; }
+  .horde-hud .horde-zoom button { display:grid; place-items:center; width:44px; height:44px; padding:9px; border-color:#95a48460; background:#101c16ed; }
+  .horde-zoom .horde-icon { width:25px; height:25px; }
+  .horde-knight-status { top:12px; left:50%; width:56%; padding:8px 10px; }
+  .horde-knight-status>div:first-child { font-size:8px; letter-spacing:.02em; gap:5px; }
+  .horde-knight-status>div:first-child span:last-child { white-space:nowrap; }
+  .horde-knight-status small { font-size:8px; margin-top:5px; }
+  .horde-location-label { font-size:11px; margin-top:3px; }
+  .horde-top-right { right:10px; top:15px; }
+  .horde-top-right time { display:none; }
+  .horde-top-right button { min-width:44px; min-height:44px; padding:10px; font-size:0; }
+  .horde-top-right button>.horde-icon { width:19px; height:19px; }
+  .horde-numbers { top:99px; left:10px; padding:7px 9px; gap:8px; }
+  .horde-numbers strong { font-size:21px; }
+  .horde-numbers>div { grid-template-columns:23px auto; column-gap:5px; }
+  .horde-numbers .horde-icon { width:23px; height:23px; }
+  .horde-numbers span { font-size:8px; }
+  .horde-temporary { padding-left:8px; }
+  .horde-rally { top:160px; right:10px; padding:7px 9px 11px; gap:6px; min-width:120px; }
+  .horde-rally>.horde-icon { width:24px; height:24px; }
+  .horde-rally b { font-size:11px; }
+  .horde-rally small { font-size:8px; }
+  .horde-hud .horde-debug-kill { top:119px; right:10px; font-size:10px; padding:5px 7px; }
+  .horde-conquest-dock { left:10px; bottom:13px; width:194px; max-width:51%; gap:5px; }
+  .horde-route { padding:7px 8px; }
+  .horde-route-heading { font-size:7px; }
+  .horde-route-heading b { font-size:9px; }
+  .horde-route ol { gap:3px; margin-top:5px; }
+  .horde-route li { min-width:24px; gap:3px; }
+  .horde-route li small { display:none; }
+  .horde-route .horde-route-marker { width:27px; height:27px; }
+  .horde-route-marker>.horde-icon { width:20px; height:20px; }
+  .horde-passives { gap:4px; }
+  .horde-passives .horde-passive-badge { padding:4px 5px; }
+  .horde-passive-badge>.horde-icon { width:21px; height:21px; }
+  .horde-passive-name { display:none; }
+  .horde-action-dock { right:10px; bottom:13px; flex-direction:column; align-items:stretch; gap:6px; max-width:44%; }
+  .horde-hud .horde-action { min-width:151px; min-height:51px; gap:7px; padding:7px 8px 10px; }
+  .horde-action>.horde-icon { width:23px; height:23px; }
+  .horde-action-copy b { font-size:10px; }
+  .horde-action-copy small { font-size:8px; }
+  .horde-action kbd { display:none; }
+  .horde-threat { bottom:195px; font-size:11px; padding:7px 10px; max-width:94%; width:auto; min-width:235px; }
+  .horde-threat .horde-icon { width:20px; height:20px; }
+  .horde-card-art { height:145px; }
+  .horde-hud .horde-card { min-height:365px; }
+  .horde-card-art span { font-size:8px; padding:3px 4px; top:3px; left:0; }
+  .horde-card-art b { font-size:8px; padding:3px 6px; right:0; bottom:0; }
+  .horde-card h2 { font-size:18px; }
+  .horde-card p { font-size:11px; }
+}
+@media(max-width:700px) and (pointer:coarse) {
+  .horde-conquest-dock { bottom:121px; }
+  .horde-dpad { left:10px; bottom:13px; grid-template:repeat(2,46px)/repeat(3,46px); gap:3px; }
+}

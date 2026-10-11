@@ -1,3 +1,4 @@
+import { DEFAULT_BINDINGS, type Bindings, type ControlAction } from '../data/controls';
 export class HordeInput {
   private keys = new Set<string>();
   private touch = new Map<number, string>();
@@ -11,22 +12,26 @@ export class HordeInput {
   onZoom?: (steps: number) => void;
   onGesture?: () => void;
   onDirection?: (x: number, z: number) => void;
+  onStop?: () => void;
+  bindings: Bindings = { ...DEFAULT_BINDINGS };
   enabled = () => true;
   pointer = { x: 0, y: 0 };
   constructor(private toggle: () => void, private restart: () => void, private canvas?: HTMLCanvasElement) {}
   private down = (event: KeyboardEvent) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
     if ((event.target as HTMLElement)?.closest('input, textarea, select')) return;
     // Some virtual keyboards deliver Escape with an empty/unidentified physical code.
     const code = event.key === 'Escape' || event.key === 'Esc' ? 'Escape' : event.code;
     if (event.code === "Space" && (event.target as HTMLElement)?.closest("button")) return;
-    const controls = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'Escape', 'KeyR', 'KeyQ', 'KeyE', 'Space'];
+    const controls = [...Object.values(this.bindings), 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'Escape'];
     if (!controls.includes(code)) return;
     event.preventDefault(); this.onGesture?.(); if (event.repeat) return;
-    if (code === 'Escape') this.toggle();
-    else if (code === 'KeyR') this.restart();
+    if (code === 'Escape' || code === this.bindings.pause) this.toggle();
+    else if (code === this.bindings.restart) this.restart();
     else if (this.enabled()) {
-      if (code === 'Space') this.onSprint?.();
-      else if (code === 'KeyQ' || code === 'KeyE') this.onAbility?.(code === 'KeyQ' ? 0 : 1);
+      if (code === this.bindings.sprint) this.onSprint?.();
+      else if (code === this.bindings.stop) { this.clear(); this.onStop?.(); }
+      else if (code === this.bindings.ability1 || code === this.bindings.ability2) this.onAbility?.(code === this.bindings.ability1 ? 0 : 1);
       else { this.keys.add(code); this.changed(); }
     }
   };
@@ -60,10 +65,10 @@ export class HordeInput {
   private changed() { const { x, z } = this.direction(); this.onDirection?.(x, z); }
   direction() {
     if (!this.enabled()) return { x: 0, z: 0 };
-    const held = (codes: string[], direction: string) => codes.some(code => this.keys.has(code)) || [...this.touch.values()].includes(direction);
+    const held = (action: ControlAction, arrow: string) => this.keys.has(this.bindings[action]) || (!Object.values(this.bindings).includes(arrow) && this.keys.has(arrow)) || [...this.touch.values()].includes(action);
     const agent = performance.now() < this.agentUntil ? this.agent : { x: 0, z: 0 };
-    const x = Number(held(['KeyD', 'ArrowRight'], 'right')) - Number(held(['KeyA', 'ArrowLeft'], 'left')) + agent.x;
-    const z = Number(held(['KeyS', 'ArrowDown'], 'down')) - Number(held(['KeyW', 'ArrowUp'], 'up')) + agent.z;
+    const x = Number(held('right', 'ArrowRight')) - Number(held('left', 'ArrowLeft')) + agent.x;
+    const z = Number(held('down', 'ArrowDown')) - Number(held('up', 'ArrowUp')) + agent.z;
     const length = Math.hypot(x, z); return length > 1 ? { x: x / length, z: z / length } : { x, z };
   }
 }

@@ -1,5 +1,8 @@
 import { PERKS, RULES } from "./rules";
 import { add, clamp, distance, scale } from "./math";
+import { locationForWave } from '../data/campaign';
+import { isPassivePerk } from '../data/perks';
+import { startingHealth, recruitLifetime } from './perk-effects';
 import type { Ability, Encounter, GameEvent, Knight, Perk, Point, Zombie } from "./types";
 export const alive = (world: Encounter) => world.zombies.filter(a => a.hp > 0);
 export const permanentCount = (world: Encounter) => world.zombies.filter(a => a.hp > 0 && a.kind === "permanent").length;
@@ -19,22 +22,23 @@ export function newAbility(): Ability {
     launch: { x: 0, z: 0 }, landing: { x: 0, z: 0 }, aiming: false, aim: { x: 0, z: 0 }, aimValid: false, aimOnGround: false };
 }
 export function newKnight(wave: number, position: Point = { x: 6, z: -3 }): Knight {
-  const hp = RULES.knightHealth + (wave - 1) * RULES.waveHealthIncrease;
+  const hp = locationForWave(wave).hp;
   return { ...position, hp, maxHp: hp, facing: 0, phase: 1, state: "hunt", attack: "sweep", timer: 0, attackNumber: 0,
     flash: 0, moving: false, origin: { ...position }, direction: { x: 0, z: -1 }, chargeEnd: { ...position }, hitIds: [],
-    crossbowCooldown: 1.5, rushCooldown: 3, rushSpeed: 0, rushTurn: 0,
+    crossbowCooldown: 1.5, rushCooldown: 3, rushSpeed: 0, rushTurn: 0, target: { ...position }, specialCooldown: 7,
     bolt: { ...position, flying: false, direction: { x: 0, z: -1 }, remaining: 0 } };
 }
 export function spawnZombie(world: Encounter, point: Point, kind: Zombie["kind"] = "permanent"): Zombie {
-  const zombie: Zombie = { ...point, id: world.nextId++, kind, hp: RULES.zombieHealth, maxHp: RULES.zombieHealth,
-    bite: 0, lifetime: kind === "temporary" ? RULES.lifetime : 0, expired: false, locked: false, feasting: false,
+  const health = startingHealth(world);
+  const zombie: Zombie = { ...point, id: world.nextId++, kind, hp: health, maxHp: health,
+    bite: 0, lifetime: kind === "temporary" ? recruitLifetime(world) : 0, expired: false, locked: false, feasting: false,
     facing: 0, moving: false, speed: 0, flash: 0, deadFor: 0, airborne: 0, flightSpin: 0 };
   clampBody(zombie, RULES.zombieRadius); world.zombies.push(zombie); return zombie;
 }
 export function createEncounter(normal = false, seed = 0x7e57c0de): Encounter {
   const world: Encounter = { status: "ready", normal, paused: false, elapsed: 0, zombies: [], knight: newKnight(1),
     wave: 1, betweenWaves: false, awaitingReward: false, offeredRewards: [], waveTimeLeft: 0,
-    sprintUnlocked: false, sprintRemaining: 0, sprintCooldown: 0, abilities: [newAbility(), newAbility()],
+    sprintUnlocked: false, sprintRemaining: 0, sprintCooldown: 0, abilities: [newAbility(), newAbility()], passives: [],
     casualties: 0, recruited: 0, expiredCount: 0, nextId: 0, activeSite: null, lastSite: null,
     nextSiteAt: 0, siteProgress: 0, rng: (seed >>> 0) || 1, events: [] };
   for (let i = 0; i < RULES.count; i++) {
@@ -81,15 +85,23 @@ export function damageKnight(world: Encounter, damage: number) {
   if (world.wave >= RULES.waves) { finish(world, true); return; }
   world.betweenWaves = true; world.awaitingReward = true; world.waveTimeLeft = RULES.waveBreak;
   cancelAim(world); for (const a of alive(world)) a.moving = false;
-  const pool = PERKS.filter(perk => !hasPerk(world, perk));
+  const pool = PERKS.filter(perk => !hasPerk(world, perk) && (isPassivePerk(perk) || perk === 'sprint' || world.abilities.some(a => a.upgrade === null)));
   for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(random(world) * (i + 1)); [pool[i], pool[j]] = [pool[j]!, pool[i]!]; }
   world.offeredRewards = pool.slice(0, 2); emit(world, { type: "wave-cleared" });
 }
 export function hasPerk(world: Encounter, perk: Perk) {
-  return perk === "sprint" ? world.sprintUnlocked : world.abilities.some(a => a.upgrade === perk);
+  return isPassivePerk(perk) ? world.passives.includes(perk) : perk === "sprint" ? world.sprintUnlocked : world.abilities.some(a => a.upgrade === perk);
 }
 export function grantPerk(world: Encounter, perk: Perk): boolean {
   if (hasPerk(world, perk)) return false;
+  if (isPassivePerk(perk)) {
+    world.passives.push(perk);
+    for (const zombie of alive(world)) {
+      if (perk === 'vigor') { zombie.maxHp += 15; zombie.hp = Math.min(zombie.maxHp, zombie.hp + 15); }
+      if (perk === 'lasting' && zombie.kind === 'temporary') zombie.lifetime += 20;
+    }
+    emit(world, { type: 'perk-gained', upgrade: perk }); return true;
+  }
   if (perk === "sprint") { world.sprintUnlocked = true; return true; }
   const empty = world.abilities.find(a => a.upgrade === null);
   if (!empty || !PERKS.includes(perk)) return false;
@@ -116,5 +128,6 @@ export function startNextWave(world: Encounter) {
     const p = { x, z }, d = distance(p, center); if (d > farthest) { farthest = d; best = p; }
   }
   world.wave++; world.knight = newKnight(world.wave, best); world.betweenWaves = false; world.waveTimeLeft = 0;
+  world.activeSite = null; world.lastSite = null; world.siteProgress = 0; world.nextSiteAt = world.elapsed;
   emit(world, { type: "wave-start" });
 }

@@ -1,0 +1,160 @@
+.horde-ui-layer { position:absolute; inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.horde-hud button { min-height:44px; }
+.horde-hud p { color:#c0c9bb; }
+.horde-hud :is(input,select):focus-visible { outline:2px solid #f0deaa; outline-offset:3px; }
+.horde-hud select { font:inherit; color:#eee7d1; background:#0c1812; border:1px solid #a8bd9166; border-radius:6px; padding:10px; min-height:44px; pointer-events:auto; }
+.horde-hud input[type=checkbox] { accent-color:#b8d29a; width:20px; height:20px; flex:none; }
+.horde-reduced-motion * { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
+.horde-hud .horde-fineprint { font-size:12px; color:#b1bfaa; line-height:1.6; }
+.horde-menu { display:flex; align-items:flex-start; box-sizing:border-box; padding:32px 5.625%; overflow:auto; pointer-events:auto; }
+.horde-menu-content { position:relative; left:auto; top:auto; transform:none; width:min(420px,40%); min-width:330px; margin:auto 0; gap:12px; flex-shrink:0; }
+.horde-menu h1 { font-size:clamp(35px,4.5vw,62px); letter-spacing:-.035em; }
+.horde-menu .horde-kicker { color:#c5d4aa; font-size:12px; letter-spacing:.13em; }
+.horde-menu .horde-raise { display:flex; align-items:center; justify-content:space-between; font-size:24px; min-height:58px; padding:10px 20px; }
+.horde-menu .horde-raise:disabled { font-size:18px; }
+.horde-mode-note { display:block; color:#a6b29a; font-size:12px; margin-top:3px; }
+.horde-menu .horde-new-march { min-height:46px; text-align:left; border-color:#a8b18a55; background:#263325bb; }
+.horde-menu-links { display:flex; gap:10px; }
+.horde-menu-links button { flex:1; background:#0e1812d9; font-size:13px; color:#c7d7bd; }
+.horde-continue { border-left:2px solid #b5d49a; padding:0 0 0 14px; display:flex; flex-direction:column; gap:5px; margin:4px 0 8px; }
+.horde-continue>span { color:#b5c999; font-size:10px; letter-spacing:.12em; }
+.horde-continue>b { font:600 21px HordeSerif,serif; }
+.horde-continue>small { font-size:12px; }
+.horde-continue>.horde-raise { margin-top:7px; background:#344b32; border-color:#162b18; }
+.horde-menu-route { position:absolute; bottom:32px; right:3%; display:flex; width:49%; justify-content:space-evenly; gap:8px; color:#d9d8b8; }
+.horde-menu-route>span { display:flex; align-items:center; flex-direction:column; gap:7px; position:relative; flex:1; text-align:center; padding-top:14px; border-top:1px solid #b7c39b70; }
+.horde-menu-route .horde-icon { width:30px; height:30px; }
+.horde-menu-route b { position:absolute; left:calc(50% + 11px); top:10px; background:#14281f; border-radius:50%; padding:2px 5px; font-size:9px; }
+.horde-menu-route small { font-size:10px; color:#b5c3a8; }
+.horde-record { display:flex; align-items:center; gap:12px; border-top:1px solid #bed19c33; padding-top:12px; font-size:12px; }
+.horde-record>.horde-icon { color:#d6bf7d; }
+.horde-record>span { display:flex; flex-direction:column; gap:3px; }
+.horde-record small { font-size:10px; }
+.horde-save { display:flex; flex-direction:column; gap:6px; font-size:11px; line-height:1.5; color:#a3b898; }
+.horde-save-saving { color:#e2c895; }
+.horde-save-error { color:#f0bf9c; }
+.horde-save button { align-self:center; font-size:12px; }
+.horde-menu .horde-save button { align-self:flex-start; }
+.horde-save-warning { position:absolute; top:130px; left:22px; max-width:260px; padding:12px; border:1px solid #daaf7755; border-radius:8px; background:#161d16f5; pointer-events:auto; }
+.horde-modal { display:flex; align-items:flex-start; justify-content:center; background:#07100cdc; backdrop-filter:blur(5px); z-index:4; padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left)); overscroll-behavior:contain; }
+.horde-modal>section { flex-shrink:0; margin:auto; background:linear-gradient(145deg,#1c2a20,#101c16); border:1px solid #afc89444; border-top:2px solid #b5c59188; box-shadow:0 18px 70px #0007; }
+.horde-modal h1 { font-size:34px; line-height:1.18; margin:9px 0 14px; }
+.horde-modal h2 { font-size:18px; margin:22px 0 10px; color:#dddcc2; }
+.horde-modal p { font-size:14px; }
+.horde-modal .horde-kicker { font-size:10px; letter-spacing:.12em; }
+.horde-dialog-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+.horde-dialog-heading button { margin-top:5px; flex-shrink:0; }
+.horde-settings>section { width:min(720px,100%); text-align:left; }
+.horde-setting-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.horde-setting-grid label { display:flex; flex-direction:column; gap:7px; font-size:13px; color:#ccdbc0; }
+.horde-setting-grid .horde-toggle { flex-direction:row; align-items:center; line-height:1.5; }
+.horde-setting-grid+p { margin-top:12px; }
+.horde-bindings { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.horde-bindings button { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; font-size:12px; text-align:left; }
+.horde-bindings button[aria-pressed=true] { background:#3e5029; border-color:#daedba; }
+.horde-bindings kbd { min-width:40px; }
+.horde-reset-bindings { margin:16px 0 18px; font-size:12px!important; }
+.horde-settings .horde-audio { display:grid; grid-template-columns:1fr 1fr; background:#0d19135e; padding:16px; }
+.horde-settings .horde-audio input { height:28px; }
+.horde-pause-population { display:flex; justify-content:center; align-items:center; gap:8px; color:#ccd7b3; font-size:13px; margin:22px 0; }
+.horde-pause-population b { font-size:24px; }
+.horde-first-steps { position:absolute; bottom:135px; left:50%; transform:translateX(-50%); width:min(480px,90%); box-sizing:border-box; text-align:center; background:#11231aee; border:1px solid #c8d9a54d; border-radius:10px; padding:16px 20px; box-shadow:0 8px 24px #0004; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.horde-first-steps>.horde-icon { color:#d8d3a7; }
+.horde-first-steps b { font:600 20px HordeSerif,serif; }
+.horde-first-steps span { color:#bbceb2; font-size:12px; line-height:1.6; }
+.horde-first-steps button { background:transparent; border-color:#b3cc8f55; font-size:12px; }
+.horde-movement-hint { position:absolute; left:50%; transform:translateX(-50%); bottom:165px; text-align:center; font-size:11px; color:#d1dcca; background:#0a1912c9; border-radius:4px; padding:7px 12px; }
+.horde-command-bar { position:absolute; bottom:164px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:12px; background:#11241def; border:1px solid #b4e4c255; padding:6px 6px 6px 15px; border-radius:7px; font-size:12px; color:#d6edda; white-space:nowrap; }
+.horde-command-bar button { font-size:12px; padding:8px 15px; }
+.horde-results>section { width:min(650px,100%); }
+.horde-result-emblem { width:68px; height:68px; margin:20px auto 8px; color:#dfca8c; }
+.horde-result-route { display:flex; justify-content:center; gap:20px; margin:25px 0; }
+.horde-result-route>span { display:flex; flex-direction:column; align-items:center; gap:7px; color:#788b77; }
+.horde-result-route .is-conquered { color:#c1d5a4; }
+.horde-result-route .horde-icon { width:36px; height:36px; }
+.horde-result-route small { font-size:10px; }
+.horde-result-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding-block:18px; border-block:1px solid #bfd7a533; margin-bottom:18px; }
+.horde-result-grid>span { display:flex; flex-direction:column; gap:7px; font-size:10px; color:#b3c7a6; }
+.horde-result-grid b { color:#eee6c8; font-size:20px; font-variant-numeric:tabular-nums; }
+.horde-rewards>section { width:min(820px,100%); background:transparent; border:0; box-shadow:none; padding:0; }
+.horde-rewards .horde-card p { font-size:13px; }
+.horde-rewards .horde-card h2 { font-size:25px; }
+.horde-hud[data-touch=always] .horde-dpad { display:grid; }
+.horde-hud[data-touch=hidden] .horde-dpad { display:none; }
+.horde-hud[data-touch=always] .horde-conquest-dock { bottom:130px; }
+@media (max-width:700px) {
+  .horde-menu { padding:28px 6%; }
+  .horde-menu-content { width:100%; max-width:440px; min-width:0; gap:11px; }
+  .horde-menu-shade { position:fixed; background:linear-gradient(100deg,#0b1911f7,#0e2018da 70%,#102016bb); }
+  .horde-menu h1 { font-size:44px; }
+  .horde-menu p { font-size:14px; }
+  .horde-menu-route { display:none; }
+  .horde-menu small { font-size:12px; }
+  .horde-menu .horde-mode-note { font-size:11px; }
+  .horde-modal { padding:16px; }
+  .horde-modal>section { padding:24px 20px; }
+  .horde-modal h1 { font-size:28px; }
+  .horde-modal p { font-size:13px; }
+  .horde-dialog-heading { gap:8px; }
+  .horde-dialog-heading button { padding:8px 12px; font-size:12px; }
+  .horde-settings .horde-audio { grid-template-columns:1fr; }
+  .horde-setting-grid { grid-template-columns:1fr; }
+  .horde-bindings { grid-template-columns:1fr; }
+  .horde-first-steps { bottom:140px; padding:14px; gap:7px; }
+  .horde-first-steps>.horde-icon { display:none; }
+  .horde-first-steps b { font-size:18px; }
+  .horde-first-steps span { font-size:11px; }
+  .horde-command-bar,.horde-movement-hint { bottom:243px; max-width:90%; box-sizing:border-box; font-size:10px; }
+  .horde-movement-hint { width:max-content; }
+  .horde-command-bar button { font-size:11px; }
+  .horde-save-warning { top:225px; left:10px; max-width:220px; }
+  .horde-result-grid { grid-template-columns:1fr 1fr; gap:18px; }
+  .horde-result-route { gap:16px; }
+  .horde-rewards>section { padding:0; }
+  .horde-rewards .horde-card p { font-size:12px; }
+  .horde-rewards .horde-card h2 { font-size:18px; }
+  .horde-hud[data-touch=always] .horde-conquest-dock { bottom:121px; }
+  .horde-hud[data-touch=always] .horde-first-steps { bottom:230px; }
+  .horde-hud[data-touch=always] .horde-dpad { left:10px; bottom:13px; grid-template:repeat(2,46px)/repeat(3,46px); gap:3px; }
+  .horde-hud[data-touch=hidden] .horde-conquest-dock { bottom:13px; }
+}
+@media(max-width:700px) and (pointer:coarse) {
+  .horde-first-steps { bottom:230px; }
+  .horde-hud[data-touch=hidden] .horde-first-steps { bottom:140px; }
+}
+@media(max-height:620px) {
+  .horde-menu { padding-block:20px; }
+  .horde-menu h1 { font-size:36px; }
+  .horde-menu-route { display:none; }
+  .horde-first-steps { bottom:115px; padding:10px 15px; }
+  .horde-first-steps>.horde-icon { display:none; }
+  .horde-first-steps b { font-size:16px; }
+  .horde-first-steps span { font-size:11px; }
+}
+.horde-boot-error { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:16px; background:#12251b; color:#eee7d1; padding:30px; font:16px/1.6 system-ui,sans-serif; }
+.horde-boot-error h1 { font:30px Georgia,serif; margin:0; }
+.horde-boot-error p { max-width:480px; }
+.horde-boot-error button { border:1px solid #c9dcb0; border-radius:8px; min-height:44px; padding:10px 20px; background:#e4e8d0; color:#132d1e; font:inherit; cursor:pointer; }
+.horde-history { font-size:12px; color:#c1d1b2; border-top:1px solid #bed19c33; }
+.horde-history summary { min-height:44px; display:list-item; padding:12px 0; box-sizing:border-box; cursor:pointer; }
+.horde-history summary:focus-visible { outline:2px solid #f0deaa; outline-offset:3px; }
+.horde-history ol { list-style:none; padding:0; margin:0; }
+.horde-history li { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid #bed19c22; }
+.horde-history li span { display:flex; flex-direction:column; gap:3px; }
+.horde-history li small { font-size:10px; }
+.horde-history time { font-variant-numeric:tabular-nums; color:#dacb9b; }
+.horde-credit-links { display:flex; gap:20px; font-size:12px; }
+.horde-credit-links a { color:#d4d8ad; min-height:44px; display:flex; align-items:center; }
+.horde-credit-links a:focus-visible { outline:2px solid #f0deaa; outline-offset:3px; }
+.horde-audio input[type=range] { appearance:none; background:transparent; border:0; box-shadow:none; padding:0; height:28px; }
+.horde-audio input[type=range]::-webkit-slider-runnable-track { height:4px; background:#6d865b; border-radius:3px; }
+.horde-audio input[type=range]::-webkit-slider-thumb { appearance:none; height:16px; width:16px; margin-top:-6px; border-radius:50%; background:#d5dfb9; border:2px solid #8fba79; box-shadow:0 1px 5px #0008; }
+.horde-audio input[type=range]::-moz-range-track { height:4px; background:#6d865b; border-radius:3px; }
+.horde-audio input[type=range]::-moz-range-thumb { height:14px; width:14px; border-radius:50%; background:#d5dfb9; border:2px solid #8fba79; }
+@media(max-width:700px) {
+  .horde-command-bar,.horde-movement-hint { top:222px; bottom:auto; }
+  .horde-hud[data-touch=always] .horde-threat { bottom:245px; }
+}
+@media(max-width:700px) and (pointer:coarse) {
+  .horde-hud:not([data-touch=hidden]) .horde-threat { bottom:245px; }
+}

@@ -1,6 +1,9 @@
 // Godot defaults: scripts/gameplay/*.gd and scenes/main.tscn at source dc97542.
+import { CAMPAIGN } from '../data/campaign';
+import { PERK_INFO } from '../data/perks';
+import type { Perk } from './types';
 export const RULES = {
-  count: 40, zombieHealth: 30, knightHealth: 800, waveHealthIncrease: 200, waves: 3, waveBreak: 4,
+  count: 40, zombieHealth: 30, knightHealth: 800, waveHealthIncrease: 200, waves: CAMPAIGN.length, waveBreak: 4,
   halfWidth: 30, halfDepth: 22, zombieRadius: 0.28, knightRadius: 0.55,
   spawnX: -8, spawnZ: 3, spawnSpacing: 0.8, maxAgents: 60, lifetime: 45,
   speed: 3.6, cohesionRadius: 4, separationRadius: 1.2, separationStrength: 7,
@@ -18,8 +21,8 @@ export const RULES = {
   slingRange: 22, slingSpread: 2.5, flightDuration: 0.8, flightHeight: 3.5, impactRadius: 2, impactDamage: 100, slingCooldown: 2.5,
   feastDuration: 5, feastCooldown: 15, feastIntervalScale: 0.5, feastHealing: 2,
 } as const;
-export const PERKS = ["mines", "sling", "feast", "sprint"] as const;
-export const PERK_TITLES = { mines: "Corpse mines", sling: "Zombie sling", feast: "Blood feast", sprint: "Sprint" };
+export const PERKS = Object.keys(PERK_INFO) as Perk[];
+export const PERK_TITLES = Object.fromEntries(PERKS.map(perk => [perk, PERK_INFO[perk].title])) as Record<Perk, string>;
 export const SITES = [
   { name: "West", x: -14, z: -8 },
   { name: "South", x: -10, z: 10 },

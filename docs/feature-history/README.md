@@ -9,3 +9,7 @@ instead.
 
 - [Local development](local-development.md) — source ownership, DEV environment and reproducible wallet dependencies.
 - [Horde encounter](horde-encounter.md) — native three-wave port, source parity, asset conversion, input/debug contract and verification limits.
+- [Conquest campaign](conquest-campaign.md) — five locations, signature knight attacks, passive perks and the extensible campaign table.
+- [Release readiness](release-readiness.md) — cloud checkpoints, onboarding, player controls/settings, personal records and release verification.
+- [Playable field guide](visual-guide.md) — short exercises using the real characters and rules, with separate controls and credits.
+- [Atmosphere](atmosphere.md) — drifting clouds/shadows, occasional crow/bat flocks and fading rain showers.

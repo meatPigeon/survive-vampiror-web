@@ -182,7 +182,7 @@
 
 @keyframes horde-card-in {
   from {
-    opacity:0;
+    opacity:.85;
   }
   to {
     opacity:1;

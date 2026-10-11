@@ -7,6 +7,15 @@ import { defineUiConfig } from "@idosgames/react/ui";
 // Everything is optional; what you leave out keeps its default. Uncomment and edit.
 export default defineUiConfig({
   theme: {
+    bgTop: '#254834',
+    bgBottom: '#0b1712',
+    panel: '#1d3426',
+    panelEdge: '#667a52',
+    gold: '#daca91',
+    green: '#88af70',
+    radius: 12,
+    buttonRadius: 8,
+    font: "'HordeSans', system-ui, sans-serif",
     // bgTop: "#232a6b",          // screen background, top of the gradient
     // bgBottom: "#0d1033",       // … and bottom
     // panel: "#2c3480",          // cards and popups

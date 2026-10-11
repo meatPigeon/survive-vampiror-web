@@ -1,0 +1,96 @@
+.horde-location-label {
+  display:block;
+  text-align:center;
+  color:var(--location-accent,#b4d3a0);
+  font-family:HordeSerif,serif;
+  font-size:17px;
+  font-weight:400;
+  margin-top:7px;
+}
+.horde-route {
+  position:absolute;
+  left:28px;
+  bottom:112px;
+  background:#0e1412c9;
+  padding:12px 14px;
+  border-left:2px solid var(--location-accent,#b4d3a0);
+  border-radius:0 5px 5px 0;
+  max-width:calc(100% - 56px);
+}
+.horde-route>small {
+  font-size:9px;
+  letter-spacing:.07em;
+  color:#adb8a7;
+}
+.horde-route ol {
+  display:flex;
+  list-style:none;
+  gap:16px;
+  margin:9px 0 0;
+  padding:0;
+}
+.horde-route li {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  opacity:.45;
+}
+.horde-route li span {
+  width:22px;
+  height:22px;
+  display:grid;
+  place-items:center;
+  border:1px solid #aaa99d88;
+  border-radius:50%;
+  font-size:10px;
+}
+.horde-route li small {
+  font-size:9px;
+}
+.horde-route .horde-route-current {
+  color:var(--location-accent,#e5cf99);
+  opacity:1;
+}
+.horde-route .horde-route-current span {
+  border-color:var(--location-accent,#e5cf99);
+  background:#ffffff0a;
+}
+.horde-route .horde-route-conquered {
+  color:#9cdbb0;
+  opacity:1;
+}
+.horde-route .horde-route-conquered span {
+  border-color:#9cdbb0;
+}
+.horde-passives {
+  position:absolute;
+  left:28px;
+  bottom:28px;
+  display:flex;
+  flex-wrap:wrap;
+  max-width:330px;
+  gap:5px;
+}
+.horde-passives span {
+  pointer-events:auto;
+  background:#0e1412e3;
+  border:1px solid #aaa99d35;
+  border-radius:4px;
+  padding:5px 8px;
+  font-size:10px;
+}
+.horde-perk-artwork {
+  width:160px;
+  height:160px;
+  filter:drop-shadow(0 0 12px currentColor);
+}
+@media(max-width:700px) {
+  .horde-location-label { font-size:12px; margin-top:5px; }
+  .horde-route { left:14px; bottom:240px; padding:8px 10px; max-width:calc(100% - 28px); }
+  .horde-route ol { gap:12px; }
+  .horde-route li small { font-size:8px; }
+  .horde-passives { left:14px; bottom:350px; max-width:180px; }
+  .horde-passives span { font-size:9px; }
+  .horde-perk-artwork { width:130px; height:130px; }
+}

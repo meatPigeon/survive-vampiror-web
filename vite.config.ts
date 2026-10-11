@@ -31,6 +31,7 @@ export default defineConfig(() => {
   );
   return {
     base: "./",
+    build: { license: { fileName: 'third-party-licenses.md' } },
     plugins: [react()],
     resolve: { alias },
     server: { port: 5180 },

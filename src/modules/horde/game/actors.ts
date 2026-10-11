@@ -5,7 +5,8 @@ import { MotionAir } from "./motion-air";
 import { characterLight } from './material-look';
 import { recoveryTime, strikeTime, windupTime } from "./combat";
 import { RULES } from "./rules";
-import type { Encounter, Zombie } from "./types";
+import { locationForWave } from '../data/campaign';
+import type { Attack, Encounter, Zombie } from "./types";
 
 export function disposeObjects(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>();
@@ -146,7 +147,7 @@ export class Actor {
     this.air.update(dt, world.sprintRemaining > 0 && a.moving);
   }
   updateKnight(world: Encounter, dt: number) {
-    const k = world.knight, mounted = world.wave >= 3, attacking = ["windup", "strike", "recovery"].includes(k.state);
+    const k = world.knight, mounted = locationForWave(world.wave).knightModel === 3, attacking = ["windup", "strike", "recovery"].includes(k.state);
     this.root.position.set(k.x, 0, k.z); this.root.rotation.y = k.facing;
     this.hit(k.hp, dt);
     const skeleton = this.model.getObjectByName('Skeleton3D');
@@ -168,10 +169,31 @@ export class Actor {
       return;
     }
     if (attacking) {
-      const name = [...this.actions.keys()].find(name => name.startsWith(`combat_${k.attack}_`));
+      // Reuse the authored skeleton clips, mapping each special's phases into a real pose.
+      const fallback: Partial<Record<Attack, Attack>> = { bash: 'sweep', consecration: 'spin', lance: 'charge', firebomb: 'crossbow', shockwave: 'spin' };
+      const pose = fallback[k.attack] ?? k.attack;
+      const name = [...this.actions.keys()].find(name => name.startsWith(`combat_${pose}_`));
       const action = name ? this.play(name) : null;
-      if (action) { action.time = (k.state === "windup" ? 0 : windupTime(k.attack)) + (k.state === "recovery" ? strikeTime(world) : 0) + Math.min(k.timer, k.state === "recovery" ? recoveryTime(k.attack) : Infinity); this.mixer.update(0); }
+      if (action) {
+        if (fallback[k.attack]) {
+          const clips = action.getClip().name.match(/_(\d+)_(\d+)_(\d+)_(\d+)_(\d+)_(\d+)$/);
+          const authored = clips ? [Number(clips[1]) + Number(clips[2]) / 1000, Number(clips[3]) + Number(clips[4]) / 1000, Number(clips[5]) + Number(clips[6]) / 1000] : [1, 0.3, 1];
+          const phase = k.state === 'windup' ? 0 : k.state === 'strike' ? 1 : 2;
+          const duration = phase === 0 ? windupTime(k.attack) : phase === 1 ? strikeTime(world) : recoveryTime(k.attack);
+          action.time = authored.slice(0, phase).reduce((sum, n) => sum + n, 0) + authored[phase]! * Math.min(1, k.timer / duration);
+        } else action.time = (k.state === "windup" ? 0 : windupTime(k.attack)) + (k.state === "recovery" ? strikeTime(world) : 0) + Math.min(k.timer, k.state === "recovery" ? recoveryTime(k.attack) : Infinity);
+        this.mixer.update(0);
+      }
     } else { this.play(mounted ? k.moving ? "combat_mounted_run" : "combat_mounted_idle" : k.moving ? "run" : "idle"); if (this.action) this.action.timeScale = k.moving ? 0.9 : 1; this.mixer.update(dt); }
+    this.rig.rotation.set(0, 0, 0); this.rig.position.set(0, 0, 0);
+    if (attacking && ['bash', 'consecration', 'lance', 'firebomb', 'shockwave'].includes(k.attack)) {
+      const charging = k.state === 'windup', striking = k.state === 'strike';
+      if (k.attack === 'bash') this.rig.rotation.x = charging ? 0.13 : striking ? -0.2 : 0;
+      if (k.attack === 'consecration') { this.rig.position.y = charging ? 0.12 : 0; this.rig.rotation.x = charging ? -0.08 : 0; }
+      if (k.attack === 'lance') { this.rig.rotation.x = charging ? 0.1 : striking ? -0.24 : 0; this.rig.position.z = striking ? 0.18 : 0; }
+      if (k.attack === 'firebomb') this.rig.rotation.z = charging ? -0.08 : striking && k.timer < 0.3 ? 0.12 : 0;
+      if (k.attack === 'shockwave') this.rig.position.y = charging ? -0.14 : striking ? Math.sin(Math.min(1, k.timer / 0.3) * Math.PI) * 0.18 : 0;
+    }
     if (horse) {
       if (k.moving) this.stride += dt * 12;
       ["FrontLeft", "FrontRight", "RearLeft", "RearRight"].forEach((name, i) => {
@@ -179,7 +201,7 @@ export class Actor {
       });
       const body = horse.getObjectByName("Body"); if (body) body.position.y = k.moving ? Math.sin(this.stride * 2) * 0.035 : 0;
     }
-    this.air.update(dt, mounted && k.moving || k.state === "strike" && ["charge", "rush"].includes(k.attack), mounted ? 1.6 : 1.15, 1.1);
+    this.air.update(dt, mounted && k.moving || k.state === "strike" && ["charge", "rush", "lance"].includes(k.attack), mounted ? 1.6 : 1.15, 1.1);
     this.model.rotation.z = k.attack === "rush" && k.state === "strike" ? -k.rushTurn / (50 * Math.PI / 180) * 0.08 : 0;
   }
   destroy() {

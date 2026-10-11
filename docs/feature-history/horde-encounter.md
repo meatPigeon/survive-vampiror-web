@@ -2,6 +2,8 @@
 
 The initial one-knight slice was expanded into a native port of the sibling Godot game at source commit `dc97542e57888c82ab18c6b8a47c9294192bf3bb` (Submission Update). The user asked for the full reference game, including testing, GitHub pushes and staged DEV uploads. Keep the source game's rules and authored assets as the baseline when extending this module.
 
+The current local iteration extends that three-wave baseline into a five-location march. Its intentional rule changes, new attacks and passive perks are recorded in [Conquest campaign](conquest-campaign.md). The three-wave tables and staged receipts below describe the original port and earlier uploads.
+
 The game runs in Three.js inside the existing iDos module host. It is not a Godot export or iframe. `horde` replaces `mini-game` in the composition; the unregistered starter remains as a catalog reference. The base handles sign-in, lobby and shared UI. Encounter state is local and does not grant platform currency, report arbitrary scores or complete platform quests. Those integrations require a separately scoped request and configured IDs.
 
 ## Source coverage

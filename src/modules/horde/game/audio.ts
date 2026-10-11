@@ -1,4 +1,4 @@
-import type { GameEvent } from './types';
+import type { GameEvent, Perk } from './types';
 const files = import.meta.glob('../assets/reference/audio/*', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const url = (name: string) => files[`../assets/reference/audio/${name}`]!;
 const levels = { warning: -7, swish: -12, impact: -6, voice: -15, rise: -13, sink: -16, footsteps: -22, bite: -17, command: -17, notice: -14, result: -8, cast: -13, perkImpact: -10 };
@@ -19,7 +19,7 @@ export class HordeAudio {
     this.syncVolumes();
   }
   get settings() { return { music: Math.round(volumes.music * 100), effects: Math.round(volumes.effects * 100) }; }
-  setVolume(bus: 'music' | 'effects', value: number) { volumes = { ...volumes, [bus]: Math.max(0, Math.min(1, value / 100)) }; this.syncVolumes(); if (bus === 'effects') { const player = this.channels.get('notice')!; if (player.paused) { player.src = url('command.wav'); player.play().catch(() => {}); } } }
+  setVolume(bus: 'music' | 'effects', value: number, feedback = true) { volumes = { ...volumes, [bus]: Math.max(0, Math.min(1, value / 100)) }; this.syncVolumes(); if (feedback && bus === 'effects') { const player = this.channels.get('notice')!; if (player.paused) { player.src = url('command.wav'); player.play().catch(() => {}); } } }
   private syncVolumes() {
     this.music.volume = volumes.music * 10 ** (-12 / 20);
     for (const [key, player] of this.channels) player.volume = volumes.effects * 10 ** (levels[key] / 20);
@@ -58,7 +58,8 @@ export class HordeAudio {
       case 'recruited': this.voice(1); this.play('notice', 'recruited.wav'); break;
       case 'site-closed': this.play('sink', 'grave_sink.wav'); break;
       case 'site-activated': this.play('rise', 'grave_rise.wav'); break;
-      case 'ability-activated': this.play('cast', { mines: 'mine_arm.wav', sling: 'sling_launch.wav', feast: 'feast_start.wav', sprint: 'sprint.wav' }[event.upgrade!]); break;
+      case 'ability-activated': { const cues: Partial<Record<Perk, string>> = { mines: 'mine_arm.wav', sling: 'sling_launch.wav', feast: 'feast_start.wav', sprint: 'sprint.wav' }; const cue = event.upgrade && cues[event.upgrade]; if (cue) this.play('cast', cue); break; }
+      case 'perk-gained': this.play('notice', 'recruited.wav', 0.85); break;
       case 'ability-impact': this.play('perkImpact', event.upgrade === 'mines' ? 'mine_blast.wav' : 'sling_land.wav'); break;
       case 'feast-ended': if (this.channels.get('cast')!.paused) this.play('cast', 'feast_end.wav'); break;
       case 'wave-cleared': this.stopEffects(); break;

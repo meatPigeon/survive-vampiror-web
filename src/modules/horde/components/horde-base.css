@@ -1,11 +1,13 @@
 @font-face {
   font-family:HordeSans;
   src:url('../assets/reference/fonts/noto_sans.ttf');
+  font-display:swap;
 }
 
 @font-face {
   font-family:HordeSerif;
   src:url('../assets/reference/fonts/noto_serif.ttf');
+  font-display:swap;
 }
 
 .horde-hud {
@@ -160,6 +162,24 @@
   background:none;
   border:0;
   padding:4px 6px;
+}
+
+.horde-hud .horde-debug-kill {
+  position:absolute;
+  top:61px;
+  right:28px;
+  padding:6px 10px;
+  font-size:12px;
+  color:#f2c194;
+  border-color:#c68e6080;
+  background:#2f231de6;
+}
+
+@media(max-width:700px) {
+  .horde-hud .horde-debug-kill {
+    top:194px;
+    right:14px;
+  }
 }
 
 .horde-numbers {

@@ -6,10 +6,15 @@ import { ArenaCamera } from "./camera";
 import { Previews } from "./previews";
 import { characterLight, moonlight, terrainMaterial } from './material-look';
 import { Graveyard } from './graveyard';
+import { LocationScenery } from './location-scenery';
+import { locationForWave } from '../data/campaign';
 import { CombatEffects } from './effects';
+import { Clouds } from './clouds';
+import { Weather } from './weather';
+import { loosenEnvironment } from './arena-dressing';
 import { strikeTime } from './combat';
 import { RULES, SITES } from "./rules";
-import type { Encounter, GameEvent } from "./types";
+import type { Encounter, GameEvent, Point } from "./types";
 
 const urls = {
   permanent: new URL('../assets/reference/permanent_zombie.glb', import.meta.url).href,
@@ -37,9 +42,16 @@ export class HordeView {
   private previews = new Previews();
   private terrain = terrainMaterial();
   private graveyard: Graveyard | null = null;
+  private location: LocationScenery | null = null;
+  private lighting: ReturnType<typeof moonlight>;
   private effects = new CombatEffects();
+  private clouds = new Clouds();
+  private weather = new Weather();
   private sites: SiteVisual[] = [];
   private bolt = new THREE.Group();
+  private destination = new THREE.Group();
+  private reducedMotion = false;
+  private quality: string | null = null;
   private observer: ResizeObserver;
   private destroyed = false;
   private width = 1;
@@ -52,17 +64,46 @@ export class HordeView {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.15;
     this.renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;';
     this.renderer.domElement.setAttribute('aria-label', 'Horde arena'); host.appendChild(this.renderer.domElement);
-    moonlight(this.scene); this.scene.add(this.effects.root);
+    this.lighting = moonlight(this.scene); this.scene.add(this.effects.root, this.clouds.root, this.weather.root);
     this.menu.background = new THREE.Color(0x132724);
-    for (const [size, y] of [[200, -0.02], [60, 0]] as const) {
-      const ground = new THREE.Mesh(new THREE.PlaneGeometry(size, size === 60 ? 44 : size), this.terrain.material);
-      ground.rotation.x = -Math.PI / 2; ground.position.y = y; ground.receiveShadow = true; this.scene.add(ground);
-    }
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), this.terrain.material);
+    ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; this.scene.add(ground);
     this.scene.add(this.previews.root);
+    const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xbcf4e7, transparent: true, opacity: 0.85, depthWrite: false });
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.65, 0.74, 32), markerMaterial);
+    ring.rotation.x = -Math.PI / 2; this.destination.add(ring);
+    for (const rotation of [0, Math.PI / 2]) {
+      const line = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.58), markerMaterial);
+      line.rotation.set(-Math.PI / 2, 0, rotation); this.destination.add(line);
+    }
+    this.destination.visible = false; this.scene.add(this.destination);
     const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.65, 6), new THREE.MeshStandardMaterial({ color: 0xb2afa0 }));
     shaft.rotation.x = Math.PI / 2; this.bolt.add(shaft); this.bolt.visible = false; this.scene.add(this.bolt);
     this.observer = new ResizeObserver(() => this.resize(host)); this.observer.observe(host); this.resize(host);
     this.ready = this.load();
+  }
+  configure(quality: 'auto' | 'low' | 'high', reducedMotion: boolean) {
+    const low = quality === 'low' || quality === 'auto' && window.matchMedia('(pointer: coarse)').matches;
+    this.clouds.configure(low);
+    this.weather.configure(low, reducedMotion);
+    const shadows = !low;
+    if (this.renderer.shadowMap.enabled !== shadows) {
+      this.renderer.shadowMap.enabled = shadows;
+      for (const scene of [this.scene, this.menu]) scene.traverse(o => {
+        if (o instanceof THREE.Mesh) for (const material of Array.isArray(o.material) ? o.material : [o.material]) material.needsUpdate = true;
+      });
+    }
+    if (this.quality !== quality) {
+      this.quality = quality;
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, low ? 1 : 1.5));
+      this.renderer.setSize(this.width, this.height, false);
+    }
+    this.reducedMotion = reducedMotion; this.effects.root.visible = !reducedMotion;
+    this.render();
+  }
+  setDestination(point: Point | null) {
+    this.destination.visible = !!point;
+    if (point) this.destination.position.set(point.x, 0.085, point.z);
   }
   private async load() {
     const loader = new GLTFLoader();
@@ -70,6 +111,7 @@ export class HordeView {
     if (this.destroyed) { for (const [, asset] of assets) disposeObjects(asset.scene); return; }
     for (const [key, asset] of assets) this.assets.set(key, asset);
     const environment = this.assets.get('environment')!.scene; this.scene.add(environment);
+    loosenEnvironment(environment);
     // Replace the exported overlapping flat patches with one continuous procedural surface.
     const patches = environment.getObjectByName('GroundPatches'); if (patches) patches.visible = false;
     environment.traverse(o => { if (o instanceof THREE.Mesh) { o.castShadow = true; o.receiveShadow = true; } });
@@ -104,8 +146,10 @@ export class HordeView {
     this.renderer.setSize(this.width, this.height, false); this.render();
   }
   reset() {
+    this.setDestination(null);
     for (const actor of this.actors.values()) actor.destroy(); this.actors.clear(); this.knight?.destroy(); this.knight = null; this.wave = 0;
     this.camera.reset(); this.previews.reset(); this.effects.reset(); this.terrain.active.value.fill(0);
+    this.location?.destroy(); this.location = null;
     for (const site of this.sites) { site.active = false; site.elapsed = 0; for (const grave of site.graves) grave.visible = false; site.track.visible = false; site.fill.visible = false; site.marker.visible = false; }
   }
   handleEvents(events: GameEvent[], world: Encounter) {
@@ -114,7 +158,12 @@ export class HordeView {
       if (event.type === 'recruited') {
         const recruit = world.zombies.at(-1); if (recruit) this.effects.burst(recruit, 0x9bf0bb, 18, 2);
       }
-      if (event.type === 'attack-struck' && (event.attack === 'sweep' || event.attack === 'spin')) this.knight?.slash(event.attack === 'spin', strikeTime(world), 1.1 + (world.wave >= 3 ? 0.65 : 0));
+      if (event.type === 'attack-struck' && (event.attack === 'sweep' || event.attack === 'spin')) this.knight?.slash(event.attack === 'spin', strikeTime(world), 1.1 + (locationForWave(world.wave).knightModel === 3 ? 0.65 : 0));
+      if (event.type === 'attack-struck' && event.x !== undefined && event.z !== undefined && event.attack && ['bash', 'consecration', 'lance', 'firebomb', 'shockwave'].includes(event.attack)) {
+        const color = event.attack === 'firebomb' ? 0xff813a : event.attack === 'consecration' ? 0xffe9a6 : event.attack === 'shockwave' ? 0xf5acba : 0xc0d4ff;
+        this.effects.burst({ x: event.x, z: event.z }, color, event.attack === 'firebomb' ? 36 : 22, 3.5);
+        if (event.attack !== 'shockwave') this.previews.pulse({ x: event.x, z: event.z }, event.radius ?? 2, color, 0.4, 0.3);
+      }
       if (event.type === 'bite') {
         const zombie = world.zombies.find(a => a.hp > 0 && a.x === event.x && a.z === event.z); if (zombie) this.actors.get(zombie.id)?.bite();
       }
@@ -123,7 +172,7 @@ export class HordeView {
   }
   update(world: Encounter, dt: number, menu = false) {
     this.inMenu = menu;
-    if (menu) { this.menuMixer?.update(dt); this.render(); return; }
+    if (menu) { this.menuMixer?.update(this.reducedMotion ? 0 : dt); this.render(); return; }
     if (!this.assets.size) return;
     const ids = new Set(world.zombies.map(a => a.id));
     for (const [id, actor] of this.actors) if (!ids.has(id)) { actor.destroy(); this.actors.delete(id); }
@@ -133,12 +182,19 @@ export class HordeView {
       actor.updateZombie(a, world, dt);
     }
     if (this.wave !== world.wave) {
-      this.knight?.destroy(); this.wave = world.wave; this.knight = new Actor(this.assets.get(`knight${world.wave}` as keyof typeof urls)!, false, true); this.scene.add(this.knight.root);
+      const location = locationForWave(world.wave);
+      this.location?.destroy(); this.location = new LocationScenery(location); this.scene.add(this.location.root);
+      this.camera.frameScenery(location.id === 'graveyard' ? null : this.location.root);
+      this.terrain.setLocation(location); this.lighting.setLocation(location); this.clouds.setLocation(location); this.weather.setLocation(location, world.wave);
+      this.assets.get('environment')!.scene.visible = location.id === 'graveyard';
+      if (this.graveyard) this.graveyard.root.visible = location.id === 'graveyard';
+      this.knight?.destroy(); this.wave = world.wave;
+      this.knight = new Actor(this.assets.get(`knight${location.knightModel}` as keyof typeof urls)!, false, true); this.scene.add(this.knight.root);
     }
-    this.knight?.updateKnight(world, dt); this.camera.update(world, dt); this.previews.update(world, dt);
-    this.graveyard?.update(dt);
+    this.knight?.updateKnight(world, dt); this.camera.update(world, dt); this.previews.update(world, dt); this.clouds.update(dt, this.reducedMotion); this.weather.update(dt, this.reducedMotion);
+    if (this.graveyard?.root.visible) this.graveyard.update(this.reducedMotion ? 0 : dt); this.location?.update(this.reducedMotion ? 0 : dt);
     this.effects.update(dt, this.height * this.renderer.getPixelRatio() / (this.camera.camera.top - this.camera.camera.bottom));
-    const bolt = world.knight.bolt; this.bolt.visible = bolt.flying; this.bolt.position.set(bolt.x, world.wave >= 3 ? 1.7 : 1.2, bolt.z); this.bolt.rotation.y = Math.atan2(bolt.direction.x, bolt.direction.z);
+    const bolt = world.knight.bolt; this.bolt.visible = bolt.flying; this.bolt.position.set(bolt.x, locationForWave(world.wave).knightModel === 3 ? 1.7 : 1.2, bolt.z); this.bolt.rotation.y = Math.atan2(bolt.direction.x, bolt.direction.z);
     this.sites.forEach((site, index) => {
       const active = world.activeSite === index;
       if (active !== site.active) { site.active = active; site.elapsed = 0; }
@@ -146,7 +202,7 @@ export class HordeView {
       this.terrain.active.value[index] = THREE.MathUtils.lerp(this.terrain.active.value[index]!, active ? 1 : 0, 1 - Math.exp(-4 * dt));
       if (site.fill.visible) { site.fill.geometry.dispose(); site.fill.geometry = site.geometry(Math.min(1, world.siteProgress / RULES.summonTime)); }
       site.graves.forEach((grave, i) => {
-        const t = THREE.MathUtils.clamp((site.elapsed - i * 0.09) / (active ? 0.55 : 0.4), 0, 1);
+        const t = this.reducedMotion ? 1 : THREE.MathUtils.clamp((site.elapsed - i * 0.09) / (active ? 0.55 : 0.4), 0, 1);
         const eased = active ? 1 + 2.70158 * (t - 1) ** 3 + 1.70158 * (t - 1) ** 2 : t * t;
         grave.rotation.x = 0.12 * (active ? 1 - (1 - (1 - t) ** 3) : eased);
         grave.rotation.z = [-6, 3, 8][i]! * Math.PI / 180 + (i % 2 === 0 ? 0.1 : -0.1) * (active ? (1 - t) ** 3 : eased);
@@ -165,7 +221,7 @@ export class HordeView {
   }
   capture(): Promise<Blob | null> { if (this.destroyed) return Promise.resolve(null); this.render(); return new Promise(resolve => this.renderer.domElement.toBlob(resolve, 'image/png')); }
   destroy() {
-    this.destroyed = true; this.observer.disconnect(); this.reset(); this.menuMixer?.stopAllAction(); this.effects.destroy();
+    this.destroyed = true; this.observer.disconnect(); this.reset(); this.menuMixer?.stopAllAction(); this.effects.destroy(); this.clouds.destroy(); this.weather.destroy();
     disposeObjects(this.scene); disposeObjects(this.menu);
     for (const asset of this.assets.values()) disposeObjects(asset.scene);
     this.renderer.dispose(); this.renderer.domElement.remove();

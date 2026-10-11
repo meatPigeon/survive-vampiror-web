@@ -1,0 +1,181 @@
+.horde-guide { background:#08130eee; }
+.horde-guide>section { display:flex; flex-direction:column; max-height:calc(100dvh - 44px); width:min(1180px,100%); padding:0; text-align:left; border:1px solid #c1c99b66; border-radius:16px; overflow:hidden; background:#15231c; box-shadow:0 24px 100px #0008; }
+.guide-header { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:22px 28px; border-bottom:1px solid #bccc9730; background:#1f3025; }
+.guide-brand { display:flex; align-items:center; gap:15px; }
+.guide-brand>.horde-icon { width:40px; height:40px; color:#d8ddab; }
+.horde-guide .guide-header h1 { font-size:24px; font-weight:500; margin:4px 0 0; letter-spacing:-.03em; }
+.guide-header>button { padding:0; width:44px; height:44px; background:transparent; border-color:#c1cda340; color:#c7d4bb; font-size:20px; }
+.guide-header,.guide-footer { flex:none; }
+.guide-layout { display:grid; grid-template-columns:210px minmax(0,1fr); min-height:0; overflow:auto; overscroll-behavior:contain; }
+.guide-chapters { padding:22px 12px; border-right:1px solid #bccc9725; background:#101c16; display:flex; flex-direction:column; gap:8px; }
+.horde-guide .guide-chapters button { text-align:left; padding:16px 10px; display:flex; align-items:center; gap:12px; border:1px solid transparent; background:transparent; min-height:94px; }
+.guide-chapter-icon { display:grid; place-items:center; width:34px; height:38px; color:#94a889; flex:none; }
+.guide-chapter-icon .horde-icon { width:30px; height:30px; }
+.guide-chapters button>span:last-child { display:flex; flex-direction:column; gap:5px; }
+.guide-chapters small { font-size:9px; letter-spacing:.13em; color:#9dba88; }
+.guide-chapters b { font-size:13px; font-weight:500; }
+.guide-chapters em { font-style:normal; color:#8ca28d; font-size:9px; line-height:1.4; }
+.horde-guide .guide-chapters button[aria-current=step] { background:linear-gradient(90deg,#354930,#233c2c); border-color:#a8c58b50; box-shadow:inset 3px 0 #d7d9a0; }
+.guide-chapters button[aria-current=step] .guide-chapter-icon { color:#e5dca3; }
+.horde-guide .guide-chapters p { margin:auto 12px 4px; padding-top:28px; font-size:10px; color:#91a48b; line-height:1.8; }
+.guide-content { padding:22px 26px; min-width:0; }
+.guide-scene-wrap { position:relative; border-radius:10px; background:radial-gradient(ellipse at 50% 40%,#49705d,#263f30 70%,#203628); border:1px solid #c4d39f30; overflow:hidden; }
+.guide-scene { height:320px; outline:none; touch-action:pan-y; cursor:crosshair; position:relative; }
+.guide-scene:focus-visible { box-shadow:inset 0 0 0 2px #f3dca2; }
+.guide-scene canvas { display:block; width:100%; height:100%; }
+.guide-scene-heading { position:absolute; top:15px; left:18px; right:18px; display:flex; justify-content:space-between; align-items:center; gap:10px; pointer-events:none; z-index:1; }
+.guide-scene-heading span:first-child { font-size:9px; letter-spacing:.13em; color:#e1eacb; display:flex; align-items:center; gap:7px; }
+.guide-scene-heading i { width:5px; height:5px; background:#c4e297; border-radius:50%; box-shadow:0 0 10px #c3e99488; }
+.guide-scene-heading span:last-child { font-size:10px; color:#c3d5bb; background:#12231a70; border:1px solid #bfceab24; border-radius:20px; padding:5px 10px; }
+.guide-scene-caption { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); pointer-events:none; display:flex; align-items:center; gap:8px; width:max-content; max-width:90%; box-sizing:border-box; padding:8px 14px; border:1px solid #d5deb745; border-radius:6px; background:#10231be8; font-size:12px; color:#e3e7cb; text-align:center; }
+.guide-scene-caption .horde-icon { width:21px; height:21px; flex:none; color:#d0d79f; }
+.guide-scene-caption.is-complete { background:#274b32ee; border-color:#c5e49d90; }
+.guide-progress { position:absolute; bottom:0; left:0; right:0; height:3px; background:#071c1388; }
+.guide-progress i { display:block; height:100%; background:#d5e4a4; transition:width .12s linear; }
+.guide-scene-loading { position:absolute; inset:45% 8% auto; text-align:center; font-size:13px; color:#d6ddc4; pointer-events:none; }
+.guide-lesson-copy { display:flex; align-items:center; justify-content:space-between; gap:25px; padding-top:23px; }
+.horde-guide .guide-lesson-copy h2 { font-size:27px; line-height:1.18; font-weight:500; margin:7px 0 10px; max-width:380px; color:#f2e8ce; letter-spacing:-.035em; }
+.horde-guide .guide-lesson-copy p { font-size:12px; line-height:1.6; margin:0; max-width:360px; color:#b9cab4; }
+.guide-practice-actions { min-width:200px; }
+.horde-guide .guide-do { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 15px; font-size:12px; width:100%; color:#e4eccd; background:#354e35; border-color:#a0be8055; }
+.guide-do .horde-icon { width:20px; height:20px; }
+.guide-practice-actions>div { display:flex; justify-content:space-between; gap:5px; }
+.horde-guide .guide-practice-actions>div button { font-size:10px; padding:6px 8px; border-color:transparent; color:#adbf9f; background:transparent; }
+.guide-feedback { display:flex; align-items:center; gap:13px; min-height:52px; margin-top:20px; padding:12px 15px; border-left:2px solid #afbc7955; background:#0c1b145e; box-sizing:border-box; }
+.guide-feedback>.horde-icon { width:25px; height:25px; flex:none; color:#c6cb92; }
+.horde-guide .guide-feedback p { color:#b3c3aa; font-size:11px; line-height:1.6; margin:0; }
+.guide-feedback.is-retry { border-color:#d8996c; }
+.guide-footer { display:flex; justify-content:space-between; align-items:center; padding:14px 26px; border-top:1px solid #bccc972e; gap:16px; background:#1c2c22; }
+.guide-reference-links { display:flex; gap:16px; }
+.horde-guide .guide-reference-links button { font-size:11px; padding:5px 0; border:0; background:transparent; color:#aebc9f; }
+.horde-guide .guide-reference-links button[aria-pressed=true] { color:#eee5bb; text-decoration:underline; text-underline-offset:5px; }
+.guide-next { display:flex; align-items:center; gap:20px; }
+.guide-next>span { font-size:10px; letter-spacing:.14em; color:#95a78b; }
+.horde-guide .guide-next button { display:flex; align-items:center; gap:25px; font-size:12px; padding:10px 18px; }
+.guide-next .horde-icon { width:20px; height:20px; }
+.guide-map { border:1px solid #c8d39c38; border-radius:10px; padding:20px 22px 15px; background:radial-gradient(ellipse at 10% 40%,#53674344,transparent 70%),linear-gradient(145deg,#314b38,#1c332c); text-align:center; overflow:hidden; }
+.guide-map-route { display:flex; justify-content:space-between; position:relative; padding:35px 0 20px; }
+.guide-map-route:before { content:''; position:absolute; top:66px; left:8%; right:8%; border-top:2px dashed #bdc59177; transform:rotate(-5deg); }
+.guide-map-route>div { position:relative; display:flex; flex-direction:column; align-items:center; gap:7px; flex:1; transform:translateY(calc(14px - var(--stop)*7px)); }
+.guide-map-route>div>span { display:grid; place-items:center; width:58px; height:58px; background:#213b2e; border:1px solid #b9cb9477; box-shadow:0 0 0 6px #294533; transform:rotate(-6deg); border-radius:14px; }
+.guide-map-route .horde-icon { width:37px; height:37px; color:#d3d4a2; transform:rotate(6deg); }
+.guide-map-route b { font-size:9px; color:#b7c995; }
+.guide-map-route small { font-size:10px; color:#d0d8c0; }
+.horde-guide .guide-map p { font:italic 14px HordeSerif,serif; margin:0; color:#b8c8a5; }
+.guide-perk-choices { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:18px; }
+.horde-guide .guide-perk-choices button { display:flex; align-items:center; flex-direction:column; padding:8px 12px 15px; background:#0f211a; border-color:#a9c49033; border-radius:10px; }
+.horde-guide .guide-perk-choices button[aria-pressed=true] { border-color:#d3d099; background:linear-gradient(145deg,#405031,#263c29); box-shadow:0 0 0 2px #d4d39418; }
+.guide-perk-choices .horde-perk-artwork { width:135px; height:104px; max-width:100%; }
+.guide-perk-choices small { font-size:8px; letter-spacing:.08em; color:#9bb284; margin:3px 0 7px; }
+.guide-perk-choices b { font:500 17px HordeSerif,serif; }
+.guide-ten { height:104px; display:flex; align-items:center; justify-content:center; color:#d8ddaf; gap:5px; }
+.guide-ten .horde-icon { width:38px; height:38px; }
+.guide-ten strong { font:36px HordeSerif,serif; }
+.guide-perk-detail { display:flex; align-items:center; gap:16px; padding:15px 0 0; min-height:61px; }
+.guide-perk-detail>.horde-icon { color:#d1d397; width:30px; height:30px; flex:none; }
+.guide-perk-detail b { font-size:12px; color:#dde1be; }
+.horde-guide .guide-perk-detail p { font-size:11px; margin:5px 0 0; line-height:1.6; }
+.horde-guide .guide-example-note { margin:10px 0 0; font-size:9px; color:#94a48c; }
+.guide-reference { padding:18px 8px; min-height:505px; }
+.horde-guide .guide-reference h2 { font-size:31px; font-weight:500; margin:10px 0 26px; }
+.guide-control-list { display:grid; grid-template-columns:1fr 1fr; gap:20px 30px; }
+.guide-control-list>div { display:grid; grid-template-columns:1fr auto; gap:10px; padding-bottom:16px; border-bottom:1px solid #bac6a02b; }
+.guide-control-list span { font-size:12px; color:#d9dfc5; }
+.guide-control-list b { display:flex; gap:4px; align-items:center; font-size:11px; font-weight:400; }
+.guide-control-list small { grid-column:1/-1; font-size:10px; line-height:1.6; color:#96ad91; }
+.guide-control-list kbd { font-size:10px; padding:3px 6px; }
+.guide-save-note { display:flex; gap:18px; padding:24px 20px; background:#23362a; border-radius:8px; margin-top:25px; }
+.guide-save-note>.horde-icon { width:30px; height:30px; flex:none; color:#c3d5a1; }
+.guide-save-note b { font:19px HordeSerif,serif; }
+.horde-guide .guide-save-note p { margin:10px 0; font-size:12px; }
+.guide-save-note small { font-size:10px; color:#a0b399; line-height:1.5; display:block; }
+.guide-credits { text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.guide-credits>.horde-icon { width:65px; height:65px; color:#d6cb95; margin-bottom:28px; }
+.horde-guide .guide-credits h2 { font-size:38px; margin-bottom:16px; }
+.horde-guide .guide-credits p { font-size:13px; max-width:380px; margin-bottom:15px; }
+.guide-credits dl { display:flex; gap:50px; margin:20px 0; font-size:11px; }
+.guide-credits dt { color:#81987d; margin-bottom:10px; }
+.guide-credits dd { margin:0; color:#c5d2b8; }
+@media(max-width:900px) {
+  .guide-layout { grid-template-columns:170px minmax(0,1fr); }
+  .guide-chapters { padding:15px 8px; }
+  .guide-chapter-icon { width:25px; }
+  .guide-chapters em { display:none; }
+  .guide-content { padding:18px; }
+  .guide-lesson-copy { flex-direction:column; align-items:flex-start; gap:14px; }
+  .guide-practice-actions { display:flex; gap:10px; align-items:center; width:100%; }
+  .guide-practice-actions>div { flex:none; }
+  .guide-scene { height:290px; }
+  .guide-reference { min-height:530px; }
+  .guide-control-list { grid-template-columns:1fr; gap:13px; }
+}
+@media(max-width:700px) {
+  .horde-guide { padding:10px; }
+  .horde-guide>section { max-height:calc(100dvh - 24px); border-radius:12px; padding:0; }
+  .guide-header { padding:16px; gap:10px; }
+  .guide-brand { gap:9px; }
+  .guide-brand>.horde-icon { width:29px; height:29px; }
+  .horde-guide .guide-header h1 { font-size:17px; max-width:220px; }
+  .horde-guide .guide-header .horde-kicker { font-size:8px; }
+  .guide-layout { display:flex; flex-direction:column; }
+  .guide-chapters { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; padding:8px; border-right:0; border-bottom:1px solid #bccc9730; }
+  .guide-chapters,.guide-content { flex:none; }
+  .horde-guide .guide-chapters button { padding:9px 3px; flex-direction:column; gap:4px; text-align:center; min-height:73px; }
+  .guide-chapter-icon { width:24px; height:24px; }
+  .guide-chapter-icon .horde-icon { width:23px; height:23px; }
+  .guide-chapters small,.horde-guide .guide-chapters p { display:none; }
+  .guide-chapters b { font-size:9px; }
+  .horde-guide .guide-chapters button[aria-current=step] { box-shadow:inset 0 -2px #d7d9a0; }
+  .guide-content { padding:12px; }
+  .guide-scene { height:240px; }
+  .guide-scene-heading { top:11px; left:10px; right:10px; }
+  .guide-scene-heading span:first-child { font-size:8px; }
+  .guide-scene-heading span:last-child { font-size:8px; padding:4px 7px; }
+  .guide-scene-caption { font-size:10px; padding:7px 9px; bottom:12px; gap:6px; }
+  .guide-scene-caption .horde-icon { width:18px; height:18px; }
+  .guide-lesson-copy { padding-top:17px; gap:10px; }
+  .horde-guide .guide-lesson-copy h2 { font-size:25px; max-width:300px; margin:6px 0 8px; }
+  .horde-guide .guide-lesson-copy p { font-size:11px; }
+  .guide-lesson-copy .horde-kicker { font-size:8px; }
+  .guide-practice-actions { flex-wrap:wrap; gap:2px; }
+  .guide-practice-actions>div { width:100%; }
+  .horde-guide .guide-practice-actions>div button { padding:3px 8px; }
+  .horde-guide .guide-do { padding:10px 12px; font-size:11px; }
+  .guide-feedback { margin-top:9px; padding:10px; gap:10px; }
+  .horde-guide .guide-feedback p { font-size:10px; }
+  .guide-feedback>.horde-icon { width:21px; height:21px; }
+  .guide-footer { padding:10px 12px; flex-wrap:wrap; gap:5px; }
+  .guide-reference-links { gap:18px; order:2; justify-content:center; width:100%; }
+  .horde-guide .guide-reference-links button { font-size:10px; }
+  .guide-next { width:100%; justify-content:space-between; gap:15px; }
+  .horde-guide .guide-next button { font-size:11px; gap:16px; }
+  .guide-next>span { font-size:9px; }
+  .guide-map { padding:18px 10px 15px; }
+  .guide-map>.horde-kicker { font-size:7px; letter-spacing:.09em; }
+  .guide-map-route { padding:30px 0 15px; }
+  .guide-map-route:before { top:46px; }
+  .guide-map-route>div>span { width:33px; height:38px; border-radius:8px; box-shadow:0 0 0 3px #294533; }
+  .guide-map-route .horde-icon { width:26px; height:26px; }
+  .guide-map-route small { font-size:8px; }
+  .horde-guide .guide-map p { font-size:11px; }
+  .guide-perk-choices { gap:6px; margin-top:14px; }
+  .horde-guide .guide-perk-choices button { padding:6px 3px 12px; }
+  .guide-perk-choices .horde-perk-artwork,.guide-ten { height:78px; }
+  .guide-perk-choices small { font-size:6px; }
+  .guide-perk-choices b { font-size:12px; }
+  .guide-ten { gap:0; }
+  .guide-ten .horde-icon { width:28px; height:28px; }
+  .guide-ten strong { font-size:25px; }
+  .horde-guide .guide-perk-detail p { font-size:10px; }
+  .guide-reference { padding:15px 5px; min-height:440px; }
+  .horde-guide .guide-reference h2 { font-size:25px; }
+  .guide-save-note { padding:17px 12px; gap:10px; }
+  .guide-save-note b { font-size:16px; }
+  .horde-guide .guide-save-note p { font-size:11px; }
+  .guide-credits dl { flex-direction:column; gap:20px; }
+}
+@media(max-height:600px) and (min-width:701px) {
+  .guide-header { padding:14px 24px; }
+  .guide-scene { height:220px; }
+  .guide-layout { grid-template-columns:170px minmax(0,1fr); }
+}

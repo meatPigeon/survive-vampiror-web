@@ -10,7 +10,7 @@ export default defineAppConfig({
   // "game" — sign-in → straight into a game that lives inside the lobby (idle-rpg); an app whose
   // games take the whole screen (voxelcraft, board-game) starts in the lobby. "lobby" — always
   // sign-in → lobby → "Play". The mode id of a game ("voxelcraft") starts in that one.
-  start: "game",
+  start: "horde",
   lobby: {
     // order: ["play", "store", "character"], // these tabs first, in this order
     // primary: ["season"],                    // also a main tab rather than under "More"

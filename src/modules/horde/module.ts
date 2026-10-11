@@ -9,8 +9,8 @@ export const hordeModule = defineModule({
   meta: { name: "Survive Vampiror", type: "game", genre: "survival", engine: "three" },
   setup(ctx) {
     const box = createControllerBox<HordeController>();
-    ctx.registerRoute({ id: "horde", label: "Horde encounter", icon: "⚔️" });
-    ctx.registerScene(createHordeScene(box));
+    ctx.registerRoute({ id: "horde", label: "Survive Vampiror", icon: "⚔️" });
+    ctx.registerScene(createHordeScene(box, ctx.client));
     ctx.registerPanel({ id: "hud", slot: "overlay", component: makeHordeHud(box) });
     ctx.exposeToAgent({
       state: () => box.get()?.describe() ?? { mounted: false, playing: false },

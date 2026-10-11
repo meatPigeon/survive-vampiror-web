@@ -28,15 +28,22 @@ export class Graveyard {
       marker.rotation.set(0, (i % 3 - 1) * 0.22 + (z > 0 ? Math.PI : 0), (i % 2 - 0.5) * 0.09);
       marker.scale.setScalar(0.9 + (i % 3) * 0.12); this.root.add(marker);
     }
-    // One instanced draw for worn boundary stones, leaving the interior clear.
+    // Old stone runs survive in short, bowed fragments with long gaps between them.
     const edges: [number, number, number][] = [];
-    for (let x = -29; x <= 29; x += 1.25) for (const z of [-22.6, 22.6]) edges.push([x, z, 0]);
-    for (let z = -21; z <= 21; z += 1.25) for (const x of [-30.6, 30.6]) edges.push([x, z, Math.PI / 2]);
-    const stones = new THREE.InstancedMesh(new THREE.BoxGeometry(1.08, 0.11, 0.48), stone, edges.length);
+    const fragments = [[-21,-23.8,10,.17], [19,-25.6,7,-.26], [-16,25,8,-.19],
+      [21,24.5,5,.31], [-32.8,-7,8,1.4], [33.2,6,7,1.75]] as const;
+    for (const [cx,cz,count,yaw] of fragments) for (let i=0;i<count;i++) {
+      if (i % 5 === 2) continue;
+      const along=(i-(count-1)/2)*1.55 + Math.sin(i*2.7)*.18;
+      const bend=Math.sin(along*.38+cx)*.5;
+      edges.push([cx+along*Math.cos(yaw)-bend*Math.sin(yaw),cz+along*Math.sin(yaw)+bend*Math.cos(yaw),yaw]);
+    }
+    const stones = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.5,0), stone, edges.length);
+    stones.name = 'broken-graveyard-stone-runs';
     const dummy = new THREE.Object3D();
     edges.forEach(([x, z, yaw], i) => {
-      dummy.position.set(x, 0.045, z); dummy.rotation.set(0, yaw + Math.sin(i * 12.3) * 0.08, 0);
-      dummy.scale.set(0.9 + (i % 5) * 0.025, 1, 0.9 + (i % 3) * 0.05); dummy.updateMatrix(); stones.setMatrixAt(i, dummy.matrix);
+      dummy.position.set(x, 0.065, z); dummy.rotation.set(0, yaw + Math.sin(i * 12.3) * .4, 0);
+      dummy.scale.set(.86+(i%5)*.08, .14, .55+(i%3)*.09); dummy.updateMatrix(); stones.setMatrixAt(i, dummy.matrix);
       stones.setColorAt(i, new THREE.Color().setHSL(0.43, 0.1, 0.58 + (i % 4) * 0.025));
     });
     stones.receiveShadow = true; this.root.add(stones);

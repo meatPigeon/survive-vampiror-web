@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --test tests/horde.test.mjs tests/presentation.test.mjs",
+    "test": "node --test tests/horde.test.mjs tests/presentation.test.mjs tests/campaign.test.mjs tests/knight-specials.test.mjs tests/release.test.mjs tests/controller.test.mjs tests/guide.test.mjs",
     "assets:port": "node scripts/port-assets.mjs",
     "verify": "node scripts/verify.mjs",
     "check": "npm run typecheck && npm test && npm run build && npm run verify",

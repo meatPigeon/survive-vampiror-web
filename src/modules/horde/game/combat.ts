@@ -1,12 +1,15 @@
 import { RULES } from "./rules";
 import { add, angleBetween, clamp, closest, distance, dot, length, lerp, moveToward, normalized, rotate, scale, subtract } from "./math";
 import { alive, centerOf, clampBody, damageZombie, emit } from "./world";
+import { locationForWave } from '../data/campaign';
+import { advanceSpecialStrike, isSpecial, SPECIALS, specialTarget, startSpecialStrike } from './knight-specials';
 import type { Attack, Encounter, Point } from "./types";
 
-export const windupTime = (kind: Attack) => ({ sweep: RULES.windup, charge: RULES.chargeWindup, spin: RULES.spinWindup, crossbow: RULES.crossbowWindup, rush: RULES.rushWindup })[kind];
-export const strikeTime = (world: Encounter) => ({ sweep: RULES.strike, charge: RULES.chargeDuration / (world.wave >= 3 ? 1.4 : 1), spin: RULES.spinDuration, crossbow: 0.18, rush: RULES.rushDuration })[world.knight.attack];
-export const recoveryTime = (kind: Attack) => ({ sweep: RULES.recovery, charge: RULES.chargeRecovery, spin: RULES.spinRecovery, crossbow: RULES.crossbowRecovery, rush: RULES.rushRecovery })[kind];
-const radius = (world: Encounter) => world.wave >= 3 ? 0.75 : RULES.knightRadius;
+export const mountedKnight = (world: Encounter) => locationForWave(world.wave).knightModel === 3;
+export const windupTime = (kind: Attack) => isSpecial(kind) ? SPECIALS[kind].windup : ({ sweep: RULES.windup, charge: RULES.chargeWindup, spin: RULES.spinWindup, crossbow: RULES.crossbowWindup, rush: RULES.rushWindup })[kind];
+export const strikeTime = (world: Encounter) => isSpecial(world.knight.attack) ? SPECIALS[world.knight.attack].strike : ({ sweep: RULES.strike, charge: RULES.chargeDuration / (mountedKnight(world) ? 1.4 : 1), spin: RULES.spinDuration, crossbow: 0.18, rush: RULES.rushDuration })[world.knight.attack];
+export const recoveryTime = (kind: Attack) => isSpecial(kind) ? SPECIALS[kind].recovery : ({ sweep: RULES.recovery, charge: RULES.chargeRecovery, spin: RULES.spinRecovery, crossbow: RULES.crossbowRecovery, rush: RULES.rushRecovery })[kind];
+const radius = (world: Encounter) => mountedKnight(world) ? 0.75 : RULES.knightRadius;
 const facing = (p: Point) => Math.atan2(p.x, p.z);
 
 function endpoint(world: Encounter, target: Point): Point {
@@ -32,6 +35,17 @@ function countTargets(world: Encounter, kind: Attack, target: Point, targets: Po
 }
 export function chooseAttackTarget(world: Encounter, kind: Attack, fallback: Point): Point {
   if (kind === "spin") return { ...fallback };
+  if (isSpecial(kind)) {
+    if (kind !== 'consecration' && kind !== 'firebomb') return { ...fallback };
+    const candidates = [fallback, centerOf(alive(world)), ...alive(world)];
+    let best = specialTarget(world, kind, fallback), count = -1;
+    for (const candidate of candidates) {
+      const target = specialTarget(world, kind, candidate);
+      const found = alive(world).filter(a => distance(a, target) <= SPECIALS[kind].radius).length;
+      if (found > count) { best = target; count = found; }
+    }
+    return best;
+  }
   const k = world.knight;
   const reach = kind === "crossbow" ? RULES.crossbowRange : kind === "charge" ? Math.hypot(RULES.chargeRange, RULES.chargeWidth / 2) : RULES.attackRange;
   const targets = alive(world).filter(a => distance(a, k) <= reach);
@@ -48,15 +62,16 @@ export function chooseAttackTarget(world: Encounter, kind: Attack, fallback: Poi
   return best;
 }
 export function beginAttack(world: Encounter, kind: Attack, target: Point) {
-  if (kind === "rush" && world.wave < 3) return;
+  if (kind === "rush" && !mountedKnight(world)) return;
   const k = world.knight;
   k.attack = kind; k.attackNumber++; k.direction = normalized(subtract(target, k));
   if (length(k.direction) < 1e-6) k.direction = { x: 0, z: -1 };
-  k.origin = { x: k.x, z: k.z }; k.chargeEnd = endpoint(world, target);
+  k.origin = { x: k.x, z: k.z }; k.chargeEnd = endpoint(world, target); k.target = isSpecial(kind) ? specialTarget(world, kind, target) : { ...target };
   if (kind === "charge" && distance(k.origin, k.chargeEnd) < 0.1) k.attack = kind = "sweep";
   if (kind === "charge") k.direction = normalized(subtract(k.chargeEnd, k.origin));
   if (kind === "crossbow") k.crossbowCooldown = RULES.crossbowInterval;
   if (kind === "rush") { k.rushCooldown = RULES.rushInterval; k.rushSpeed = RULES.knightSpeed * 2; k.rushTurn = 0; }
+  if (isSpecial(kind)) k.specialCooldown = SPECIALS[kind].cooldown;
   k.state = "windup"; k.timer = 0; k.hitIds = []; k.moving = false; k.facing = facing(k.direction);
   emit(world, { type: "attack-warned", attack: kind });
 }
@@ -128,19 +143,21 @@ function hunt(world: Encounter, dt: number) {
   const nearest = living.reduce<typeof living[number] | null>((best, a) => !best || distance(a, k) < distance(best, k) ? a : best, null);
   if (!nearest) return;
   const d = distance(nearest, k);
-  if (world.wave >= 3 && k.rushCooldown <= 0 && d <= RULES.rushRange) { beginAttack(world, "rush", centerOf(living)); return; }
-  if (world.wave >= 2 && k.crossbowCooldown <= 0 && d >= RULES.crossbowMinRange && d <= RULES.crossbowRange) { beginAttack(world, "crossbow", chooseAttackTarget(world, "crossbow", nearest)); return; }
+  const location = locationForWave(world.wave), special = location.special;
+  if (k.specialCooldown <= 0 && d <= SPECIALS[special].range) { beginAttack(world, special, chooseAttackTarget(world, special, nearest)); return; }
+  if (mountedKnight(world) && k.rushCooldown <= 0 && d <= RULES.rushRange) { beginAttack(world, "rush", centerOf(living)); return; }
+  if (location.knightModel >= 2 && k.crossbowCooldown <= 0 && d >= RULES.crossbowMinRange && d <= RULES.crossbowRange) { beginAttack(world, "crossbow", chooseAttackTarget(world, "crossbow", nearest)); return; }
   const pattern: Attack[] = k.phase === 1 ? ["sweep", "sweep", "charge"] : k.phase === 2 ? ["sweep", "charge", "spin"] : ["charge", "spin", "sweep", "spin"];
   let next = pattern[k.attackNumber % pattern.length]!;
   if (d > RULES.attackRange && d <= RULES.chargeRange) next = "charge";
   const reach = next === "charge" ? RULES.chargeRange : next === "spin" ? RULES.spinRadius : RULES.attackRange;
   if (d <= reach) { beginAttack(world, next, chooseAttackTarget(world, next, nearest)); return; }
-  const direction = normalized(subtract(nearest, k)); Object.assign(k, add(k, scale(direction, RULES.knightSpeed * (world.wave >= 3 ? 2 : 1) * dt)));
+  const direction = normalized(subtract(nearest, k)); Object.assign(k, add(k, scale(direction, RULES.knightSpeed * (mountedKnight(world) ? 2 : 1) * dt)));
   clampBody(k, radius(world)); k.facing = facing(direction); k.moving = true;
 }
 export function updateKnight(world: Encounter, dt: number) {
-  const k = world.knight; if (k.state === "stopped" || k.hp <= 0) return;
-  k.crossbowCooldown = Math.max(0, k.crossbowCooldown - dt); k.rushCooldown = Math.max(0, k.rushCooldown - dt);
+  const k = world.knight; if (world.status !== 'playing' || world.paused || world.betweenWaves || k.state === "stopped" || k.hp <= 0) return;
+  k.crossbowCooldown = Math.max(0, k.crossbowCooldown - dt); k.rushCooldown = Math.max(0, k.rushCooldown - dt); k.specialCooldown = Math.max(0, k.specialCooldown - dt);
   advanceBolt(world, dt); if ((k.state as string) === "stopped") return;
   k.moving = false;
   switch (k.state) {
@@ -148,13 +165,18 @@ export function updateKnight(world: Encounter, dt: number) {
     case "windup":
       k.timer += dt;
       if (k.timer >= windupTime(k.attack)) {
-        k.state = "strike"; k.timer = 0; emit(world, { type: "attack-struck", attack: k.attack });
+        k.state = "strike"; k.timer = 0;
+        const target = k.attack === 'consecration' || k.attack === 'firebomb' ? k.target : k.origin;
+        const reach = isSpecial(k.attack) ? SPECIALS[k.attack].range : undefined;
+        emit(world, { type: "attack-struck", attack: k.attack, x: target.x, z: target.z, radius: k.attack === 'consecration' || k.attack === 'firebomb' ? SPECIALS[k.attack].radius : reach });
         if (k.attack === "crossbow") Object.assign(k.bolt, k.origin, { flying: true, direction: { ...k.direction }, remaining: RULES.crossbowRange });
+        else if (isSpecial(k.attack)) startSpecialStrike(world);
         else if (k.attack !== "charge" && k.attack !== "rush") hitArea(world);
       }
       break;
     case "strike":
       if (k.attack === "rush") { advanceRush(world, Math.min(dt, Math.max(0, RULES.rushDuration - k.timer))); if (k.state !== "strike") return; }
+      if (isSpecial(k.attack)) advanceSpecialStrike(world, k.timer, k.timer + dt);
       k.timer += dt;
       if (k.attack === "charge") {
         const previous = { x: k.x, z: k.z }; Object.assign(k, lerp(k.origin, k.chargeEnd, Math.min(k.timer / strikeTime(world), 1)));

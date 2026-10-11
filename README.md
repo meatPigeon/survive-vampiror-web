@@ -4,13 +4,15 @@ Native web source for iDos title `FYVPZFCO`, developed with Codex and iDos Code 
 
 **Start here:** [Open the project and begin coding](START_HERE.md).
 
-Lead forty zombies through three escalating knight waves in a moonlit low-poly graveyard. The native port follows the Godot reference's combat, recruitment, upgrades, difficulty and rewards, and uses its authored models, animations, audio and fonts. Procedural ground, warm candles, soft character rim lighting and combat sparks add a web visual treatment. The existing iDos host handles authentication and shared UI.
+Lead forty zombies on a five-location march: Village Graveyard → Village Chapel → Royal Road → Fortress Outskirts → Castle Courtyard. Each defender adds a signature attack, with new passive perks between waves. The port uses the Godot reference's baseline combat, recruitment, difficulty, rewards and authored assets, with procedural scenery, ground shaders, lighting and combat sparks. The existing iDos host handles authentication and shared UI.
 
 Recruit temporary allies at five rotating craters. Corpse mines plant half your available temporary recruits (at least one); the horde can walk through them while their two-second fuse burns. Permanent zombies are never spent as mines.
 
-Move with WASD/arrows or touch direction buttons; bites happen automatically. Unlocked abilities use Q/E, sprint uses Space, and the sling uses mouse aim, left-click to fire and right-click to cancel. Mouse wheel zooms, Esc pauses and R restarts. Keep at least one permanent zombie alive.
+Tap/click the ground, use WASD/arrows, or hold touch direction buttons to move; bites happen automatically. Q/E use unlocked abilities, Space sprints once unlocked, and the sling fires by tapping a valid landing spot. X/right-click/Stop cancel a destination or aim. Scroll or the phone zoom buttons adjust the view. Esc pauses; R opens a new-march confirmation. Keys are remappable. Keep at least one permanent zombie alive.
 
-[Play the five-crater build (DEV version 5)](https://fyvpzfco-dev.idos.games/v/bld82469a232b124490b01dc2c8d02e327d/index.html). All 31 tests, types, build, DEV backend and MCP checks pass. Local Chrome shows all five craters and the planted-bomb pose without console errors; an isolated UI scenario verifies temporary-only planting, pass-through movement and detonation. Full rendered three-wave playthrough and hosted gameplay remain unverified; hosted access was previously denied. Live promotion is disabled.
+The five-location campaign and release-readiness pass are local, uncommitted iterations for review. The game now includes cloud checkpoints/Continue, a fair Retry location from the entrance, a field guide, persistent sound/graphics/motion/control settings, automatic pause on focus loss, clearer results and private personal records. Adventure and Relentless are the new names for the original Newbie and Normal rules. See the [release candidate notes and remaining checks](docs/feature-history/release-readiness.md). Its [campaign history](docs/feature-history/conquest-campaign.md) explains the new attacks, five passive perks and extension points. A development-only **Insta-kill knight** button makes the locations and reward flow quick to inspect; those practice runs preserve the real checkpoint and do not enter personal records.
+
+[Previous five-crater build (DEV version 5)](https://fyvpzfco-dev.idos.games/v/bld82469a232b124490b01dc2c8d02e327d/index.html) contains the earlier three-wave game. Its 31 tests, types, build, DEV backend and MCP checks passed. Local Chrome showed all five craters and temporary-only passable mines; hosted gameplay remains unverified because access was previously denied. Live promotion is disabled.
 
 ## Local development
 
@@ -49,7 +51,7 @@ codex mcp login idos-data --scopes config:read,config:write,cloudcode:write,buil
 
 For backend configuration, grant `FYVPZFCO-DEV`. Staged build uploads additionally require `build:write` on canonical `FYVPZFCO`; select the permissions needed by that workflow. Set `tool_timeout_sec = 180` under `[mcp_servers.idos-data]` in Codex configuration for the finish-upload wait, then start a fresh Codex session after connecting. `npm run mcp:check` verifies both connections and reads the DEV currency configuration through Codex's native MCP transport, without starting a model turn or reading OAuth credentials. This machine's Data MCP reports 137 tools and access on both the live and DEV titles; configuration work should target `FYVPZFCO-DEV`.
 
-`npm run check` performs strict TypeScript checks, runs 31 gameplay/input/presentation tests, creates the production bundle, and verifies guest login, player bootstrap and public title configuration against the real DEV backend. It needs network access. Tests cover all attacks, five-site recruitment, temporary-only mines and pass-through movement, abilities, wave carryover, terminal outcomes, input cleanup, camera projection and converted animation rigs, plus a complete three-wave victory using ordinary movement and valid skip rewards. Presentation checks cover particle lifecycle and the real planted-bomb model, cancellation/death and fuse resource disposal. `npm run verify` runs only the backend check.
+`npm run check` performs strict TypeScript checks, runs gameplay/input/presentation tests, creates the production bundle, and verifies guest login, player bootstrap, title configuration, the private save schema and a complete checkpoint write/read against the real DEV backend. It needs network access. Tests cover all ten attacks, passive perks and reward gating, five-site recruitment, temporary-only passable mines, wave carryover, terminal outcomes, input cleanup, camera projection and converted rigs, plus a five-wave victory using ordinary movement, valid offered upgrades and repeated checkpoint restores. Release tests cover failed/corrupt saves, write ordering/throttling, controller lifecycle, practice exclusion, remapping and pointer destinations. Presentation checks cover scenery bounds, finite animation, previews, particle lifecycle, planted-bomb pose and GPU resource disposal. `npm run verify` runs only the backend check.
 
 `npm run assets:port` reproducibly exports the source scenes and authored combat clips, copies audio/fonts/UI art and records a revision/hash manifest. It needs the sibling Godot project and Godot 4.7.2; normal builds use the committed assets. The movement fixture can be refreshed with the Godot script described in [the encounter history](docs/feature-history/horde-encounter.md).
 
@@ -64,7 +66,7 @@ Runs type, gameplay and backend checks, creates the DEV archive, uploads it and 
 For a label or a read-only status check:
 
 ```sh
-npm run stage:dev -- "Three-wave native port"
+npm run stage:dev -- "Five-location release candidate"
 npm run stage:dev -- --status blde7df07c403b846bab863c89d235353dd
 ```
 

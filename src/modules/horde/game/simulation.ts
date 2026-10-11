@@ -6,12 +6,15 @@ import { moveHorde } from "./movement";
 import { tickAbility } from "./abilities";
 import { updateKnight } from "./combat";
 import type { Encounter } from "./types";
+import { CAMPAIGN, locationForWave } from '../data/campaign';
+import { biteDamage, recruitmentStock } from './perk-effects';
 export * from "./types";
 export * from "./rules";
 export * from "./world";
 export * from "./movement";
 export * from "./abilities";
 export * from "./combat";
+export * from './perk-effects';
 
 export function setPaused(w: Encounter, paused: boolean) {
   if (w.status !== "ready" && w.status !== "playing") return;
@@ -31,7 +34,7 @@ function recruit(w: Encounter, dt: number) {
   if (living.length >= RULES.maxAgents || !living.some(a => !a.locked && distance(a, site) <= RULES.siteRadius)) { w.siteProgress = 0; return; }
   w.siteProgress += dt;
   if (w.siteProgress >= RULES.summonTime) {
-    if (addZombies(w, RULES.reserves, site) > 0) { w.activeSite = null; emit(w, { type: "site-closed" }); w.nextSiteAt = w.elapsed + RULES.siteRespawnDelay; }
+    if (addZombies(w, recruitmentStock(w), site) > 0) { w.activeSite = null; emit(w, { type: "site-closed" }); w.nextSiteAt = w.elapsed + RULES.siteRespawnDelay; }
     w.siteProgress = 0;
   }
 }
@@ -69,7 +72,7 @@ export function stepEncounter(w: Encounter, dt: number, inputX = 0, inputZ = 0) 
     a.bite = RULES.biteInterval * (a.feasting ? RULES.feastIntervalScale : 1);
     a.facing = Math.atan2(w.knight.x - a.x, w.knight.z - a.z);
     if (a.feasting) a.hp = Math.min(a.maxHp, a.hp + RULES.feastHealing);
-    emit(w, { type: "bite", x: a.x, z: a.z }); damageKnight(w, RULES.biteDamage);
+    emit(w, { type: "bite", x: a.x, z: a.z }); damageKnight(w, biteDamage(w));
   }
   if (w.status === "playing" && !w.betweenWaves) recruit(w, dt);
 }
@@ -78,11 +81,13 @@ export function describeEncounter(w: Encounter) {
   return {
     status: w.status, mode: w.normal ? "Normal" : "Newbie", paused: w.paused, elapsed: w.elapsed,
     wave: w.wave, betweenWaves: w.betweenWaves, awaitingReward: w.awaitingReward, rewards: [...w.offeredRewards], waveTimeLeft: w.waveTimeLeft,
+    totalWaves: CAMPAIGN.length, location: locationForWave(w.wave), passives: [...w.passives],
+    route: CAMPAIGN.map((location, index) => ({ id: location.id, name: location.name, shortName: location.shortName, state: index + 1 < w.wave || (index + 1 === w.wave && w.knight.hp <= 0) ? 'conquered' : index + 1 === w.wave ? 'current' : 'ahead' })),
     alive: living.length, permanent: living.length - temporary.length, temporary: temporary.length,
     nextExpiration: temporary.length ? Math.min(...temporary.map(a => a.lifetime)) : null,
     casualties: w.casualties, recruited: w.recruited, expired: w.expiredCount, center: centerOf(living), knight: structuredClone(w.knight),
     sprint: { unlocked: w.sprintUnlocked, remaining: w.sprintRemaining, cooldown: w.sprintCooldown }, abilities: structuredClone(w.abilities),
-    site: w.activeSite === null ? null : { ...SITES[w.activeSite]!, stock: RULES.reserves, progress: w.siteProgress / RULES.summonTime },
+    site: w.activeSite === null ? null : { ...SITES[w.activeSite]!, stock: recruitmentStock(w), progress: w.siteProgress / RULES.summonTime },
     siteTimeLeft: Math.max(0, w.nextSiteAt - w.elapsed),
     zombies: living.map(a => ({ id: a.id, x: a.x, z: a.z, hp: a.hp, kind: a.kind, locked: a.locked, lifetime: a.lifetime })),
     bounds: { halfWidth: RULES.halfWidth, halfDepth: RULES.halfDepth },
