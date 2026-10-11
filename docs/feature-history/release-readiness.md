@@ -2,7 +2,7 @@
 
 ## Scope and state
 
-Local release-readiness pass, 2026-10-09. The five-location campaign remains the content boundary: forty starting zombies, five defenders, ten attacks, nine perks and temporary-only passable mines. No Solana gameplay or economy work was added. The source is uncommitted and has not been pushed or uploaded; previous DEV version 5 is still the earlier three-wave game.
+Local release-readiness pass, 2026-10-09. The five-location campaign remains the content boundary: forty starting zombies, five defenders, ten attacks, nine perks and temporary-only passable mines. No Solana gameplay or economy work was added. Release update, 2026-10-11: source committed and pushed as `3cae75e`, then staged as DEV version 6 (`bldded8bbac29fc46efa5b5e4c39012e9b5`, `deploy=false`). The repository is now public. Previous DEV version 5 remains the earlier three-wave game.
 
 The host now opens `horde` after authentication. Its client is injected into the scene; the module never creates another SDK client or logs in itself. The host theme, page title, favicon and description match the game. Source models, animation, music and fonts remain the authored Godot assets. Build output includes Vite's generated dependency notices and the source Noto font license.
 
@@ -53,7 +53,7 @@ Cloud writes are last-write-wins. Use one active game session per player. Closin
 - Desktop, 390×844 portrait and 844×390 landscape layouts were rendered. Settings/help/rewards scroll within short screens; attack warnings now clear the route display and direction buttons on portrait. Screenshots include `/tmp/release-phone-final.png`, `/tmp/release-retry-final.png`, `/tmp/release-settings-final.png`, `/tmp/release-phone-rewards.png`, `/tmp/release-landscape-rewards.png` and `/tmp/release-victory.png`. Direction buttons were forced visible for a desktop-browser viewport check; this is not a physical touch-device test. Browser testing left two real test defeats in this DEV player's private history.
 - The irregular terrain/border pass was rendered across all five locations through the practice controls. Castle phone inspection exposed foreground floor clipping; adaptive orthographic eye distance and a larger continuous ground fixed it, then the 390×844 render was checked again. Captures are `.idos/organic-{graveyard,chapel,road,outskirts,castle}.png` and `.idos/organic-castle-phone.png`. Browser warnings/errors were absent. The original hints preference and frozen Wave 1/00:00/40-zombie checkpoint were restored afterward.
 - Focus-loss/hidden-page pause and failed-save feedback are covered in automated controller/store tests. Browser automation did not produce an actual tab visibility change, so tab-switch behavior still needs a manual device check. No browser console warnings/errors were observed during the rendered pass.
-- `npm run package:dev` passed; `.idos/dev-build.zip` passed archive integrity checking. It contains the compiled DEV client only and has not been uploaded. Production bundles omit the local knight-kill control and include dependency/font notices.
+- `npm run package:dev` passed; `.idos/dev-build.zip` passed archive integrity checking. It contains the compiled DEV client only; the subsequent 2026-10-11 checked build was uploaded as DEV version 6. Production bundles omit the local knight-kill control and include dependency/font notices.
 - The production build retains the existing large-chunk warning from the host/Three.js/wallet dependency graph. No new dependencies were installed. Actual low-end device performance remains to be measured.
 
 ## Before public promotion
@@ -61,7 +61,7 @@ Cloud writes are last-write-wins. Use one active game session per player. Closin
 1. Check physical touch input, real tab switching, network interruption/recovery and the intended mobile/desktop browsers. The local Chrome pass and automated failure tests do not replace those device checks.
 2. Have new players complete Adventure and try Relentless; automated victory is not a human difficulty/readability review. Check sound and frame rate on the intended browsers/devices.
 3. Register the same private key on PROD before a public build uses `FYVPZFCO`. The production title was not changed in this pass.
-4. Review the local changes, then commit/push and stage DEV only when authorized. Verify that exact hosted artifact before a separate explicit live promotion. Earlier denied hosted access must not be bypassed.
+4. Verify the exact hosted DEV version 6 artifact before a separate live promotion. Commit/push and DEV staging are complete; hosted gameplay verification remains outstanding. Earlier denied hosted access must not be bypassed.
 
 ## References
 

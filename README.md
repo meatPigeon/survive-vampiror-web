@@ -35,7 +35,7 @@ npm run mcp:check
 
 Open this repository as the Codex workspace. Read [IDOS.md](IDOS.md), then use the `idos-code` MCP for SDK guidance and module source. Backend configuration is handled by the separate `idos-data` MCP. OAuth is connected on this machine, and an authenticated DEV configuration read has passed.
 
-The remote is https://github.com/meatPigeon/survive-vampiror-web. The repository is currently private, so contest judges cannot view its source until its visibility is changed. The existing Godot project has its own repository in the sibling `survive-vampiror` directory. Keep its assets and behavior as references for the port.
+The remote is https://github.com/meatPigeon/survive-vampiror-web. The repository is public; anonymous GitHub API access was verified on 2026-10-11, so contest judges can view its source. The existing Godot project has its own repository in the sibling `survive-vampiror` directory. Keep its assets and behavior as references for the port.
 
 GitHub stores the local source. It does not automatically deploy or copy files into the iDos AI Coder. Its built-in GitHub connector requires the iDos Start plan. Code MCP supplies source and SDK guidance. App Data MCP manages backend data and ready-build uploads. Its upload tools require the canonical title ID even for a staged test version, so staging adds an entry to the live title's build history. Live promotion is a separate operation. [DEV version 1](https://fyvpzfco-dev.idos.games/v/blde7df07c403b846bab863c89d235353dd/index.html) is uploaded and verified.
 

@@ -10,15 +10,14 @@ https://fyvpzfco-dev.idos.games/v/bldded8bbac29fc46efa5b5e4c39012e9b5/index.html
 the monsters instead of the hero. Lead a persistent horde of forty zombies from the village
 graveyard through the chapel, royal road and fortress outskirts to the castle. Read each knight's
 telegraphed attacks, move as a group, recruit temporary allies from scattered graves, and choose
-new abilities and perks between battles. The campaign includes five distinct arenas and ten
-defenders, each with a recognizable attack pattern.
+new abilities and perks between battles. The campaign includes five distinct arenas, five defenders and ten
+knight attacks with readable warnings.
 
 The game is built as a native web title on the iDos Games engine. Its current host provides account
 and wallet sign-in; the horde game itself remains playable without buying anything. **Solana token
 integration is not live yet.** The proposed HORDE token is still awaiting its creator's funded launch
 transaction. Update this section and the submission copy only after verifying the token on Solana
-mainnet and implementing or confirming its actual in-game use. Never claim wallet sign-in alone is
-the game's meaningful Solana integration.
+mainnet and implementing or confirming its actual in-game use. Describe only verified Solana features; do not claim unimplemented token or economy features.
 
 ## Demo video recording plan (60–90 seconds)
 
@@ -55,8 +54,7 @@ expect meaningful integration, not just a token ticker.
 ## Submission fields
 
 - iDos project: https://idosgames.com/app/FYVPZFCO/
-- GitHub: https://github.com/meatPigeon/survive-vampiror-web (currently private; make accessible to
-  judges before submitting)
+- GitHub: https://github.com/meatPigeon/survive-vampiror-web (public; anonymous access verified 2026-10-11)
 - Colosseum Crypto World's Fair project page: not created yet
 - Superteam Earn side-track submission: not submitted yet
 - Demo and pitch video URLs: not recorded or uploaded yet
