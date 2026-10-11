@@ -28,7 +28,6 @@ function Hud({ controller }: { controller: HordeController }) {
         <small>{state.mode} · Wave {state.wave} / {state.totalWaves} · Phase {['I', 'II', 'III'][k.phase - 1]}</small><strong className="horde-location-label">{state.location.name}</strong>
       </div>
       <div className="horde-top-right"><time><HordeIcon name="clock" />{clock(state.elapsed)}</time><button onClick={() => controller.togglePause()} disabled={finished}><HordeIcon name="pause" />Pause</button></div>
-      {import.meta.env.DEV && state.loaded && !dialog && !state.betweenWaves && k.hp > 0 && <button className="horde-debug-kill" title="Temporary test control. Starts a practice run; saved progress and personal records are preserved." onClick={() => controller.debugKillKnight()}>Insta-kill knight</button>}
       <div className={`horde-numbers ${state.permanent <= 8 ? 'horde-critical' : ''}`}>
         <div><HordeIcon name="permanent" /><strong>{state.permanent}</strong><span>{state.permanent <= 8 ? 'Keep them alive' : 'permanent'}</span></div>
         {state.temporary > 0 && <div className="horde-temporary"><HordeIcon name="temporary" /><strong>+{state.temporary}</strong><span className={(state.nextExpiration ?? 0) <= 10 ? 'horde-expiring' : ''}>temporary · {Math.ceil(state.nextExpiration ?? 0)}s</span></div>}

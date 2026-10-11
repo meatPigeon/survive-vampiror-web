@@ -32,16 +32,6 @@ test('controller start, focus loss, menu and Continue preserve the checkpoint an
   });
 });
 
-test('debug practice traverses rewards and results without replacing the real saved run or awarding records', async () => {
-  await withController(async c => {
-    c.start(); await c.saves.flush(); const id = c.saves.profile.checkpoint.runId;
-    c.debugKillKnight(); assert.equal(c.getSnapshot().practice,true); assert.equal(c.world.awaitingReward,true); assert.equal(c.saves.profile.checkpoint.world.knight.hp,800);
-    for (let wave = 1; wave < 5; wave++) { c.reward('skip'); for (let i = 0; i < 241; i++) game.stepEncounter(c.world,1/60); c.debugKillKnight(); }
-    assert.equal(c.world.status,'won'); assert.equal(c.saves.profile.completed,0); assert.equal(c.saves.profile.wins,0); assert.equal(c.saves.profile.checkpoint.runId,id); assert.equal(c.saves.profile.checkpoint.world.wave,1);
-    c.returnToMenu(); c.continueRun(); assert.equal(c.world.wave,1); assert.equal(c.getSnapshot().practice,false);
-  });
-});
-
 test('restored runs stay frozen behind help/settings, and a declined new march cannot discard them', async () => {
   const profile = freshProfile(), world = game.createEncounter(true); game.beginBattle(world); world.knight.hp = 455; profile.checkpoint = captureCheckpoint(world,'existing-run');
   await withController(async c => {

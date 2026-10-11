@@ -1,5 +1,5 @@
 import type { IDosGamesClient } from '@idosgames/core';
-import { createEncounter, describeEncounter, setPaused, stepEncounter, beginBattle, damageKnight, activateAbility, updateAim, fireSling, cancelAim, resolveReward, sprint, abilityText, canActivate } from './simulation';
+import { createEncounter, describeEncounter, setPaused, stepEncounter, beginBattle, activateAbility, updateAim, fireSling, cancelAim, resolveReward, sprint, abilityText, canActivate } from './simulation';
 import { HordeInput } from './input';
 import { HordeView } from './view';
 import { HordeAudio } from './audio';
@@ -30,7 +30,6 @@ export class HordeController {
   private notified = 0;
   private saveElapsed = 0;
   private runId = '';
-  private practice = false;
   private destination: Point | null = null;
   private lastDirection = { x: 0, z: 0 };
   private trail = 800;
@@ -72,7 +71,7 @@ export class HordeController {
   private makeSnapshot() {
     const p = this.saves.profile, checkpoint = p.checkpoint, settings = p.settings;
     return { ...describeEncounter(this.world), loaded: this.loaded && this.saves.loaded, error: this.error, menu: this.menu, normal: settings.normal,
-      panel: this.panel, confirmNew: this.confirmNew, practice: this.practice, settings, reducedMotion: this.reducedMotion,
+      panel: this.panel, confirmNew: this.confirmNew, settings, reducedMotion: this.reducedMotion,
       mode: this.world.normal ? 'Relentless' : 'Adventure', audio: this.audio.settings, healthTrail: this.trail,
       saveStatus: this.saves.status, saveError: this.saves.error, saveNotice: this.saves.notice, hasSynced: this.saves.hasSynced,
       savedRun: checkpoint ? { location: locationForWave(checkpoint.world.wave).name, wave: checkpoint.world.wave, elapsed: checkpoint.world.elapsed, savedAt: checkpoint.savedAt, normal: checkpoint.world.normal } : null,
@@ -103,7 +102,7 @@ export class HordeController {
   start(confirmed = false) {
     if (!this.loaded || !this.saves.loaded || this.error) return;
     if (!confirmed && this.saves.profile.checkpoint) { this.confirmNew = true; this.publish(); return; }
-    this.confirmNew = false; this.panel = null; this.menu = false; this.practice = false; this.runId = crypto.randomUUID();
+    this.confirmNew = false; this.panel = null; this.menu = false; this.runId = crypto.randomUUID();
     this.world = createEncounter(this.saves.profile.settings.normal, Math.floor(Math.random() * 0xffffffff));
     this.resetView(); this.checkpoint(true, true); this.publish();
   }
@@ -111,7 +110,7 @@ export class HordeController {
     const checkpoint = readCheckpoint(retry ? this.saves.profile.retryCheckpoint ?? this.saves.profile.checkpoint : this.saves.profile.checkpoint);
     if (!checkpoint || !this.loaded || this.error) return;
     this.world = checkpoint.world; this.runId = retry || this.saves.profile.history.some(r => r.id === checkpoint.runId) ? crypto.randomUUID() : checkpoint.runId;
-    this.menu = false; this.panel = null; this.confirmNew = false; this.practice = false; this.resetView();
+    this.menu = false; this.panel = null; this.confirmNew = false; this.resetView();
     this.audio.beginBattle(); this.audio.pause(true); this.checkpoint(true, retry); this.publish();
   }
   private resetView() {
@@ -129,7 +128,7 @@ export class HordeController {
     this.audio.menu(); this.view.update(this.world, 0, true); this.publish();
   }
   private checkpoint(flush = false, locationEntry = false) {
-    if (this.menu || this.practice || !this.runId) return;
+    if (this.menu || !this.runId) return;
     const checkpoint = captureCheckpoint(this.world, this.runId);
     if (checkpoint) { this.saves.update(p => { p.checkpoint = checkpoint; if (locationEntry) p.retryCheckpoint = checkpoint; }); this.saveElapsed = 0; }
     if (flush) void this.saves.flush();
@@ -166,13 +165,6 @@ export class HordeController {
   }
   zoom(steps: number) { if (this.input.enabled()) this.view.camera.zoom(steps); }
   reward(index: number | 'skip') { if (this.panel || this.confirmNew || this.menu) return; if (resolveReward(this.world, index)) { this.input.clear(); this.consumeEvents(); this.checkpoint(true); this.publish(); } }
-  // Local test runs preserve the real checkpoint and never enter personal records.
-  debugKillKnight() {
-    if (!import.meta.env.DEV || !this.input.enabled() || this.world.knight.hp <= 0) return;
-    this.checkpoint(true); this.practice = true;
-    beginBattle(this.world); damageKnight(this.world, this.world.knight.hp);
-    this.consumeEvents(); this.view.update(this.world, 0, false); this.publish();
-  }
   private refreshAim() {
     if (!this.world.abilities.some(a => a.aiming)) return;
     const aim = this.view.camera.aim(this.view.renderer.domElement, this.input.pointer.x, this.input.pointer.y);
@@ -183,7 +175,7 @@ export class HordeController {
     if (events.some(e => ['wave-cleared', 'wave-start', 'victory', 'defeat'].includes(e.type))) {
       this.input.clear(); this.clearDestination();
       if (['won', 'lost'].includes(this.world.status)) {
-        if (!this.practice) { this.saves.update(p => { finishRecord(p, this.world, this.runId); }); void this.saves.flush(); }
+        this.saves.update(p => { finishRecord(p, this.world, this.runId); }); void this.saves.flush();
       } else this.checkpoint(true, events.some(e => e.type === 'wave-start'));
     }
   }
@@ -229,7 +221,7 @@ export class HordeController {
   reload() { this.checkpoint(true); void this.saves.flush().then(() => window.location.reload()); }
   describe() {
     return { mounted: true, active: this.active, loaded: this.loaded && this.saves.loaded, error: this.error, menu: this.menu, zoom: this.view.camera.factor,
-      practice: this.practice, saveStatus: this.saves.status, destination: this.destination, panel: this.panel,
+      saveStatus: this.saves.status, destination: this.destination, panel: this.panel,
       playing: this.active && this.loaded && !this.menu && !this.world.paused && !this.world.betweenWaves && this.world.status === 'playing', ...describeEncounter(this.world) };
   }
   async move(args?: Record<string, unknown>) {

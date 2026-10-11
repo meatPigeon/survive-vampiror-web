@@ -2,6 +2,8 @@
 
 ## Current update
 
+2026-10-12: removed the temporary knight-kill button, its controller action and the practice-run state used exclusively by that cheat. It is now absent from local development as well as production. The separate playable field-guide exercises are unchanged.
+
 2026-10-11: version 8 is now live, PROD has the private save schema, and Solana account recovery is implemented. See [Solana identity](solana-identity.md) for current evidence and limits. The original release-candidate history below describes the earlier pass.
 
 ## Scope and state
