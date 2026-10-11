@@ -1,6 +1,7 @@
 import type { HordeController } from '../game/controller';
 import { CAMPAIGN } from '../data/campaign';
 import { HordeIcon } from './HordeIcon';
+import { CommanderIdentity } from './CommanderIdentity';
 export type Snapshot = ReturnType<HordeController['getSnapshot']>;
 export const clock = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 export function SaveStatus({ state, controller }: { state: Snapshot; controller: HordeController }) {
@@ -25,6 +26,7 @@ export function GameMenu({ state, controller }: { state: Snapshot; controller: H
     <button className={state.savedRun ? 'horde-new-march' : 'horde-raise'} disabled={!state.loaded} onClick={() => controller.start()}>{!state.loaded ? 'Preparing the horde…' : state.savedRun ? 'Start a new march' : 'Raise the horde →'}</button>
     <div className="horde-menu-links"><button onClick={() => controller.openPanel('help')}>How to play</button><button disabled={!state.loaded} onClick={() => controller.openPanel('settings')}>Settings</button></div>
     <SaveStatus state={state} controller={controller} />
+    <CommanderIdentity />
     {state.saveNotice && <small role="status">{state.saveNotice}</small>}
     {state.records.completed > 0 && <div className="horde-record"><HordeIcon name="crown" /><span><b>{state.records.wins} {state.records.wins === 1 ? 'kingdom' : 'kingdoms'} conquered</b><small>{state.records.bestTime !== null ? `Fastest victory ${clock(state.records.bestTime)} · Most survivors ${state.records.bestSurvivors}` : `Farthest march: ${state.records.bestWave} of ${state.totalWaves} locations`}</small></span></div>}
     {state.records.history.length > 0 && <details className="horde-history"><summary>Recent marches</summary><ol>{state.records.history.map(run => <li key={run.id}><span>{run.won ? 'Kingdom conquered' : `${run.conquered} of ${state.totalWaves} conquered`}<small>{run.normal ? 'Relentless' : 'Adventure'} · {run.survivors} survivors</small></span><time>{clock(run.elapsed)}</time></li>)}</ol></details>}

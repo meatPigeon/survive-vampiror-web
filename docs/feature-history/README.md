@@ -13,3 +13,4 @@ instead.
 - [Release readiness](release-readiness.md) — cloud checkpoints, onboarding, player controls/settings, personal records and release verification.
 - [Playable field guide](visual-guide.md) — short exercises using the real characters and rules, with separate controls and credits.
 - [Atmosphere](atmosphere.md) — drifting clouds/shadows, occasional crow/bat flocks and fading rain showers.
+- [Solana identity](solana-identity.md) — signature-verified commander accounts, cross-browser cloud recovery and version 8 publication.

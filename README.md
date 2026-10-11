@@ -12,7 +12,13 @@ Tap/click the ground, use WASD/arrows, or hold touch direction buttons to move; 
 
 The five-location campaign and release-readiness pass are committed on `main`. The game includes cloud checkpoints/Continue, a fair Retry location from the entrance, a field guide, persistent sound/graphics/motion/control settings, automatic pause on focus loss, clearer results and private personal records. Adventure and Relentless are the new names for the original Newbie and Normal rules. See the [release candidate notes and remaining checks](docs/feature-history/release-readiness.md). Its [campaign history](docs/feature-history/conquest-campaign.md) explains the new attacks, five passive perks and extension points. A development-only **Insta-kill knight** button makes the locations and reward flow quick to inspect; those practice runs preserve the real checkpoint and do not enter personal records.
 
-[Contest candidate (DEV version 6)](https://fyvpzfco-dev.idos.games/v/bldded8bbac29fc46efa5b5e4c39012e9b5/index.html) contains the five-location campaign and passes the local release checks and DEV save round-trip. It is staged for testing, not promoted live. Human device checks and public promotion remain outstanding. The earlier [DEV version 5](https://fyvpzfco-dev.idos.games/v/bld82469a232b124490b01dc2c8d02e327d/index.html) contains the older three-wave game.
+[Play Survive Vampiror](https://idosgames.com/app/FYVPZFCO/). Version 8 is published on iDos, including the five-location campaign and Solana account recovery. The [DEV artifact](https://fyvpzfco-dev.idos.games/v/bld8a26c9762b6145d38ed8bcadabf4232b/index.html) passed 83 tests, strict TypeScript, packaging and real backend checks. Local Chrome verified the compiled game; hosted browser inspection and physical device checks remain outstanding.
+
+## Solana integration
+
+Choose **Sign in with Solana**, connect your wallet and sign the login message. iDos verifies the signature and recovers the same player account on another browser, including your campaign checkpoint, preferences and personal records. Standalone pages discover installed Solana wallets through Wallet Standard; the game embedded on iDos uses its platform bridge. No transaction fee or token purchase is required. Guest play remains available, with separate saves.
+
+Saves are private iDos cloud data, not on-chain achievements or token rewards. The HORDE mainnet mint is verified: [view token](https://solscan.io/token/9UB6DJsQncQoxQrBW8a6HyyDAfeWKoYN7WaHmukpidos). See [implementation and verification](docs/feature-history/solana-identity.md). Run `npm run verify:solana` to exercise real DEV signature authentication, cross-client campaign recovery and invalid-signature rejection with disposable, unfunded test keys.
 
 ## Local development
 
@@ -61,7 +67,7 @@ For backend configuration, grant `FYVPZFCO-DEV`. Staged build uploads additional
 npm run stage:dev
 ```
 
-Runs type, gameplay and backend checks, creates the DEV archive, uploads it and stages a test version with `deploy=false`. It returns the DEV test URL and writes `.idos/last-stage.json` (ignored). The command uses the canonical identity from `src/idos.title.ts`; configuration and the returned test host use DEV. Live promotion is a separate publishing action.
+Runs type, gameplay, guest/backend and Solana signature checks, creates the DEV archive, uploads it and stages a test version with `deploy=false`. It returns the DEV test URL and writes `.idos/last-stage.json` (ignored). The command uses the canonical identity from `src/idos.title.ts`; configuration and the returned test host use DEV. Live promotion is a separate publishing action.
 
 For a label or a read-only status check:
 
@@ -70,7 +76,7 @@ npm run stage:dev -- "Five-location release candidate"
 npm run stage:dev -- --status blde7df07c403b846bab863c89d235353dd
 ```
 
-The initial upload/finish workflow was verified end to end. The helper's status mode reads the same staged version without creating an extra build. DEV version 6 is the current staged candidate; its hosted game has not yet had a manual human playthrough.
+The initial upload/finish workflow was verified end to end. The helper's status mode reads the same staged version without creating an extra build. Version 8 is the current published release. The staging command itself still never promotes a build; publication is a separate authorized action.
 
 ## DEV build archive
 
@@ -84,4 +90,4 @@ This builds for DEV and creates `.idos/dev-build.zip`, with `index.html` at the 
 
 Bootstrapped from the official `@idosgames/mcp@0.1.28` registry. The title ID and starter-module list were verified in the publisher's browser editor. This is an MCP starter baseline, rather than a byte-for-byte export of every file in the online editor. Registry fingerprints are recorded in [docs/idos-registry.json](docs/idos-registry.json).
 
-The active game module is `horde`; the unregistered `mini-game` folder is retained as a catalog reference. [Horde encounter decisions](docs/feature-history/horde-encounter.md) record source parity, architecture and verification limits. On-chain gameplay integration is a later milestone; load the matching MCP skill before adding a platform feature.
+The active game module is `horde`; the unregistered `mini-game` folder is retained as a catalog reference. [Horde encounter decisions](docs/feature-history/horde-encounter.md) record source parity, architecture and verification limits. Solana message authentication is implemented; on-chain gameplay and token rewards are not. Load the matching MCP skill before adding a platform feature.

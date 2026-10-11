@@ -1,5 +1,9 @@
 # Release candidate: player experience and reliable progress
 
+## Current update
+
+2026-10-11: version 8 is now live, PROD has the private save schema, and Solana account recovery is implemented. See [Solana identity](solana-identity.md) for current evidence and limits. The original release-candidate history below describes the earlier pass.
+
 ## Scope and state
 
 Local release-readiness pass, 2026-10-09. The five-location campaign remains the content boundary: forty starting zombies, five defenders, ten attacks, nine perks and temporary-only passable mines. No Solana gameplay or economy work was added. Release update, 2026-10-11: source committed and pushed as `3cae75e`, then staged as DEV version 6 (`bldded8bbac29fc46efa5b5e4c39012e9b5`, `deploy=false`). The repository is now public. Previous DEV version 5 remains the earlier three-wave game.

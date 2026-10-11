@@ -1,8 +1,8 @@
 # Crypto World's Fair and iDos side-track submission kit
 
 Prepared 2026-10-11 for Survive Vampiror. The current public iDos game is at
-https://idosgames.com/app/FYVPZFCO/. The current staged DEV build (version 6) is at
-https://fyvpzfco-dev.idos.games/v/bldded8bbac29fc46efa5b5e4c39012e9b5/index.html.
+https://idosgames.com/app/FYVPZFCO/. The current published build (version 8), also available in DEV, is at
+https://fyvpzfco-dev.idos.games/v/bld8a26c9762b6145d38ed8bcadabf4232b/index.html.
 
 ## Project presentation
 
@@ -13,11 +13,9 @@ telegraphed attacks, move as a group, recruit temporary allies from scattered gr
 new abilities and perks between battles. The campaign includes five distinct arenas, five defenders and ten
 knight attacks with readable warnings.
 
-The game is built as a native web title on the iDos Games engine. Its current host provides account
-and wallet sign-in; the horde game itself remains playable without buying anything. **Solana token
-integration is not live yet.** The proposed HORDE token is still awaiting its creator's funded launch
-transaction. Update this section and the submission copy only after verifying the token on Solana
-mainnet and implementing or confirming its actual in-game use. Describe only verified Solana features; do not claim unimplemented token or economy features.
+The game is built as a native web title on iDos Games. Solana Ed25519 message signatures authenticate a persistent player identity. A fresh browser using the same wallet recovers the same account and its private campaign checkpoint, preferences and personal records. No transaction fee or token purchase is required; guests remain welcome with separate saves. Saves are off-chain iDos data. **HORDE mainnet mint is verified:** `9UB6DJsQncQoxQrBW8a6HyyDAfeWKoYN7WaHmukpidos`.
+
+The existing [Colosseum project](https://colosseum.com/arena/projects/survive-vampiror) has a saved draft with game details, Solana explanation, repository and live links. Telegram contact, founder profile, artwork upload and video URLs remain incomplete. Browser file uploads require enabling file-URL access for the ChatGPT extension. The project has not been finally submitted.
 
 ## Demo video recording plan (60–90 seconds)
 
@@ -40,32 +38,26 @@ grows between battles. Your permanent zombies are the lifeline: keep at least on
 
 ## Project pitch video script (about 45 seconds)
 
-“Most survival games ask you to be the lone hero. Survive Vampiror flips that fantasy: you command
-the monsters. I built a playable five-location campaign where you guide a living horde, evade
-readable knight attacks, recruit short-lived allies and shape your strategy with perks between
-waves. The challenge is to preserve your permanent horde while using temporary recruits for tactical
-abilities. The game is built on iDos Games and its complete source and tests are in the project
-repository. The planned HORDE token has not launched yet, so I will describe the Solana integration
-only after the mainnet launch and its in-game use are verified.”
+“Most survival games ask you to be the lone hero. Survive Vampiror flips that fantasy: you command the monsters. I built a five-location campaign where you guide forty zombies, dodge readable knight attacks, recruit temporary allies and choose tactical perks. The horde advances from a village graveyard to a castle. Solana wallets give the player a signature-verified identity that can recover the same campaign on another browser, without a transaction fee. The game is live on iDos and its source is public. My next step is feedback from more players and devices.”
 
-Re-record or edit the final two sentences after the Solana feature is genuinely implemented; judges
-expect meaningful integration, not just a token ticker.
+Add a short introduction in your own voice and explain your background accurately. Colosseum asks for a founder pitch of up to two minutes, separate from a live-product demo of up to three minutes. Do not substitute a slide deck for the demo.
 
 ## Submission fields
 
 - iDos project: https://idosgames.com/app/FYVPZFCO/
 - GitHub: https://github.com/meatPigeon/survive-vampiror-web (public; anonymous access verified 2026-10-11)
-- Colosseum Crypto World's Fair project page: not created yet
+- Colosseum project: https://colosseum.com/arena/projects/survive-vampiror (draft; not finally submitted)
 - Superteam Earn side-track submission: not submitted yet
 - Demo and pitch video URLs: not recorded or uploaded yet
-- Solana mainnet token and meaningful in-game integration: not complete
+- Solana integration: signature-authenticated cloud campaign recovery implemented and tested
+- HORDE mainnet token: https://solscan.io/token/9UB6DJsQncQoxQrBW8a6HyyDAfeWKoYN7WaHmukpidos (verified by read-only mainnet RPC)
+- Pitch deck: output/pitch/survive-vampiror-pitch-solana.pptx; PDF export in output/pdf/
 
 ## Release evidence and boundaries
 
-- Commit: `3cae75e` (`Prepare five-location horde release candidate`).
-- DEV stage: version 6, build `bldded8bbac29fc46efa5b5e4c39012e9b5`, `deploy=false`.
-- Automated release checks: 80 tests passed, strict TypeScript/build passed, and real DEV profile
-  save round-trip passed (24,433 bytes).
-- No PROD promotion, wallet payment, token mint, or public contest submission has been performed.
-- The official Colosseum first-filter checklist also requires a complete project page, repository
-  configured under its rules, a project presentation, demo video and pitch video.
+- Version 8, build `bld8a26c9762b6145d38ed8bcadabf4232b`, promoted with API status `Live` and `Published: true`.
+- 83 automated tests passed, strict TypeScript/build passed, guest cloud-save round-trip passed, and actual Solana signature/campaign recovery checks passed.
+- Local Chrome inspected the compiled release and discovered Phantom. Hosted DEV browser access is blocked by a saved site permission and was not bypassed.
+- DEV and PROD both have Solana wallet login enabled and the private save schema registered.
+- The agent performed no wallet payment or token mint. The user-completed mint is now verified. Video uploads and final contest submission remain incomplete.
+- Deadline shown on the official contest page: October 13, 2026, 11:59 Almaty time (October 12, 23:59 PDT).
