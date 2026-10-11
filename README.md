@@ -10,9 +10,9 @@ Recruit temporary allies at five rotating craters. Corpse mines plant half your 
 
 Tap/click the ground, use WASD/arrows, or hold touch direction buttons to move; bites happen automatically. Q/E use unlocked abilities, Space sprints once unlocked, and the sling fires by tapping a valid landing spot. X/right-click/Stop cancel a destination or aim. Scroll or the phone zoom buttons adjust the view. Esc pauses; R opens a new-march confirmation. Keys are remappable. Keep at least one permanent zombie alive.
 
-The five-location campaign and release-readiness pass are local, uncommitted iterations for review. The game now includes cloud checkpoints/Continue, a fair Retry location from the entrance, a field guide, persistent sound/graphics/motion/control settings, automatic pause on focus loss, clearer results and private personal records. Adventure and Relentless are the new names for the original Newbie and Normal rules. See the [release candidate notes and remaining checks](docs/feature-history/release-readiness.md). Its [campaign history](docs/feature-history/conquest-campaign.md) explains the new attacks, five passive perks and extension points. A development-only **Insta-kill knight** button makes the locations and reward flow quick to inspect; those practice runs preserve the real checkpoint and do not enter personal records.
+The five-location campaign and release-readiness pass are committed on `main`. The game includes cloud checkpoints/Continue, a fair Retry location from the entrance, a field guide, persistent sound/graphics/motion/control settings, automatic pause on focus loss, clearer results and private personal records. Adventure and Relentless are the new names for the original Newbie and Normal rules. See the [release candidate notes and remaining checks](docs/feature-history/release-readiness.md). Its [campaign history](docs/feature-history/conquest-campaign.md) explains the new attacks, five passive perks and extension points. A development-only **Insta-kill knight** button makes the locations and reward flow quick to inspect; those practice runs preserve the real checkpoint and do not enter personal records.
 
-[Previous five-crater build (DEV version 5)](https://fyvpzfco-dev.idos.games/v/bld82469a232b124490b01dc2c8d02e327d/index.html) contains the earlier three-wave game. Its 31 tests, types, build, DEV backend and MCP checks passed. Local Chrome showed all five craters and temporary-only passable mines; hosted gameplay remains unverified because access was previously denied. Live promotion is disabled.
+[Contest candidate (DEV version 6)](https://fyvpzfco-dev.idos.games/v/bldded8bbac29fc46efa5b5e4c39012e9b5/index.html) contains the five-location campaign and passes the local release checks and DEV save round-trip. It is staged for testing, not promoted live. Human device checks and public promotion remain outstanding. The earlier [DEV version 5](https://fyvpzfco-dev.idos.games/v/bld82469a232b124490b01dc2c8d02e327d/index.html) contains the older three-wave game.
 
 ## Local development
 
@@ -35,7 +35,7 @@ npm run mcp:check
 
 Open this repository as the Codex workspace. Read [IDOS.md](IDOS.md), then use the `idos-code` MCP for SDK guidance and module source. Backend configuration is handled by the separate `idos-data` MCP. OAuth is connected on this machine, and an authenticated DEV configuration read has passed.
 
-The private remote is https://github.com/meatPigeon/survive-vampiror-web. Commit and push changes with normal Git commands. The existing Godot project has its own repository in the sibling `survive-vampiror` directory. Keep its assets and behavior as references for the port.
+The remote is https://github.com/meatPigeon/survive-vampiror-web. The repository is currently private, so contest judges cannot view its source until its visibility is changed. The existing Godot project has its own repository in the sibling `survive-vampiror` directory. Keep its assets and behavior as references for the port.
 
 GitHub stores the local source. It does not automatically deploy or copy files into the iDos AI Coder. Its built-in GitHub connector requires the iDos Start plan. Code MCP supplies source and SDK guidance. App Data MCP manages backend data and ready-build uploads. Its upload tools require the canonical title ID even for a staged test version, so staging adds an entry to the live title's build history. Live promotion is a separate operation. [DEV version 1](https://fyvpzfco-dev.idos.games/v/blde7df07c403b846bab863c89d235353dd/index.html) is uploaded and verified.
 
@@ -70,7 +70,7 @@ npm run stage:dev -- "Five-location release candidate"
 npm run stage:dev -- --status blde7df07c403b846bab863c89d235353dd
 ```
 
-The initial upload/finish workflow was verified end to end. The helper's status mode reads the same staged version without creating an extra build.
+The initial upload/finish workflow was verified end to end. The helper's status mode reads the same staged version without creating an extra build. DEV version 6 is the current staged candidate; its hosted game has not yet had a manual human playthrough.
 
 ## DEV build archive
 
