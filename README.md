@@ -107,7 +107,7 @@ For agent and module conventions, read [IDOS.md](IDOS.md). For local MCP setup, 
 
 ## Release status
 
-Last checked **2026-10-12**: the public game runs version 8. [DEV version 11](https://fyvpzfco-dev.idos.games/v/bld3db8990b2d86466fa04ec50199bb557e/index.html) contains the removal of development controls and the first compact mobile HUD pass; it is staged, not published. The latest camera, atmosphere and layout polish passed local browser review; the owner authorized publication on 2026-10-12 and the release is being prepared. Local source, staged builds and the public game can differ.
+Published **2026-10-12**: [version 12 is live](https://idosgames.com/app/FYVPZFCO/) from source commit `d50c0ae`. This release removes the on-screen direction pad and development kill control, adds the compact responsive HUD and adaptive portrait camera, lightens cloud cover and clarifies Solana account recovery. Strict types, all 85 tests, packaging, real DEV checkpoint persistence and Solana identity recovery checks passed. Phone/laptop/desktop layouts and gameplay controls were checked in local Chrome. Hosted browser inspection was blocked by a saved browser permission; iDos MCP confirmed this exact build as Live and Published. Physical touch-device and low-end performance checks remain outstanding.
 
 `npm run package:dev` creates a local DEV archive. `npm run stage:dev` checks and uploads a candidate with `deploy=false`, returning a test URL. Publication is a separate, explicitly approved operation. See [release verification and device limits](docs/feature-history/release-readiness.md).
 

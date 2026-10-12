@@ -12,7 +12,7 @@ The host owns authentication. `src/walletLogin.tsx` now uses Solana rather than 
 
 ## Recovery discoverability
 
-Local UX follow-up (2026-10-12): the menu collapses account help under Play across devices / Solana commander. It explains how the same wallet restores a march, exposes an Open account action through `ctx.features.open("profile")`, and states that guest and wallet accounts have separate saves. The module still reads the server-confirmed identity; it never performs authentication itself or imports the host/profile module. Real DEV signature and checkpoint recovery verification passed again with disposable keys. Local Chrome verified the guest explanation, Open account navigating to the host Profile overlay and return to the same paused checkpoint. A real user wallet signature remains a separate device check. This local presentation update has not been deployed.
+Local UX follow-up (2026-10-12): the menu collapses account help under Play across devices / Solana commander. It explains how the same wallet restores a march, exposes an Open account action through `ctx.features.open("profile")`, and states that guest and wallet accounts have separate saves. The module still reads the server-confirmed identity; it never performs authentication itself or imports the host/profile module. Real DEV signature and checkpoint recovery verification passed again with disposable keys. Local Chrome verified the guest explanation, Open account navigating to the host Profile overlay and return to the same paused checkpoint. A real user wallet signature remains a separate device check. This presentation update was published in version 12 on 2026-10-12; see [release verification](release-readiness.md).
 
 ## Backend and release
 
