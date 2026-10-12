@@ -10,7 +10,7 @@ export function SaveStatus({ state, controller }: { state: Snapshot; controller:
     {state.saveStatus === 'error' && <button onClick={() => void controller.retrySave()}>Retry save connection</button>}
   </div>;
 }
-export function GameMenu({ state, controller }: { state: Snapshot; controller: HordeController }) {
+export function GameMenu({ state, controller, openAccount }: { state: Snapshot; controller: HordeController; openAccount?: () => void }) {
   return <div className="horde-menu"><div className="horde-menu-shade" /><section className="horde-menu-content" aria-label="Main menu">
     <span className="horde-kicker">YOU ARE THE HORDE</span><h1>SURVIVE<br />VAMPIROR</h1>
     <p>Forty restless souls. Five defenders.<br />Lead the dead from village to kingdom.</p>
@@ -26,7 +26,7 @@ export function GameMenu({ state, controller }: { state: Snapshot; controller: H
     <button className={state.savedRun ? 'horde-new-march' : 'horde-raise'} disabled={!state.loaded} onClick={() => controller.start()}>{!state.loaded ? 'Preparing the horde…' : state.savedRun ? 'Start a new march' : 'Raise the horde →'}</button>
     <div className="horde-menu-links"><button onClick={() => controller.openPanel('help')}>How to play</button><button disabled={!state.loaded} onClick={() => controller.openPanel('settings')}>Settings</button></div>
     <SaveStatus state={state} controller={controller} />
-    <CommanderIdentity />
+    <CommanderIdentity openAccount={openAccount} />
     {state.saveNotice && <small role="status">{state.saveNotice}</small>}
     {state.records.completed > 0 && <div className="horde-record"><HordeIcon name="crown" /><span><b>{state.records.wins} {state.records.wins === 1 ? 'kingdom' : 'kingdoms'} conquered</b><small>{state.records.bestTime !== null ? `Fastest victory ${clock(state.records.bestTime)} · Most survivors ${state.records.bestSurvivors}` : `Farthest march: ${state.records.bestWave} of ${state.totalWaves} locations`}</small></span></div>}
     {state.records.history.length > 0 && <details className="horde-history"><summary>Recent marches</summary><ol>{state.records.history.map(run => <li key={run.id}><span>{run.won ? 'Kingdom conquered' : `${run.conquered} of ${state.totalWaves} conquered`}<small>{run.normal ? 'Relentless' : 'Adventure'} · {run.survivors} survivors</small></span><time>{clock(run.elapsed)}</time></li>)}</ol></details>}

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { RULES } from "./rules";
+import { RULES, SITES } from "./rules";
 import { alive, centerOf } from "./world";
 import type { Encounter, Point } from "./types";
 export class ArenaCamera {
@@ -8,6 +8,8 @@ export class ArenaCamera {
   private aspect = 1;
   private fitted = 40.2;
   private size = 40.2;
+  private manualZoom = false;
+  private world: Encounter | null = null;
   private focus = new THREE.Vector3();
   private pan = new THREE.Vector3();
   private readonly eyeDirection = new THREE.Vector3(0, 0.8, 0.6);
@@ -15,7 +17,9 @@ export class ArenaCamera {
   constructor() { this.camera.position.set(0, 32, 24); this.camera.lookAt(0, 0, 0); }
   resize(width: number, height: number) {
     this.aspect = width / height; this.fit();
-    this.size = this.fitted * this.factor; this.project();
+    this.size = this.fitted * this.factor;
+    if (this.world) this.update(this.world, 0, true);
+    else this.project();
   }
   /** Fit actual landmark vertices once at travel, retaining the original graveyard contract. */
   frameScenery(root: THREE.Object3D | null) {
@@ -43,15 +47,37 @@ export class ArenaCamera {
   private fit() {
     this.fitted = Math.max((this.sceneryFrame?.width ?? RULES.halfWidth * 2 + 5) / this.aspect, this.sceneryFrame?.height ?? RULES.halfDepth * 2 * 0.8 + 5);
   }
-  zoom(steps: number) { this.factor = THREE.MathUtils.clamp(this.factor * Math.pow(0.88, steps), 0.45, 1.25); }
-  reset() { this.factor = 1; this.frameScenery(null); this.size = this.fitted; this.focus.set(0, 0, 0); this.pan.set(0, 0, 0); this.project(); }
+  zoom(steps: number) {
+    if (steps === 0) { this.factor = 1; this.manualZoom = false; return; }
+    // Start manual zoom at the framing the player can actually see, so the first
+    // zoom-in cannot jump out to the larger, whole-arena portrait overview.
+    if (!this.manualZoom && this.aspect < .8) this.factor = this.size / this.fitted;
+    this.manualZoom = true;
+    this.factor = THREE.MathUtils.clamp(this.factor * Math.pow(0.88, steps), .25, 1.25);
+  }
+  reset() { this.factor = 1; this.manualZoom = false; this.world = null; this.frameScenery(null); this.size = this.fitted; this.focus.set(0, 0, 0); this.pan.set(0, 0, 0); this.project(); }
   update(world: Encounter, dt: number, snap = false) {
-    this.size = THREE.MathUtils.lerp(this.size, this.fitted * this.factor, snap ? 1 : 1 - Math.exp(-12 * dt));
+    this.world = world;
+    let targetSize = this.fitted * this.factor;
+    const members = alive(world).filter(a => !a.locked);
     if (this.factor < 1) {
-      const mobile = alive(world).filter(a => !a.locked);
-      if (mobile.length) { const p = centerOf(mobile); this.focus.set(p.x, 0, p.z); }
+      if (members.length) { const p = centerOf(members); this.focus.set(p.x, 0, p.z); }
       else { this.project(); return; }
+    } else if (this.aspect < .8 && !this.manualZoom && members.length) {
+      // A full-width arena turns the horde into dots on a portrait phone. Frame
+      // the playable objectives together instead; manual zoom-out keeps overview.
+      const points: Point[] = [...members, world.knight];
+      if (world.activeSite !== null && SITES[world.activeSite]) points.push(SITES[world.activeSite]!);
+      let left = Infinity, right = -Infinity, north = Infinity, south = -Infinity;
+      for (const p of points) {
+        left = Math.min(left, p.x); right = Math.max(right, p.x);
+        north = Math.min(north, p.z); south = Math.max(south, p.z);
+      }
+      // Side room for attack shapes; vertical room for the top HUD and abilities.
+      targetSize = Math.min(this.fitted, Math.max(34 / this.aspect, (right - left + 12) / this.aspect, (south - north + 14) * .8 / .70));
+      this.focus.set((left + right) / 2, 0, (north + south) / 2);
     } else this.focus.set(0, 0, this.sceneryFrame?.z ?? 0);
+    this.size = THREE.MathUtils.lerp(this.size, targetSize, snap ? 1 : 1 - Math.exp(-12 * dt));
     this.pan.lerp(this.focus, snap ? 1 : 1 - Math.exp(-8 * dt));
     this.project();
   }

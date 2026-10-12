@@ -9,10 +9,10 @@ import { GameMenu, clock, SaveStatus } from './GameMenu';
 import { GameDialogs } from './GameDialogs';
 import { RewardDialog } from './RewardDialog';
 import './horde.css';
-export function makeHordeHud(box: ReturnType<typeof createControllerBox<HordeController>>) {
-  return function HordeHud() { const controller = useSyncExternalStore(box.subscribe, box.get, box.get); return controller ? <Hud controller={controller} /> : null; };
+export function makeHordeHud(box: ReturnType<typeof createControllerBox<HordeController>>, openAccount?: () => void) {
+  return function HordeHud() { const controller = useSyncExternalStore(box.subscribe, box.get, box.get); return controller ? <Hud controller={controller} openAccount={openAccount} /> : null; };
 }
-function Hud({ controller }: { controller: HordeController }) {
+function Hud({ controller, openAccount }: { controller: HordeController; openAccount?: () => void }) {
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot);
   const finished = state.status === 'won' || state.status === 'lost', k = state.knight;
   const dialog = !!(state.panel || state.confirmNew || state.error || !state.menu && (state.paused || finished || state.awaitingReward));
@@ -20,7 +20,7 @@ function Hud({ controller }: { controller: HordeController }) {
   const threat = { sweep: 'Sweep — move sideways', charge: 'Charge — clear the lane', spin: 'Spin — get out of the circle', crossbow: 'Crossbow — leave the blue line', rush: 'Stampede — bait the turn', bash: 'Shield bash — step out of the cone', consecration: 'Consecration — leave the marked circle', lance: 'Lance thrust — clear the narrow lane', firebomb: 'Firebomb — leave the burning ground', shockwave: 'Royal shockwave — stay beyond the ring or follow behind it' }[k.attack];
   return <div className={`horde-hud ${state.reducedMotion ? 'horde-reduced-motion' : ''}`} style={{ '--location-accent': `#${state.location.palette.accent.toString(16).padStart(6, '0')}` } as CSSProperties}>
     <div className="horde-ui-layer" inert={dialog}>
-    {state.menu ? <GameMenu state={state} controller={controller} /> : <>
+    {state.menu ? <GameMenu state={state} controller={controller} openAccount={openAccount} /> : <>
       <div className="horde-knight-status">
         <div><span>{state.location.defender.toUpperCase()}</span><span>{k.hp} / {k.maxHp}</span></div>
         <div className="horde-health" role="progressbar" aria-label="Knight health" aria-valuenow={k.hp} aria-valuemin={0} aria-valuemax={k.maxHp}><i style={{ width: `${state.healthTrail / k.maxHp * 100}%` }} /><b style={{ width: `${k.hp / k.maxHp * 100}%` }} /></div>

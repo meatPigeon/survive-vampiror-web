@@ -2,6 +2,12 @@
 
 ## Current update
 
+Responsive follow-up, 2026-10-12 (locally verified; owner authorized deployment): portrait cameras frame the living horde, knight and active recruitment site together, reserving space for warnings and controls. Whole-arena overview remains available by zooming out. Manual zoom starts from the currently visible scale; Auto restores adaptive framing. Resizing reprojects the current encounter immediately, including during pause. Pause zoom also renders immediately without advancing the simulation. Camera regression tests cover objective visibility, zoom direction after rotation and paused projection, rather than only checking a zoom parameter.
+
+The compact HUD reserves both iDos host corners; wide phone landscape places health, population and recruitment in one upper row. Below 1180 pixels the route dock stays in Pause to keep it clear of combat warnings. Pause secondary actions use a compact grid. Mobile rewards use horizontal artwork/text cards with concise effect descriptions, preserving detailed ability help separately.
+
+Fresh local Chrome checks rendered all five locations in portrait, simultaneous abilities/sprint/aim/shockwave warning at 320 and 390 CSS pixels, reward selection/confirmation at 320 pixels, cooldowns, pause route/perks and settings. The integrated iDos host verified Continue, paused camera controls, keyboard access to the route disclosure, the Solana help disclosure and its Open account action. The existing DEV checkpoint remained at 00:52 with 38 survivors. Captures are under `.idos/review/`. Live pointer checks verified movement, automatic bites, Stop, temporary-only mine detonation, sprint, sling cancellation and firing. Final 700×380 and 844×390 landscape, 1024×769 laptop and 1440×900 desktop renders were checked; an overlap between the route dock and warning at 1024 pixels was fixed and rechecked. Browser warnings/errors were absent. Strict types, 85 tests, packaging, real DEV checkpoint round-trips and Solana signature/recovery checks passed. Physical touch hardware and low-end device performance remain unverified. Publication was explicitly authorized after the local checks; the upload receipt will be recorded here.
+
 2026-10-12: mobile combat now uses tap-to-move without the direction pad or its visibility setting. Portrait phones, short landscape screens and coarse-pointer devices use compact health/population/recruitment chips and a single row of ability buttons with readable cooldowns. Route, passive perks and camera zoom are available in Pause; camera adjustment does not resume combat. The old `settings.touch` field remains readable for version 1 save compatibility but no longer controls any UI. Keyboard movement remains available. The first-command hint is reduced to two lines on mobile, and the command bar keeps a small Stop/Cancel control at the edge.
 
 Mobile verification: types, all 83 tests, production build, live DEV checkpoint checks and Solana identity checks passed. A controller regression verifies that paused zoom does not enable movement or advance combat. Chrome verified actual Continue, pause zoom, tap-to-move and Stop; a local, account-free layout fixture exercised both ability slots, sprint, cooldowns, the long shockwave warning and simultaneous sling aiming at phone portrait/landscape widths, including a 320 CSS-pixel width. The aim prompt was moved above attack warnings after that check exposed an overlap. The fixture is ignored and is not part of the shipped game. Chrome's extension UI interrupted the last real-page pause disclosure check. Physical touch hardware and the hosted candidate remain unverified.
@@ -9,6 +15,10 @@ Mobile verification: types, all 83 tests, production build, live DEV checkpoint 
 2026-10-12: removed the temporary knight-kill button, its controller action and the practice-run state used exclusively by that cheat. It is now absent from local development as well as production. The separate playable field-guide exercises are unchanged.
 
 2026-10-11: version 8 is now live, PROD has the private save schema, and Solana account recovery is implemented. See [Solana identity](solana-identity.md) for current evidence and limits. The original release-candidate history below describes the earlier pass.
+
+## Original October 9 release history
+
+The sections below preserve the initial release pass. Later updates above supersede its direction-pad, development-control and deployment status statements.
 
 ## Scope and state
 

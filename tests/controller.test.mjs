@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadController, loadGame, simulation as game } from './load-source.mjs';
+import { ArenaCamera, loadController, loadGame, simulation as game } from './load-source.mjs';
 const { HordeController } = await loadController();
 const { freshProfile } = await loadGame('player-profile');
 const { captureCheckpoint } = await loadGame('checkpoint');
@@ -69,14 +69,20 @@ test('defeat retries the location entrance instead of the latest nearly-dead aut
 
 test('pause camera controls adjust the view without resuming combat or enabling movement', async () => {
   await withController(async (c, _window, _writes, frame) => {
-    const zooms = []; c.view.camera.zoom = steps => zooms.push(steps);
-    c.zoom(1); assert.deepEqual(zooms, []); // No encounter on the main menu.
+    const camera = new ArenaCamera(); camera.resize(390, 760);
+    c.view.camera = camera;
+    c.zoom(1); assert.equal(camera.factor, 1); // No encounter on the main menu.
     c.start(); c.togglePause();
+    camera.update(c.world, 0, true);
+    const sizes = []; c.view.render = () => sizes.push(camera.camera.top * 2);
+    const initial = camera.camera.top * 2;
     const elapsed = c.world.elapsed, position = game.centerOf(game.alive(c.world));
     c.zoom(-1); c.zoom(1); c.input.holdTouch(1, 'right'); frame();
-    assert.deepEqual(zooms, [-1, 1]); assert.equal(c.world.paused, true);
+    assert.equal(sizes.length, 2); assert.ok(sizes[0] > initial); assert.ok(sizes[1] < sizes[0]);
+    c.zoom(0); assert.ok(Math.abs(sizes[2] - initial) < .00001);
+    assert.equal(c.world.paused, true);
     assert.equal(c.world.elapsed, elapsed); assert.deepEqual(game.centerOf(game.alive(c.world)), position);
     assert.equal(c.input.enabled(), false);
-    c.openPanel('settings'); c.zoom(1); assert.deepEqual(zooms, [-1, 1]);
+    c.openPanel('settings'); c.zoom(1); assert.equal(sizes.length, 3); assert.equal(camera.factor, 1);
   });
 });

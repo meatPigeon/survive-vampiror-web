@@ -10,6 +10,10 @@ The host owns authentication. `src/walletLogin.tsx` now uses Solana rather than 
 
 `CommanderIdentity` displays the server-confirmed `LastWalletLogin`, with loading/error/retry states. It never infers authentication from a connected address. Checkpoints remain private, client-written single-player data and are unsuitable as trusted competition scores or financial rewards.
 
+## Recovery discoverability
+
+Local UX follow-up (2026-10-12): the menu collapses account help under Play across devices / Solana commander. It explains how the same wallet restores a march, exposes an Open account action through `ctx.features.open("profile")`, and states that guest and wallet accounts have separate saves. The module still reads the server-confirmed identity; it never performs authentication itself or imports the host/profile module. Real DEV signature and checkpoint recovery verification passed again with disposable keys. Local Chrome verified the guest explanation, Open account navigating to the host Profile overlay and return to the same paused checkpoint. A real user wallet signature remains a separate device check. This local presentation update has not been deployed.
+
 ## Backend and release
 
 - Canonical title: `FYVPZFCO`; DEV: `FYVPZFCO-DEV`.

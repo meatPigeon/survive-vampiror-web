@@ -8,7 +8,13 @@
 @import "./horde-guide.css";
 @import "./horde-mobile.css";
 
-.horde-identity { max-width: 440px; margin-top: 14px; color: #bbc9aa; font-size: 14px; line-height: 1.55; }
-.horde-identity summary { cursor: pointer; color: #dadfba; }
-.horde-identity p { font-size: 14px; margin: 10px 0; }
+.horde-identity { max-width:440px; margin-top:4px; padding-top:10px; border-top:1px solid #bed19c33; color:#bbc9aa; font-size:12px; line-height:1.55; }
+.horde-identity summary { cursor:pointer; color:#dadfba; min-height:44px; }
+.horde-identity summary b { font-size:12px; }
+.horde-identity summary span { display:block; padding-left:16px; font-size:11px; color:#a9bda0; }
+.horde-identity p { font-size:12px; margin:10px 0; }
+.horde-identity ol { padding-left:20px; }
+.horde-identity li { margin:6px 0; }
+.horde-identity>button { margin-top:12px; font-size:12px; }
+.horde-identity summary:focus-visible { outline:2px solid #f0deaa; outline-offset:3px; }
 .horde-identity code { color: #e9dfbf; overflow-wrap: anywhere; }

@@ -165,7 +165,10 @@ export class HordeController {
   }
   zoom(steps: number) {
     // Camera adjustment is safe while paused; movement and abilities remain gated.
-    if (this.loaded && !this.error && !this.menu && !this.panel && !this.confirmNew && ['ready', 'playing'].includes(this.world.status)) this.view.camera.zoom(steps);
+    if (this.loaded && !this.error && !this.menu && !this.panel && !this.confirmNew && ['ready', 'playing'].includes(this.world.status)) {
+      this.view.camera.zoom(steps);
+      if (this.world.paused) { this.view.camera.update(this.world, 0, true); this.view.render(); }
+    }
   }
   reward(index: number | 'skip') { if (this.panel || this.confirmNew || this.menu) return; if (resolveReward(this.world, index)) { this.input.clear(); this.consumeEvents(); this.checkpoint(true); this.publish(); } }
   private refreshAim() {

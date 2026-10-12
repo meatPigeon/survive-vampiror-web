@@ -10,4 +10,6 @@ Low graphics uses two cloud-noise octaves, 85 rain streaks and at most three fli
 
 Validation: shader compilation, drifting clouds, rain and a passing three-member flock on Low graphics were inspected in Chrome. Reduced motion visibly removed the rain/wildlife and held the cloud pattern still; the original motion preference was restored afterward. No browser warnings/errors were observed. Preview captures are `.idos/weather-flock.png` and `.idos/weather-final.png`. Presentation tests cover shared cloud drift, reduced motion, quality limits, smooth rain transitions, dry intervals, alternating flock schedules, finite geometry and resource teardown. `npm run check` passed 78 tests, types, production build and the real DEV backend save round-trip. Physical-device performance remains a release check.
 
-This iteration remains uncommitted and local; no hosting or PROD configuration changed.
+Original atmosphere work is included in the later release; see the release-readiness history for publication status.
+
+Local readability follow-up (2026-10-12): cloud air opacity and ground shade are reduced so actors and warning shapes stay clear on portrait screens. The air mask is evaluated at its projected ground position for the fixed camera tilt, keeping the central clearing aligned. Wind, rain, flocks, reduced-motion behavior and combat rules are unchanged. The lighter clouds were rendered in all five locations at phone portrait sizes. This follow-up is not deployed.

@@ -30,9 +30,11 @@ void main() {
   vec2 p = (cloudXZ + mix(vec2(4.,-3.),vec2(0.),airLayer) - wind) * vec2(.075,.095);
   float broad = billow(p + vec2(3.1,7.8));
   float shape = smoothstep(.49,.71,broad);
-  float edge = smoothstep(8.,36.,length(cloudXZ*vec2(.91,1.08))+(cloudNoise(cloudXZ*.08)-.5)*5.);
-  // Wisps cross the arena; the denser, luminous banks stay around the scenery.
-  float opacity = mix(.17, .075 + .31*edge, airLayer) * shape;
+  // Protect the ground visible beneath the elevated layer in the tilted camera.
+  vec2 groundXZ = cloudXZ - vec2(0.,5.625)*airLayer;
+  float edge = smoothstep(18.,44.,length(groundXZ*vec2(.91,1.08))+(cloudNoise(groundXZ*.08)-.5)*5.);
+  // Atmosphere should never wash out actors, attack warnings or the phone view.
+  float opacity = mix(.08, .018 + .10*edge, airLayer) * shape;
   float boundary = 1.-smoothstep(66.,84.,length(cloudXZ));
   float light = smoothstep(.43,.70,billow(p + vec2(3.02,7.68)));
   vec3 tint = mix(vec3(.022,.040,.033),cloudColor*(.76+.24*light),airLayer);

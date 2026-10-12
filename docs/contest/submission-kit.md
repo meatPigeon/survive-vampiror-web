@@ -15,12 +15,11 @@ knight attacks with readable warnings.
 
 The game is built as a native web title on iDos Games. Solana Ed25519 message signatures authenticate a persistent player identity. A fresh browser using the same wallet recovers the same account and its private campaign checkpoint, preferences and personal records. No transaction fee or token purchase is required; guests remain welcome with separate saves. Saves are off-chain iDos data. **HORDE mainnet mint is verified:** `9UB6DJsQncQoxQrBW8a6HyyDAfeWKoYN7WaHmukpidos`.
 
-The existing [Colosseum project](https://colosseum.com/arena/projects/survive-vampiror) has a saved draft with game details, Solana explanation, repository and live links. Telegram contact, founder profile, artwork upload and video URLs remain incomplete. Browser file uploads require enabling file-URL access for the ChatGPT extension. The project has not been finally submitted.
+Submission receipts recorded on 2026-10-12 show Colosseum submitted, Superteam submitted (with Edit Submission available), and iDos **Accepted — In the leaderboard**. These are the recorded submission results, not a new submission performed by the local UI polish pass. The links below replace the earlier draft-only checklist.
 
-## Demo video recording plan (60–90 seconds)
+## Demo video and optional future recording plan (60–90 seconds)
 
-Record the actual staged/production game on desktop or phone. Show only behaviors that occur in the
-current build; do not use the development-only insta-kill control in the submitted recording.
+The submitted [gameplay demo](https://youtu.be/GK23R-IHtwI) shows an ordinary Adventure run in the graveyard. It uses a guest account and explains Solana recovery in captions. It does not demonstrate a wallet signature. A future recording can use the outline below; the knight-kill control has been removed from source.
 
 1. Open the game, show its title/menu and explain “You are the Horde.”
 2. Start the first march and use a click/tap plus keyboard or touch movement to steer around the
@@ -46,12 +45,13 @@ Add a short introduction in your own voice and explain your background accuratel
 
 - iDos project: https://idosgames.com/app/FYVPZFCO/
 - GitHub: https://github.com/meatPigeon/survive-vampiror-web (public; anonymous access verified 2026-10-11)
-- Colosseum project: https://colosseum.com/arena/projects/survive-vampiror (draft; not finally submitted)
-- Superteam Earn side-track submission: not submitted yet
-- Demo and pitch video URLs: not recorded or uploaded yet
+- Colosseum project: https://colosseum.com/arena/projects/survive-vampiror (submission recorded 2026-10-12)
+- Superteam profile with submission: https://superteam.fun/earn/t/bronze-free-15
+- Gameplay demo: https://youtu.be/GK23R-IHtwI
+- Founder pitch: https://youtu.be/xq_8Us-bS2A
 - Solana integration: signature-authenticated cloud campaign recovery implemented and tested
 - HORDE mainnet token: https://solscan.io/token/9UB6DJsQncQoxQrBW8a6HyyDAfeWKoYN7WaHmukpidos (verified by read-only mainnet RPC)
-- Pitch deck: output/pitch/survive-vampiror-pitch-solana.pptx; PDF export in output/pdf/
+- [Pitch PDF](../../output/pdf/survive-vampiror-pitch-solana.pdf)
 
 ## Release evidence and boundaries
 
@@ -59,5 +59,9 @@ Add a short introduction in your own voice and explain your background accuratel
 - 83 automated tests passed, strict TypeScript/build passed, guest cloud-save round-trip passed, and actual Solana signature/campaign recovery checks passed.
 - Local Chrome inspected the compiled release and discovered Phantom. Hosted DEV browser access is blocked by a saved site permission and was not bypassed.
 - DEV and PROD both have Solana wallet login enabled and the private save schema registered.
-- The agent performed no wallet payment or token mint. The user-completed mint is now verified. Video uploads and final contest submission remain incomplete.
+- The agent performed no wallet payment or token mint. The user-completed mint is now verified. The video and submission receipts are recorded above. The current local UI changes still require visual review and owner approval before deployment.
 - Deadline shown on the official contest page: October 13, 2026, 11:59 Almaty time (October 12, 23:59 PDT).
+
+## Judge-facing source review
+
+The [README](../../README.md) leads with the playable hook, demo and pitch, then describes controls, the five-location loop, actual Solana account recovery, reproducible verification and the source map. It distinguishes published version 8, staged version 11 and local work awaiting approval. The [official side-track listing](https://superteam.fun/earn/listing/superteam-kazakhstan-x-idos-games-side-track/) was checked on 2026-10-12 and explicitly lists wallet authentication as a possible integration; prize judging remains the organizers' decision.

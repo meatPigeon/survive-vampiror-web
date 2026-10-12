@@ -12,7 +12,7 @@ export function Modal({ label, children, onClose, className = '' }: { label: str
     event.stopPropagation();
     if (event.key === 'Escape' && onClose) { event.preventDefault(); onClose(); }
     if (event.key !== 'Tab') return;
-    const focusable = Array.from(root.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]') ?? []).filter(el => el.getClientRects().length);
+    const focusable = Array.from(root.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), summary, a[href], [tabindex="0"]') ?? []).filter(el => el.getClientRects().length);
     const first = focusable[0], last = focusable.at(-1);
     if (!first) { event.preventDefault(); root.current?.focus(); }
     else if (event.shiftKey && (document.activeElement === first || document.activeElement === root.current)) { event.preventDefault(); last?.focus(); }

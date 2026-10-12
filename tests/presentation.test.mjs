@@ -38,7 +38,7 @@ test('source camera fits wide/portrait arenas, clamps zoom, excludes locked acto
   const camera = new ArenaCamera(), world = game.createEncounter();
   camera.resize(1600, 900); near(camera.camera.top * 2, 40.2);
   camera.resize(600, 1000); near(camera.camera.top * 2, 65 / 0.6);
-  camera.zoom(100); assert.equal(camera.factor, 0.45);
+  camera.zoom(100); assert.equal(camera.factor, 0.25);
   for (const a of world.zombies) a.locked = true;
   Object.assign(world.zombies[0], { locked: false, x: 10, z: -5 });
   camera.update(world, 1); near(camera.camera.position.x, 10 * (1 - Math.exp(-8)));
@@ -58,6 +58,56 @@ test('screen/world aiming round trips through the real tilted orthographic camer
     assert.equal(aim.onGround, true); near(aim.point.x, point.x); near(aim.point.z, point.z);
   }
   assert.equal(camera.aim(canvas, 0, 0).onGround, false);
+});
+
+test('portrait combat framing enlarges the first encounter and keeps the horde, knight and active recruitment site in view', () => {
+  for (const [width, height] of [[390, 760], [320, 640], [430, 932]]) {
+    const camera = new ArenaCamera(), world = game.createEncounter();
+    camera.resize(width, height);
+    const overview = camera.camera.top * 2;
+    camera.update(world, 0, true);
+    assert.ok(camera.camera.top * 2 < overview * .7, 'initial horde is substantially larger than the whole-arena view');
+    for (const site of [null, 0, 1, 2, 3, 4]) {
+      world.activeSite = site;
+      for (const edge of [-1, 1]) {
+        world.zombies.forEach((z, i) => { z.x = edge * (24 + i % 5); z.z = -12 + i % 8; });
+        world.knight.x = -edge * 24; world.knight.z = 12;
+        camera.update(world, 0, true);
+        const points = [...world.zombies, world.knight, ...(site === null ? [] : [game.SITES[site]])];
+        for (const p of points) {
+          const projected = new Vector3(p.x, 0, p.z).project(camera.camera);
+          assert.ok(Math.abs(projected.x) < .95 && Math.abs(projected.y) < .75, `${width}x${height}: objective stays clear of screen edges and HUD`);
+        }
+      }
+    }
+    const before = JSON.stringify(world);
+    camera.resize(height, width); camera.update(world, 0, true);
+    camera.resize(width, height); camera.update(world, 0, true);
+    assert.equal(JSON.stringify(world), before, 'rotation and framing cannot advance combat');
+    camera.zoom(-100); camera.update(world, 0, true);
+    assert.ok(camera.camera.top * 2 >= overview, 'manual zoom-out restores an overview');
+  }
+});
+
+test('manual zoom starts from the visible portrait fight and remains directional after rotation; Auto restores framing', () => {
+  const camera = new ArenaCamera(), world = game.createEncounter();
+  camera.resize(390, 760); camera.update(world, 0, true);
+  const initial = camera.camera.top * 2;
+  camera.zoom(1); camera.update(world, 0, true);
+  near(camera.camera.top * 2, initial * .88);
+  camera.zoom(-1); camera.update(world, 0, true);
+  near(camera.camera.top * 2, initial);
+  camera.zoom(-1); camera.update(world, 0, true);
+  assert.ok(camera.camera.top * 2 > initial);
+  camera.zoom(100); camera.update(world, 0, true);
+  camera.resize(760, 390);
+  const rotated = camera.camera.top * 2;
+  camera.zoom(1); camera.update(world, 0, true);
+  assert.ok(camera.camera.top * 2 <= rotated, 'zoom-in never zooms out, including at its limit after rotation');
+  camera.resize(390, 760); camera.zoom(0); camera.update(world, 0, true);
+  near(camera.camera.top * 2, initial);
+  camera.resize(760, 390); camera.resize(390, 760);
+  near(camera.camera.top * 2, initial); // paused resize is framed immediately
 });
 
 test('temporary recruit bomb presentation lowers the real rig, clears on cancellation and death, and releases its fuse', async () => {
@@ -261,7 +311,7 @@ test('location terrain and lighting change palettes without rebuilding shader pr
   terrain.setLocation(campaign.CAMPAIGN[0]); assert.equal(shader.uniforms.hordeTheme.value, 0); terrain.material.dispose();
 });
 
-test('location framing fits real architecture on wide and portrait screens, preserves aiming, zoom following and restart', async () => {
+test('location overview fits real architecture on wide and portrait screens, preserves aiming, zoom following and restart', async () => {
   const { loadGame } = await import('./load-source.mjs');
   const { LocationScenery } = await loadGame('location-scenery');
   const world = game.createEncounter();
@@ -272,7 +322,10 @@ test('location framing fits real architecture on wide and portrait screens, pres
       scenery.update(2); scenery.root.updateMatrixWorld(true);
       for (const [width, height] of location.id === 'graveyard' ? [[1600, 900]] : [[1600, 900], [600, 1000]]) {
         // A restored checkpoint is paused, so framing must fit before any time advances.
-        camera.resize(width, height); camera.update(world, 0, true);
+        camera.resize(width, height);
+        // Portrait defaults to the fight; zoom-out explicitly requests the whole arena.
+        if (width < height) camera.zoom(-100);
+        camera.update(world, 0, true);
         scenery.root.traverse(object => {
           if (!object.isMesh) return;
           const vertices = object.geometry.getAttribute('position'), projected = new Vector3();

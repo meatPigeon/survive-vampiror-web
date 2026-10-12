@@ -11,7 +11,7 @@ export const hordeModule = defineModule({
     const box = createControllerBox<HordeController>();
     ctx.registerRoute({ id: "horde", label: "Survive Vampiror", icon: "⚔️" });
     ctx.registerScene(createHordeScene(box, ctx.client));
-    ctx.registerPanel({ id: "hud", slot: "overlay", component: makeHordeHud(box) });
+    ctx.registerPanel({ id: "hud", slot: "overlay", component: makeHordeHud(box, () => ctx.features.open("profile")) });
     ctx.exposeToAgent({
       state: () => box.get()?.describe() ?? { mounted: false, playing: false },
       actions: {
