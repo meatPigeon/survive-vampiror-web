@@ -16,7 +16,7 @@ Scores are client-reported. Client validation, persistence and server BestTime a
 
 ## Backend configuration
 
-Configured **DEV only**, title `FYVPZFCO-DEV`, through iDos Data MCP after reading the existing Leaderboard section. IDs are `horde_adventure_{1..5}_v1` and `horde_relentless_{1..5}_v1`, in campaign order. Existing unrelated definitions must be preserved whenever configuring another environment.
+Initially configured in title `FYVPZFCO-DEV`, then enabled in PROD `FYVPZFCO` with the approved version-13 release below. Both updates used iDos Data MCP after reading the existing Leaderboard section. IDs are `horde_adventure_{1..5}_v1` and `horde_relentless_{1..5}_v1`, in campaign order. Existing unrelated definitions must be preserved whenever configuring another environment.
 
 Every board uses `ScoreAggregation: BestTime`, `Schedule: { Mode: Cyclic, IsActive: true, Cyclic: { Reset: Never } }`, `TopUsersLimit: 100`, `MinScoreToEnterTop: 1`, `BracketSize: 0`, enabled, with no rank rewards or milestones. Score sources explicitly contain `ClientScore` with `Limits: { PerActivationCap: 86400000, DailyCap: 300 }` (milliseconds, matching the save's 24-hour bound).
 
@@ -34,4 +34,10 @@ The review exposed the SDK Window's implicit grid column expanding beyond 320px.
 
 Staged as **DEV version 13**, build `bld661d0c899af24b118a31e83b5f347b7b`, on 2026-10-19: [review candidate](https://fyvpzfco-dev.idos.games/v/bld661d0c899af24b118a31e83b5f347b7b/index.html). The upload helper ran strict types, all 95 tests, live private-save, Solana-signature and leaderboard checks, then built and validated the 4,974,563-byte ZIP. Receipt: `Staged`, `livePromotion: false`. Hosted browser gameplay remains unverified because the saved browser preference blocks the DEV hosting domain; local rendering and real backend verification are separate evidence.
 
-PROD configuration and the public version 12 game have not been changed. A future approved promotion must add these same definitions to PROD, read them back and verify the production environment before switching the public build. Do not copy test-player data.
+## Approved production release
+
+The user's “if it works deploy” approved publication on 2026-10-19. Before promoting, the empty PROD Leaderboard section was read and backed up, then the ten reviewed definitions were added. MCP read-back matched the DEV definitions exactly. A fresh production SDK session verified all definitions and all ten combined leaderboard/progress reads, without submitting any scores or copying DEV participants.
+
+The same staged artifact `bld661d0c899af24b118a31e83b5f347b7b` was promoted with `deploy=true`. The promotion and an independent `get_build` read both returned **version 13, Live, Published: true, Errors: []**. Runtime source is commit `904a3c0`, already pushed to `main`. Publication receipt: `.idos/leaderboards-published-2026-10-19.json`; production read verification: `.idos/leaderboards-prod-verification.json` (both ignored).
+
+Post-release Chrome verification succeeded on the [public iDos game page](https://idosgames.com/app/FYVPZFCO/), embedding the production game host. Checked game startup, Best times from both menu and Pause, Adventure/Relentless and location selectors, empty production boards, fullscreen, Close, and restoring the existing wave-1 checkpoint paused at 00:41 with forty survivors. The earlier browser restriction concerns the DEV host; it did not block this public-page check. No game errors were observed; logs contained the platform's Phantom-adapter warnings and a Phantom extension `ethereum` injection conflict. Actual scoring/aggregation was exercised in DEV, while production verification used reads only. Local screenshot: `.idos/review/leaderboard-live.png`.

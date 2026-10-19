@@ -25,9 +25,9 @@ The game uses the original Survive Vampiror's models, animations and music, with
 | Sprint, once unlocked | Sprint button | Space |
 | Pause, route, perks, camera | Pause | Esc; mouse wheel also zooms |
 
-## Best times (DEV candidate)
+## Best times
 
-[Review DEV version 13](https://fyvpzfco-dev.idos.games/v/bld661d0c899af24b118a31e83b5f347b7b/index.html). This candidate is staged for review; the public game remains version 12.
+[Play the live version 13](https://idosgames.com/app/FYVPZFCO/). Production has ten independent boards; test-player scores remain in DEV.
 
 Clear each location to post your fastest combat time. **Best times** opens from the main menu, Pause or the clear screen; choose a location and Adventure / Relentless to see the top 100 and your own rank. The five locations have independent, all-time boards for each difficulty. A slower attempt never replaces a faster one. Pauses, choosing upgrades and travel do not count; campaign perks carry over. Times display to the millisecond.
 
@@ -119,7 +119,7 @@ For agent and module conventions, read [IDOS.md](IDOS.md). For local MCP setup, 
 
 ## Release status
 
-Published **2026-10-12**: [version 12 is live](https://idosgames.com/app/FYVPZFCO/) from source commit `d50c0ae`. This release removes the on-screen direction pad and development kill control, adds the compact responsive HUD and adaptive portrait camera, lightens cloud cover and clarifies Solana account recovery. Strict types, all 85 tests, packaging, real DEV checkpoint persistence and Solana identity recovery checks passed. Phone/laptop/desktop layouts and gameplay controls were checked in local Chrome. Hosted browser inspection was blocked by a saved browser permission; iDos MCP confirmed this exact build as Live and Published. Physical touch-device and low-end performance checks remain outstanding.
+Published **2026-10-19**: [version 13 is live](https://idosgames.com/app/FYVPZFCO/) from source commit `904a3c0`. This release adds fastest-clear leaderboards for all five locations, separated by difficulty, with persistent best times and retryable uploads. Strict types, all 95 tests, packaging, real DEV checkpoint persistence, Solana identity recovery and leaderboard ranking checks passed. Phone and desktop layouts were checked locally. After enabling the ten matching PROD definitions, real SDK reads verified every board; the public iDos page loaded the new leaderboard, filters, fullscreen view and an existing paused checkpoint in Chrome. iDos MCP confirms this exact build as Live and Published. Physical touch-device and low-end performance checks remain outstanding. See [leaderboard release details](docs/feature-history/level-leaderboards.md).
 
 `npm run package:dev` creates a local DEV archive. `npm run stage:dev` checks and uploads a candidate with `deploy=false`, returning a test URL. Publication is a separate, explicitly approved operation. See [release verification and device limits](docs/feature-history/release-readiness.md).
 
