@@ -55,7 +55,7 @@ export function stepEncounter(w: Encounter, dt: number, inputX = 0, inputZ = 0) 
     return;
   }
   // Horde physics precedes arena priority 1. Combat ordering is intentional.
-  moveHorde(w, { x: inputX, z: inputZ }, dt); w.elapsed += dt;
+  moveHorde(w, { x: inputX, z: inputZ }, dt); w.elapsed += dt; if (w.levelElapsed >= 0) w.levelElapsed += dt;
   w.knight.flash = Math.max(0, w.knight.flash - dt);
   for (const a of w.zombies) { a.flash = Math.max(0, a.flash - dt); if (a.hp <= 0) a.deadFor += dt; }
   w.zombies = w.zombies.filter(a => a.hp > 0 || a.deadFor < 0.6);
@@ -79,7 +79,7 @@ export function stepEncounter(w: Encounter, dt: number, inputX = 0, inputZ = 0) 
 export function describeEncounter(w: Encounter) {
   const living = alive(w), temporary = living.filter(a => a.kind === "temporary");
   return {
-    status: w.status, mode: w.normal ? "Normal" : "Newbie", paused: w.paused, elapsed: w.elapsed,
+    status: w.status, mode: w.normal ? "Normal" : "Newbie", paused: w.paused, elapsed: w.elapsed, levelElapsed: w.levelElapsed,
     wave: w.wave, betweenWaves: w.betweenWaves, awaitingReward: w.awaitingReward, rewards: [...w.offeredRewards], waveTimeLeft: w.waveTimeLeft,
     totalWaves: CAMPAIGN.length, location: locationForWave(w.wave), passives: [...w.passives],
     route: CAMPAIGN.map((location, index) => ({ id: location.id, name: location.name, shortName: location.shortName, state: index + 1 < w.wave || (index + 1 === w.wave && w.knight.hp <= 0) ? 'conquered' : index + 1 === w.wave ? 'current' : 'ahead' })),

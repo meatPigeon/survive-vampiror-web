@@ -28,6 +28,7 @@ adding or removing modules in this local repository.
 - `mailbox`
 - `profile`
 - `horde`
+- `leaderboard`
 <!-- idos:modules:end -->
 
 ## How the project is built

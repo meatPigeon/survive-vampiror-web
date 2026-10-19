@@ -26,7 +26,7 @@ export interface GameEvent {
   type: string; attack?: Attack; upgrade?: Perk; x?: number; z?: number; radius?: number; amount?: number;
 }
 export interface Encounter {
-  status: Outcome; normal: boolean; paused: boolean; elapsed: number; zombies: Zombie[]; knight: Knight;
+  status: Outcome; normal: boolean; paused: boolean; elapsed: number; levelElapsed: number; zombies: Zombie[]; knight: Knight;
   wave: number; betweenWaves: boolean; awaitingReward: boolean; offeredRewards: Perk[]; waveTimeLeft: number;
   sprintUnlocked: boolean; sprintRemaining: number; sprintCooldown: number; abilities: Ability[]; passives: PassivePerk[];
   casualties: number; recruited: number; expiredCount: number; nextId: number;

@@ -14,3 +14,4 @@ instead.
 - [Playable field guide](visual-guide.md) — short exercises using the real characters and rules, with separate controls and credits.
 - [Atmosphere](atmosphere.md) — drifting clouds/shadows, occasional crow/bat flocks and fading rain showers.
 - [Solana identity](solana-identity.md) — signature-verified commander accounts, cross-browser cloud recovery and version 8 publication.
+- [Level leaderboards](level-leaderboards.md) — independent fastest-clear boards per location and difficulty, resumable timing and retryable score uploads.

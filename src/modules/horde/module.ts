@@ -1,3 +1,4 @@
+import { levelBoardId } from '../../shared/level-leaderboards';
 import { defineModule } from "@idosgames/module-sdk";
 import { HordeController } from "./game/controller";
 import { createControllerBox } from "./react/controller-box";
@@ -11,7 +12,7 @@ export const hordeModule = defineModule({
     const box = createControllerBox<HordeController>();
     ctx.registerRoute({ id: "horde", label: "Survive Vampiror", icon: "⚔️" });
     ctx.registerScene(createHordeScene(box, ctx.client));
-    ctx.registerPanel({ id: "hud", slot: "overlay", component: makeHordeHud(box, () => ctx.features.open("profile")) });
+    ctx.registerPanel({ id: "hud", slot: "overlay", component: makeHordeHud(box, () => ctx.features.open("profile"), (wave, normal) => { ctx.features.open("leaderboard", { leaderboardID: levelBoardId(wave, normal) }); }) });
     ctx.exposeToAgent({
       state: () => box.get()?.describe() ?? { mounted: false, playing: false },
       actions: {

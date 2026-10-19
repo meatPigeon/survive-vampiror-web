@@ -12,10 +12,10 @@ async function withController(run, profile = freshProfile()) {
   window.matchMedia = () => Object.assign(new EventTarget(), {matches:false});
   globalThis.window = window; globalThis.document = document;
   globalThis.requestAnimationFrame = cb => {frame = cb; return 1;}; globalThis.cancelAnimationFrame = () => {};
-  const writes = [];
-  const client = {userCustomData:{getMyUserCustomData:async () => ({ok:true,data:{Private:{[PROFILE_KEY]:{Value:JSON.stringify(profile)}}}}),setPrivateData:async (_key,value) => {writes.push(JSON.parse(value)); return {ok:true,data:{}};}}};
+  const writes = [], submissions = [];
+  const client = {leaderboard:{submitScoresBatch:async scores => {submissions.push(scores); return {ok:true,data:scores.map(s => ({Id:s.LeaderboardID,Success:true,Data:{NewScore:s.Score}}))};}},userCustomData:{getMyUserCustomData:async () => ({ok:true,data:{Private:{[PROFILE_KEY]:{Value:JSON.stringify(profile)}}}}),setPrivateData:async (_key,value) => {writes.push(JSON.parse(value)); return {ok:true,data:{}};}}};
   const controller = new HordeController({}, client);
-  try { await controller.ready; controller.setRunning(true); await run(controller, window, writes, () => frame(performance.now() + 100)); }
+  try { await controller.ready; controller.setRunning(true); await run(controller, window, writes, () => frame(performance.now() + 100), submissions); }
   finally { controller.destroy(); await controller.saves.flush(); Object.assign(globalThis,previous); }
 }
 
@@ -84,5 +84,19 @@ test('pause camera controls adjust the view without resuming combat or enabling 
     assert.equal(c.world.elapsed, elapsed); assert.deepEqual(game.centerOf(game.alive(c.world)), position);
     assert.equal(c.input.enabled(), false);
     c.openPanel('settings'); c.zoom(1); assert.equal(sizes.length, 3); assert.equal(camera.factor, 1);
+  });
+});
+
+
+test('controller posts a cleared location once and keeps its time through pause and Continue', async () => {
+  await withController(async (c, _window, _writes, frame, submissions) => {
+    c.start(); game.beginBattle(c.world); c.world.elapsed = c.world.levelElapsed = 17.25;
+    game.damageKnight(c.world, 9999); frame(); await c.leaderboard.sync();
+    assert.deepEqual(submissions.flat(), [{LeaderboardID:'horde_adventure_1_v1',Score:17250}]);
+    assert.equal(c.getSnapshot().levelBest.milliseconds,17250); assert.equal(c.getSnapshot().levelBest.pending,false);
+    c.prepareLeaderboard(); assert.equal(c.world.paused,true);
+    c.returnToMenu(); c.continueRun(); assert.equal(c.world.levelElapsed,17.25); assert.equal(c.world.awaitingReward,true);
+    c.togglePause(); frame(); await c.leaderboard.sync(); assert.equal(submissions.length,1);
+    c.reward('skip'); assert.equal(c.saves.profile.levelBests.horde_adventure_1_v1.milliseconds,17250);
   });
 });

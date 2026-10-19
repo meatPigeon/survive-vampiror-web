@@ -4,6 +4,12 @@
   "generatedFromCommit": "785a4577dbda0aa6d355f2b43e62e9f6a3537471",
   "titleId": "FYVPZFCO",
   "modules": {
+    "leaderboard": {
+      "contentHash": "5d7fccefb883ee98826e3d153614e26a62d92595bfe932d29c1d5213b6113672",
+      "version": "0.1.1",
+      "customized": true,
+      "note": "Catalog screen adapted for per-location BestTime records, millisecond formatting, difficulty selection and cancellable loading."
+    },
     "inventory": {
       "contentHash": "71f41012c37839b7d4e94c6ed3759118990408da9615743bd27282ca137e49ab",
       "catalog": {

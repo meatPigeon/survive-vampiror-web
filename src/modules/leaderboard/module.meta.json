@@ -1,0 +1,26 @@
+{
+  "id": "leaderboard",
+  "type": "feature",
+  "summary": "Fastest clears for each campaign location, split by difficulty.",
+  "description": "Catalog leaderboard module adapted for millisecond clear times, location and difficulty selection, own rank, explicit retry and stale-response protection. Uses iDos BestTime aggregation and never-reset boards.",
+  "provides": [
+    "per-location and per-difficulty fastest clears",
+    "top 100 players and own rank",
+    "formatted clear times and refresh"
+  ],
+  "tags": [
+    "leaderboard",
+    "ranking",
+    "top",
+    "milestones",
+    "rank-rewards",
+    "ui",
+    "screen",
+    "events"
+  ],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.1"
+}

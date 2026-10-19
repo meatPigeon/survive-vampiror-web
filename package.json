@@ -9,14 +9,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --test tests/horde.test.mjs tests/presentation.test.mjs tests/campaign.test.mjs tests/knight-specials.test.mjs tests/release.test.mjs tests/controller.test.mjs tests/guide.test.mjs tests/solana.test.mjs",
+    "test": "node --test tests/horde.test.mjs tests/presentation.test.mjs tests/campaign.test.mjs tests/knight-specials.test.mjs tests/release.test.mjs tests/controller.test.mjs tests/guide.test.mjs tests/solana.test.mjs tests/leaderboard.test.mjs",
     "assets:port": "node scripts/port-assets.mjs",
     "verify": "node scripts/verify.mjs",
     "verify:solana": "node scripts/verify-solana.mjs",
-    "check": "npm run typecheck && npm test && npm run build && npm run verify",
+    "check": "npm run typecheck && npm test && npm run build && npm run verify && npm run verify:leaderboards",
     "mcp:check": "node scripts/mcp-check.mjs",
     "package:dev": "node scripts/package-dev.mjs",
-    "stage:dev": "node scripts/stage-dev.mjs"
+    "stage:dev": "node scripts/stage-dev.mjs",
+    "verify:leaderboards": "node scripts/verify-leaderboards.mjs"
   },
   "//": "Exact SDK and wallet dependency versions are verified for this standalone starter; see docs/feature-history/local-development.md.",
   "dependencies": {

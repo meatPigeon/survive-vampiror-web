@@ -36,7 +36,7 @@ export function spawnZombie(world: Encounter, point: Point, kind: Zombie["kind"]
   clampBody(zombie, RULES.zombieRadius); world.zombies.push(zombie); return zombie;
 }
 export function createEncounter(normal = false, seed = 0x7e57c0de): Encounter {
-  const world: Encounter = { status: "ready", normal, paused: false, elapsed: 0, zombies: [], knight: newKnight(1),
+  const world: Encounter = { status: "ready", normal, paused: false, elapsed: 0, levelElapsed: 0, zombies: [], knight: newKnight(1),
     wave: 1, betweenWaves: false, awaitingReward: false, offeredRewards: [], waveTimeLeft: 0,
     sprintUnlocked: false, sprintRemaining: 0, sprintCooldown: 0, abilities: [newAbility(), newAbility()], passives: [],
     casualties: 0, recruited: 0, expiredCount: 0, nextId: 0, activeSite: null, lastSite: null,
@@ -127,7 +127,7 @@ export function startNextWave(world: Encounter) {
   for (const x of [-RULES.halfWidth + 6, RULES.halfWidth - 6]) for (const z of [-RULES.halfDepth + 6, RULES.halfDepth - 6]) {
     const p = { x, z }, d = distance(p, center); if (d > farthest) { farthest = d; best = p; }
   }
-  world.wave++; world.knight = newKnight(world.wave, best); world.betweenWaves = false; world.waveTimeLeft = 0;
+  world.wave++; world.levelElapsed = 0; world.knight = newKnight(world.wave, best); world.betweenWaves = false; world.waveTimeLeft = 0;
   world.activeSite = null; world.lastSite = null; world.siteProgress = 0; world.nextSiteAt = world.elapsed;
   emit(world, { type: "wave-start" });
 }

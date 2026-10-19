@@ -9,24 +9,25 @@ import { GameMenu, clock, SaveStatus } from './GameMenu';
 import { GameDialogs } from './GameDialogs';
 import { RewardDialog } from './RewardDialog';
 import './horde.css';
-export function makeHordeHud(box: ReturnType<typeof createControllerBox<HordeController>>, openAccount?: () => void) {
-  return function HordeHud() { const controller = useSyncExternalStore(box.subscribe, box.get, box.get); return controller ? <Hud controller={controller} openAccount={openAccount} /> : null; };
+export function makeHordeHud(box: ReturnType<typeof createControllerBox<HordeController>>, openAccount?: () => void, openLeaderboard?: (wave: number, normal: boolean) => void) {
+  return function HordeHud() { const controller = useSyncExternalStore(box.subscribe, box.get, box.get); return controller ? <Hud controller={controller} openAccount={openAccount} openLeaderboard={openLeaderboard} /> : null; };
 }
-function Hud({ controller, openAccount }: { controller: HordeController; openAccount?: () => void }) {
+function Hud({ controller, openAccount, openLeaderboard }: { controller: HordeController; openAccount?: () => void; openLeaderboard?: (wave: number, normal: boolean) => void }) {
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot);
+  const showLeaderboard = openLeaderboard ? () => { controller.prepareLeaderboard(); openLeaderboard(state.menu ? 1 : state.wave, state.menu ? state.normal : controller.world.normal); } : undefined;
   const finished = state.status === 'won' || state.status === 'lost', k = state.knight;
   const dialog = !!(state.panel || state.confirmNew || state.error || !state.menu && (state.paused || finished || state.awaitingReward));
   const aiming = state.abilities.some(a => a.aiming);
   const threat = { sweep: 'Sweep — move sideways', charge: 'Charge — clear the lane', spin: 'Spin — get out of the circle', crossbow: 'Crossbow — leave the blue line', rush: 'Stampede — bait the turn', bash: 'Shield bash — step out of the cone', consecration: 'Consecration — leave the marked circle', lance: 'Lance thrust — clear the narrow lane', firebomb: 'Firebomb — leave the burning ground', shockwave: 'Royal shockwave — stay beyond the ring or follow behind it' }[k.attack];
   return <div className={`horde-hud ${state.reducedMotion ? 'horde-reduced-motion' : ''}`} style={{ '--location-accent': `#${state.location.palette.accent.toString(16).padStart(6, '0')}` } as CSSProperties}>
     <div className="horde-ui-layer" inert={dialog}>
-    {state.menu ? <GameMenu state={state} controller={controller} openAccount={openAccount} /> : <>
+    {state.menu ? <GameMenu state={state} controller={controller} openAccount={openAccount} openLeaderboard={showLeaderboard} /> : <>
       <div className="horde-knight-status">
         <div><span>{state.location.defender.toUpperCase()}</span><span>{k.hp} / {k.maxHp}</span></div>
         <div className="horde-health" role="progressbar" aria-label="Knight health" aria-valuenow={k.hp} aria-valuemin={0} aria-valuemax={k.maxHp}><i style={{ width: `${state.healthTrail / k.maxHp * 100}%` }} /><b style={{ width: `${k.hp / k.maxHp * 100}%` }} /></div>
         <small><span className="horde-desktop-copy">{state.mode} · </span>Wave {state.wave} / {state.totalWaves} · Phase {['I', 'II', 'III'][k.phase - 1]}</small><strong className="horde-location-label">{state.location.name}</strong>
       </div>
-      <div className="horde-top-right"><time><HordeIcon name="clock" />{clock(state.elapsed)}</time><button onClick={() => controller.togglePause()} disabled={finished}><HordeIcon name="pause" />Pause</button></div>
+      <div className="horde-top-right"><time aria-label="Location combat time"><HordeIcon name="clock" />{state.levelElapsed >= 0 ? clock(state.levelElapsed) : "—"}</time><button onClick={() => controller.togglePause()} disabled={finished}><HordeIcon name="pause" />Pause</button></div>
       <div className={`horde-numbers ${state.permanent <= 8 ? 'horde-critical' : ''}`}>
         <div aria-label={`${state.permanent} permanent zombies${state.permanent <= 8 ? ' — keep them alive' : ''}`}><HordeIcon name="permanent" /><strong>{state.permanent}</strong><span className="horde-desktop-copy">{state.permanent <= 8 ? 'Keep them alive' : 'permanent'}</span></div>
         {state.temporary > 0 && <div className="horde-temporary" aria-label={`${state.temporary} temporary zombies, next expiry in ${Math.ceil(state.nextExpiration ?? 0)} seconds`}><HordeIcon name="temporary" /><strong>+{state.temporary}</strong><span className={(state.nextExpiration ?? 0) <= 10 ? 'horde-expiring' : ''}><span className="horde-desktop-copy">temporary · </span>{Math.ceil(state.nextExpiration ?? 0)}s</span></div>}
@@ -44,7 +45,7 @@ function Hud({ controller, openAccount }: { controller: HordeController; openAcc
       {state.betweenWaves && !state.awaitingReward && !state.paused && <div className="horde-countdown"><span>Marching to {CAMPAIGN[state.wave]?.name}</span><strong key={Math.ceil(state.waveTimeLeft)}>{Math.ceil(state.waveTimeLeft)}</strong><small>{CAMPAIGN[state.wave]?.subtitle}</small></div>}
     </>}
     </div>
-    {state.awaitingReward && !state.menu && !state.paused && !state.panel && !state.confirmNew && !state.error && <RewardDialog key={state.wave} state={state} controller={controller} />}
-    <GameDialogs state={state} controller={controller} />
+    {state.awaitingReward && !state.menu && !state.paused && !state.panel && !state.confirmNew && !state.error && <RewardDialog key={state.wave} state={state} controller={controller} openLeaderboard={showLeaderboard} />}
+    <GameDialogs state={state} controller={controller} openLeaderboard={showLeaderboard} />
   </div>;
 }

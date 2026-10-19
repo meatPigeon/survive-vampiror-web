@@ -1,0 +1,12 @@
+/* The SDK Window uses an implicit grid column. Its header's min-content width
+   can push Close off narrow phones; constrain the track, not the game's canvas. */
+[data-idos-ui-layer] > div {
+  grid-template-columns: minmax(0, 1fr);
+}
+[data-idos-ui-layer] > div > div {
+  min-width: 0;
+}
+/* Read-only screens may omit balances to give their title and Close room. */
+[data-idos-ui-layer] > div:has([data-hide-overlay-balances]) > div > div:has(> [data-resource-counter]) {
+  display: none !important;
+}

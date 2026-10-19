@@ -8,6 +8,7 @@ import { makeBackToLobby } from "./lobby/BackToLobby";
 import { makeFrameHeader, makeFrameTabs } from "./lobby/GameFrame";
 import { PLAY, gameModes, hasWallet, startGame } from "./lobby/model";
 import { t } from "./lobby/i18n";
+import './overlay-layout.css';
 
 // The base of every app on the platform — the lobby, the home the player lands on after sign-in (the
 // sign-in itself is ./login, rendered by the host before any module runs). It is written against the

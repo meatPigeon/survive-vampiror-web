@@ -34,7 +34,11 @@ function copyShape<T extends object>(template: T, value: unknown): T {
 export function readCheckpoint(value: unknown): Checkpoint | null {
   try {
     if (!object(value) || typeof value.runId !== 'string' || !/^[a-zA-Z0-9-]{1,80}$/.test(value.runId) || !integer(value.savedAt, 0, Number.MAX_SAFE_INTEGER) || !object(value.world)) return null;
-    const source = value.world, world = copyShape(createEncounter(), source);
+    const source = value.world, world = copyShape(createEncounter(), { ...source,
+      // Older saves contain only total combat time. Wave 1 is recoverable; later splits are unknown.
+      levelElapsed: source.levelElapsed === undefined ? (source.wave === 1 ? source.elapsed : -1) : source.levelElapsed,
+    });
+    if (world.levelElapsed !== -1 && (world.levelElapsed < 0 || world.levelElapsed > world.elapsed + 0.000001)) return null;
     if (!['ready', 'playing'].includes(world.status) || !integer(world.wave, 1, RULES.waves) || world.elapsed < 0 || world.elapsed > 86400 || !integer(world.rng, 1, 0xffffffff)) return null;
     if (![world.nextId, world.casualties, world.recruited, world.expiredCount].every(n => integer(n, 0, 1e9)) || !nonnegative([world.waveTimeLeft, world.sprintRemaining, world.sprintCooldown, world.nextSiteAt, world.siteProgress])) return null;
     if (!Array.isArray(source.zombies) || source.zombies.length > 200 || source.zombies.length === 0) return null;

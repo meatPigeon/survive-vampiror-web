@@ -1,3 +1,4 @@
+import { readLevelBests, type LevelBests } from './level-records';
 import { DEFAULT_BINDINGS, allowedKey, type Bindings } from '../data/controls';
 import { readCheckpoint, type Checkpoint } from './checkpoint';
 import type { Encounter } from './types';
@@ -9,9 +10,9 @@ export interface GameSettings {
   quality: 'auto' | 'low' | 'high'; motion: 'system' | 'reduced' | 'full'; touch: 'auto' | 'always' | 'hidden'; bindings: Bindings;
 }
 export interface RunRecord { id: string; won: boolean; normal: boolean; elapsed: number; conquered: number; survivors: number; recruited: number; casualties: number; finishedAt: number }
-export interface PlayerProfile { version: 1; settings: GameSettings; checkpoint: Checkpoint | null; retryCheckpoint: Checkpoint | null; history: RunRecord[]; wins: number; completed: number; bestWave: number; bestTime: number | null; bestSurvivors: number }
+export interface PlayerProfile { version: 1; levelBests: LevelBests; settings: GameSettings; checkpoint: Checkpoint | null; retryCheckpoint: Checkpoint | null; history: RunRecord[]; wins: number; completed: number; bestWave: number; bestTime: number | null; bestSurvivors: number }
 export function freshProfile(): PlayerProfile {
-  return { version: 1, settings: { music: 65, effects: 80, normal: false, hints: true, quality: 'auto', motion: 'system', touch: 'auto', bindings: { ...DEFAULT_BINDINGS } }, checkpoint: null, retryCheckpoint: null, history: [], wins: 0, completed: 0, bestWave: 0, bestTime: null, bestSurvivors: 0 };
+  return { version: 1, levelBests: {}, settings: { music: 65, effects: 80, normal: false, hints: true, quality: 'auto', motion: 'system', touch: 'auto', bindings: { ...DEFAULT_BINDINGS } }, checkpoint: null, retryCheckpoint: null, history: [], wins: 0, completed: 0, bestWave: 0, bestTime: null, bestSurvivors: 0 };
 }
 const count = (value: unknown, max = 1e7) => Number.isInteger(value) && Number(value) >= 0 && Number(value) <= max;
 export function readProfile(raw?: string): { profile: PlayerProfile; notice: string | null } {
@@ -21,6 +22,7 @@ export function readProfile(raw?: string): { profile: PlayerProfile; notice: str
     const source = JSON.parse(raw);
     if (source?.version !== 1 || !source.settings) throw new Error('Unknown save format');
     const s = source.settings;
+    profile.levelBests = readLevelBests(source.levelBests);
     for (const bus of ['music', 'effects'] as const) if (count(s[bus], 100)) profile.settings[bus] = s[bus];
     for (const key of ['normal', 'hints'] as const) if (typeof s[key] === 'boolean') profile.settings[key] = s[key];
     if (['auto', 'low', 'high'].includes(s.quality)) profile.settings.quality = s.quality;

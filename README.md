@@ -25,6 +25,16 @@ The game uses the original Survive Vampiror's models, animations and music, with
 | Sprint, once unlocked | Sprint button | Space |
 | Pause, route, perks, camera | Pause | Esc; mouse wheel also zooms |
 
+## Best times (DEV candidate)
+
+[Review DEV version 13](https://fyvpzfco-dev.idos.games/v/bld661d0c899af24b118a31e83b5f347b7b/index.html). This candidate is staged for review; the public game remains version 12.
+
+Clear each location to post your fastest combat time. **Best times** opens from the main menu, Pause or the clear screen; choose a location and Adventure / Relentless to see the top 100 and your own rank. The five locations have independent, all-time boards for each difficulty. A slower attempt never replaces a faster one. Pauses, choosing upgrades and travel do not count; campaign perks carry over. Times display to the millisecond.
+
+Continue preserves the current split, Retry location restores its entrance time, and unfinished locations are not submitted. Failed uploads stay in the cloud profile and can be retried. Older saves from later locations begin ranking at the next location because they have no recoverable split timer.
+
+The iDos backend owns best-time aggregation and ranking; the browser reports the combat result. These are **casual, client-reported leaderboards**, not cheat-proof or prize-bearing results. No token or currency rewards are attached. Configuration and release state are recorded in [level leaderboard history](docs/feature-history/level-leaderboards.md).
+
 ## What Solana does for the player
 
 **The same wallet recovers the same march on another browser.** Choose **Sign in with Solana** and sign the iDos login message. The server verifies the Ed25519 signature and returns a stable player account. That account owns the private checkpoint, settings and personal records used by the game.
@@ -88,9 +98,10 @@ npm test                # simulation, controls, persistence, presentation, walle
 npm run build           # production bundle
 npm run verify          # actual DEV login and private checkpoint round-trip
 npm run verify:solana   # actual DEV signature login and cross-client recovery
+npm run verify:leaderboards # actual DEV best-time aggregation and ranking
 ```
 
-`npm run check` combines types, tests, build and the DEV save check. Backend checks require network access. Tests include all five waves reached through ordinary movement and valid upgrades, recruitment, temporary-only passable mines, all ten knight attacks, deterministic checkpoint restore, save ordering/retries, paused input, camera projection and resource disposal. Browser inspection and physical touch playtesting remain separate checks.
+`npm run check` combines types, tests, build, DEV saves and the leaderboard check. Backend checks require network access. Tests include all five waves reached through ordinary movement and valid upgrades, recruitment, temporary-only passable mines, all ten knight attacks, deterministic checkpoint restore, save ordering/retries, paused input, camera projection and resource disposal. Browser inspection and physical touch playtesting remain separate checks.
 
 ## Source map
 
@@ -99,6 +110,7 @@ npm run verify:solana   # actual DEV signature login and cross-client recovery
 | Game loop, input, saves and Three.js rendering | [Horde game](src/modules/horde/game/) |
 | Responsive HUD, menus and interactive field guide | [Horde components](src/modules/horde/components/) |
 | Five locations and nine perks | [Campaign and perk data](src/modules/horde/data/) |
+| Per-location best times | [Leaderboard screen](src/modules/leaderboard/) and [score outbox](src/modules/horde/game/leaderboard-sync.ts) |
 | Host authentication | [Login](src/base/login/) and [wallet entry](src/walletLogin.tsx) |
 | Automated verification | [Tests](tests/) and [scripts](scripts/) |
 | Design constraints and implementation history | [Feature history](docs/feature-history/README.md) |

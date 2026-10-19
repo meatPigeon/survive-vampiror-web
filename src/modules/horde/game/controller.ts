@@ -1,3 +1,6 @@
+import { LeaderboardSync } from './leaderboard-sync';
+import { recordLevelClear } from './level-records';
+import { levelBoardId } from '../../../shared/level-leaderboards';
 import type { IDosGamesClient } from '@idosgames/core';
 import { createEncounter, describeEncounter, setPaused, stepEncounter, beginBattle, activateAbility, updateAim, fireSling, cancelAim, resolveReward, sprint, abilityText, canActivate } from './simulation';
 import { HordeInput } from './input';
@@ -17,6 +20,7 @@ export class HordeController {
   readonly input: HordeInput;
   readonly audio = new HordeAudio();
   readonly saves: HordeSaveStore;
+  readonly leaderboard: LeaderboardSync;
   menu = true;
   private panel: 'help' | 'settings' | null = null;
   private confirmNew = false;
@@ -41,6 +45,7 @@ export class HordeController {
   readonly ready: Promise<void>;
   constructor(host: HTMLElement, client: IDosGamesClient) {
     this.saves = new HordeSaveStore(client.userCustomData);
+    this.leaderboard = new LeaderboardSync(client.leaderboard, this.saves);
     this.view = new HordeView(host);
     this.input = new HordeInput(() => this.togglePause(), () => this.restart(), this.view.renderer.domElement);
     this.input.enabled = () => this.loaded && this.saves.loaded && !this.menu && !this.panel && !this.confirmNew && !this.world.paused && !this.world.betweenWaves && ['ready', 'playing'].includes(this.world.status);
@@ -54,10 +59,11 @@ export class HordeController {
     };
     this.snapshot = this.makeSnapshot();
     this.saves.onChange = () => { if (!this.destroyed) this.publish(); };
+    this.leaderboard.onChange = this.saves.onChange;
     this.motion.addEventListener('change', this.applySettings);
     this.view.renderer.domElement.addEventListener('webglcontextlost', this.contextLost);
     this.applySettings();
-    const saveReady = this.saves.load().then(() => { if (!this.destroyed) { this.applySettings(); if (this.saves.loaded) this.audio.menu(); this.publish(); } });
+    const saveReady = this.saves.load().then(() => { if (!this.destroyed) { this.applySettings(); if (this.saves.loaded) { this.audio.menu(); void this.leaderboard.sync(); } this.publish(); } });
     const assetsReady = this.view.ready.then(() => {
       if (this.destroyed) return;
       this.loaded = true; this.view.update(this.world, 0, this.menu); this.publish();
@@ -73,6 +79,8 @@ export class HordeController {
     return { ...describeEncounter(this.world), loaded: this.loaded && this.saves.loaded, error: this.error, menu: this.menu, normal: settings.normal,
       panel: this.panel, confirmNew: this.confirmNew, settings, reducedMotion: this.reducedMotion,
       mode: this.world.normal ? 'Relentless' : 'Adventure', audio: this.audio.settings, healthTrail: this.trail,
+      levelBest: p.levelBests[levelBoardId(this.world.wave, this.world.normal)],
+      leaderboardStatus: this.leaderboard.status, pendingScores: Object.values(p.levelBests).filter(b => b.pending).length,
       saveStatus: this.saves.status, saveError: this.saves.error, saveNotice: this.saves.notice, hasSynced: this.saves.hasSynced,
       savedRun: checkpoint ? { location: locationForWave(checkpoint.world.wave).name, wave: checkpoint.world.wave, elapsed: checkpoint.world.elapsed, savedAt: checkpoint.savedAt, normal: checkpoint.world.normal } : null,
       retryLocation: p.retryCheckpoint ? locationForWave(p.retryCheckpoint.world.wave).name : null,
@@ -96,7 +104,9 @@ export class HordeController {
   setVolume(bus: 'music' | 'effects', volume: number) { this.setting(bus, Math.max(0, Math.min(100, Math.round(volume)))); }
   bind(action: ControlAction, code: string) { this.setting('bindings', rebind(this.saves.profile.settings.bindings, action, code)); }
   resetBindings() { this.setting('bindings', { ...DEFAULT_BINDINGS }); }
-  async retrySave() { await this.saves.retry(); if (!this.destroyed) this.applySettings(); }
+  async retrySave() { await this.saves.retry(); if (!this.destroyed) { this.applySettings(); void this.leaderboard.sync(); } }
+  retryScores() { return this.leaderboard.sync(); }
+  prepareLeaderboard() { this.pause(); }
   openPanel(panel: 'help' | 'settings') { this.audio.unlock(); this.pause(); this.panel = panel; this.publish(); }
   closePanel() { this.panel = null; this.publish(); }
   start(confirmed = false) {
@@ -178,6 +188,10 @@ export class HordeController {
   }
   private consumeEvents() {
     const events = this.world.events.splice(0); this.audio.events(events); this.view.handleEvents(events, this.world);
+    if (events.some(e => e.type === 'wave-cleared' || e.type === 'victory')) {
+      this.saves.update(p => { recordLevelClear(p.levelBests, this.world); });
+      void this.leaderboard.sync();
+    }
     if (events.some(e => ['wave-cleared', 'wave-start', 'victory', 'defeat'].includes(e.type))) {
       this.input.clear(); this.clearDestination();
       if (['won', 'lost'].includes(this.world.status)) {
@@ -239,7 +253,7 @@ export class HordeController {
     await new Promise(resolve => setTimeout(resolve, duration)); return this.describe();
   }
   destroy() {
-    this.setRunning(false); this.destroyed = true; this.saves.onChange = () => {}; void this.saves.flush().finally(() => this.saves.destroy());
+    this.setRunning(false); this.destroyed = true; this.leaderboard.destroy(); this.saves.onChange = () => {}; void this.saves.flush().finally(() => this.saves.destroy());
     this.motion.removeEventListener('change', this.applySettings); this.view.renderer.domElement.removeEventListener('webglcontextlost', this.contextLost);
     this.audio.destroy(); this.view.destroy(); this.listeners.clear();
   }

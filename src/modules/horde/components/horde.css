@@ -18,3 +18,9 @@
 .horde-identity>button { margin-top:12px; font-size:12px; }
 .horde-identity summary:focus-visible { outline:2px solid #f0deaa; outline-offset:3px; }
 .horde-identity code { color: #e9dfbf; overflow-wrap: anywhere; }
+
+.horde-clear-time { display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:8px 16px; margin:8px 0 16px; font-size:13px; }
+.horde-clear-time b { font-variant-numeric:tabular-nums; color:#f0e6ca; margin-left:6px; }
+.horde-clear-time small { display:block; color:#bdc5b5; }
+.horde-clear-time button { min-height:44px; padding:8px 12px; }
+.horde-menu-links { flex-wrap:wrap; }

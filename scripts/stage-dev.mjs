@@ -27,6 +27,7 @@ try {
     run('npm', ['test']);
     run('npm', ['run', 'verify']);
     run('npm', ['run', 'verify:solana']);
+    run('npm', ['run', 'verify:leaderboards']);
     run('npm', ['run', 'package:dev']);
   }
   client = new CodexMcp(cwd);

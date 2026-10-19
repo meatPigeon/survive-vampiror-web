@@ -9,7 +9,8 @@
     "reinforcements and upgrades",
     "private player checkpoints and records",
     "player guide and persistent settings",
-    "agent-observable simulation"
+    "agent-observable simulation",
+    "per-location clear times and public leaderboards"
   ],
   "tags": [
     "three",
@@ -20,5 +21,8 @@
   "version": "0.4.0",
   "author": {
     "name": "meatPigeon"
-  }
+  },
+  "uses": [
+    "leaderboard"
+  ]
 }

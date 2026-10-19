@@ -6,12 +6,13 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 const directory = await mkdtemp(join(tmpdir(), 'horde-test-'));
 process.on('exit', () => rmSync(directory, { recursive: true, force: true }));
-for (const folder of ['game', 'data']) {
+for (const folder of ['shared', 'game', 'data']) {
   await mkdir(join(directory, folder));
-  const names = await readdir(new URL(`../src/modules/horde/${folder}/`, import.meta.url));
+  const root = new URL(folder === 'shared' ? '../src/shared/' : `../src/modules/horde/${folder}/`, import.meta.url);
+  const names = await readdir(root);
   for (const name of names.filter(name => name.endsWith('.ts'))) {
-    const source = await readFile(new URL(`../src/modules/horde/${folder}/${name}`, import.meta.url), 'utf8');
-    const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText.replace(/(from\s+["'])(\.{1,2}\/[^"']+)(["'])/g, '$1$2.mjs$3').replace(/(from\s+["'])(three[^"']*)(["'])/g, (_, prefix, name, suffix) => `${prefix}${import.meta.resolve(name)}${suffix}`);
+    const source = await readFile(new URL(name, root), 'utf8');
+    const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText.replaceAll('../../../shared/', '../shared/').replace(/(from\s+["'])(\.{1,2}\/[^"']+)(["'])/g, '$1$2.mjs$3').replace(/(from\s+["'])(three[^"']*)(["'])/g, (_, prefix, name, suffix) => `${prefix}${import.meta.resolve(name)}${suffix}`);
     await writeFile(join(directory, folder, name.replace(/\.ts$/, '.mjs')), compiled);
   }
 }
@@ -42,3 +43,5 @@ export async function loadController() {
   await writeFile(join(directory, 'game/test-controller.mjs'), source);
   return import(pathToFileURL(join(directory, 'game/test-controller.mjs')));
 }
+
+export const loadShared = name => import(pathToFileURL(join(directory, `shared/${name}.mjs`)));
